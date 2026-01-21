@@ -9,7 +9,7 @@
     
     <style>
         /* =========================================
-           1. CSS 樣式表 (完整定義)
+           1. CSS 樣式表 (完整版)
            ========================================= */
         :root {
             --primary: #2D5A45;
@@ -26,11 +26,10 @@
             --danger: #F44336;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
             --radius-md: 12px;
-            /* 貓咪背景圖樣 */
+            /* 貓咪背景 */
             --cat-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 25c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm-8 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5zm16 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5z' fill='%232D5A45' fill-opacity='0.03'/%3E%3C/svg%3E");
         }
 
-        /* 夜間模式變數 */
         [data-theme="dark"] {
             --primary: #4A9D7C;
             --primary-light: #5AB88E;
@@ -52,10 +51,10 @@
             background-image: var(--cat-pattern);
             color: var(--text-primary);
             min-height: 100vh;
-            padding-bottom: 80px; /* 避開手機底部手勢區 */
+            padding-bottom: 80px;
         }
 
-        /* --- 登入畫面 --- */
+        /* 登入畫面 */
         .login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -74,11 +73,11 @@
         }
         .line-login-btn:hover { background: #05B34C; transform: translateY(-2px); }
 
-        /* --- App 主容器 --- */
+        /* App 容器 */
         .app-container { display: none; }
         .app-container.active { display: block; }
 
-        /* --- 頂部 Header --- */
+        /* Header */
         .header {
             background: var(--bg-secondary); padding: 15px 20px;
             border-bottom: 1px solid var(--border);
@@ -88,50 +87,37 @@
         .header h1 { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
         .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
 
-        /* --- 導航分頁 Tab --- */
+        /* Tabs */
         .nav-tabs {
             background: var(--bg-secondary); border-bottom: 1px solid var(--border);
             overflow-x: auto; white-space: nowrap; padding: 0 10px;
-            -webkit-overflow-scrolling: touch;
         }
         .nav-tab {
             display: inline-block; padding: 15px 20px; color: var(--text-secondary);
             cursor: pointer; font-weight: 500; position: relative;
         }
         .nav-tab.active { color: var(--primary); font-weight: 700; }
-        .nav-tab.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0;
-            width: 100%; height: 3px; background: var(--primary);
-        }
+        .nav-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); }
 
-        /* --- 頁面通用 --- */
+        /* Page */
         .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
         .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 統計卡片 --- */
-        .dashboard-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px; margin-bottom: 25px;
-        }
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card {
             background: var(--bg-card); padding: 20px; border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm); border: 1px solid var(--border);
         }
-        .stat-card.highlight {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white; border: none;
-        }
+        .stat-card.highlight { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; }
         .stat-card.highlight .stat-label { color: rgba(255,255,255,0.8); }
         .stat-card.highlight .stat-value { color: white; }
         .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
         .stat-value { font-size: 24px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 
-        /* --- 快速記帳區 --- */
-        .quick-add-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px; margin-bottom: 25px;
-        }
+        /* Quick Add */
+        .quick-add-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px; }
         .quick-add-btn {
             background: var(--bg-secondary); border: 1px solid var(--border);
             border-radius: 12px; padding: 15px; text-align: center; cursor: pointer;
@@ -140,86 +126,49 @@
         .quick-add-btn:hover { border-color: var(--primary); background: var(--bg-primary); }
         .quick-add-btn .icon { font-size: 24px; }
 
-        /* --- 表格樣式 --- */
-        .records-table {
-            width: 100%; border-collapse: collapse; background: var(--bg-card);
-            border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
-        }
-        .records-table th {
-            background: var(--bg-primary); text-align: left; padding: 12px 15px;
-            font-size: 13px; color: var(--text-secondary); white-space: nowrap;
-        }
-        .records-table td {
-            padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px;
-        }
+        /* Tables */
+        .records-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .records-table th { background: var(--bg-primary); text-align: left; padding: 12px 15px; font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+        .records-table td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; }
         .record-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
-        
-        .action-btn {
-            background: none; border: none; cursor: pointer; font-size: 16px;
-            padding: 5px; border-radius: 5px; margin-right: 5px;
-        }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; margin-right: 5px; }
         .action-btn:hover { background: var(--bg-primary); }
 
-        /* --- 彈出視窗 (Modal) --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
-            padding: 20px;
-        }
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
-        .modal {
-            background: var(--bg-secondary); width: 100%; max-width: 450px;
-            border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
+        .modal { background: var(--bg-secondary); width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h3 { margin: 0; font-size: 18px; }
         .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
 
-        /* --- 表單元素 --- */
+        /* Forms */
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-        .form-input, .form-select {
-            width: 100%; padding: 12px; border: 1px solid var(--border);
-            border-radius: 8px; background: var(--bg-secondary);
-            color: var(--text-primary); font-size: 15px;
-        }
-        .btn-primary {
-            background: var(--primary); color: white; border: none; padding: 12px 20px;
-            border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s;
-        }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-secondary {
-            background: var(--bg-primary); color: var(--text-primary);
-            border: 1px solid var(--border); padding: 12px 20px;
-            border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer;
-        }
+        .form-input, .form-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 15px; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn-secondary { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border); padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; }
 
-        /* --- 提示訊息 (Toast) --- */
-        .toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #333; color: white; padding: 12px 24px; border-radius: 30px;
-            font-size: 14px; opacity: 0; transition: 0.3s; z-index: 3000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
+        /* Toast */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; opacity: 0; transition: 0.3s; z-index: 3000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.error { background: var(--danger); }
 
-        /* --- 標籤樣式 --- */
+        /* Misc */
         .priority-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .p-high { background: #FFEBEE; color: #D32F2F; }
         .p-mid { background: #FFF3E0; color: #EF6C00; }
         .p-low { background: #E8F5E9; color: #2E7D32; }
+        .person-tag { display: inline-block; font-size: 11px; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 2px 6px; border-radius: 4px; margin-top: 4px; }
         
-        .person-tag {
-            display: inline-block; font-size: 11px; background: var(--bg-primary); 
-            border: 1px solid var(--border); color: var(--text-secondary);
-            padding: 2px 6px; border-radius: 4px; margin-top: 4px;
-        }
+        .member-stat-list { margin-top: 15px; }
+        .member-stat-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .member-stat-item:last-child { border-bottom: none; }
+        .member-name { font-weight: bold; }
+        .member-amount { font-family: 'Space Grotesk', sans-serif; }
 
         @media (max-width: 600px) {
-            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; } /* 手機版隱藏備註 */
+            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; }
             .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
@@ -231,12 +180,7 @@
             <h1 style="font-size: 40px; margin-bottom: 10px;">😺</h1>
             <h2>房貸記帳系統</h2>
             <p style="color: #666; margin-bottom: 20px;">與伴侶一起管理未來的家</p>
-            <button class="line-login-btn" onclick="lineLogin()">
-                <svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align: text-bottom; margin-right: 5px;">
-                    <path fill="#fff" d="M24 10.3c0-5.7-5.4-10.3-12-10.3S0 4.6 0 10.3c0 5.1 4.5 9.4 10.6 10.1.4.1.9.3 1.1.7.1.3.1.8 0 1.2-.1.3-.2 1.1-.4 1.7-.3 1-.7 2.6 1.1 1.4 1.8-1.2 9.7-5.7 9.7-13.4 0-.5-.1-.9-.1-1.3z"/>
-                </svg>
-                使用 LINE 登入
-            </button>
+            <button class="line-login-btn" onclick="lineLogin()">使用 LINE 登入</button>
         </div>
     </div>
 
@@ -244,7 +188,7 @@
         <header class="header">
             <h1>😺 房貸記帳</h1>
             <div style="display:flex; align-items:center; gap:10px;">
-                <button onclick="toggleTheme()" style="background:none;border:none;font-size:20px;cursor:pointer;" title="切換主題">🌓</button>
+                <button onclick="toggleTheme()" style="background:none;border:none;font-size:20px;cursor:pointer;">🌓</button>
                 <img id="userAvatar" class="user-avatar" src="" alt="User">
             </div>
         </header>
@@ -272,504 +216,218 @@
                     <div class="stat-value" id="dashFurniture">$0</div>
                 </div>
             </div>
-
-            <h3 style="margin-bottom: 15px;">快速記帳</h3>
-            <div class="quick-add-grid" id="quickAddGrid">
-                </div>
-
-            <div class="stat-card" style="margin-top: 20px;">
-                <h3 style="margin-bottom: 15px;">近期支出趨勢</h3>
-                <div style="height: 250px; position: relative;">
-                    <canvas id="trendChart"></canvas>
-                </div>
+            <h3>快速記帳</h3>
+            <div class="quick-add-grid" id="quickAddGrid"></div>
+            <div class="stat-card" style="margin-top:20px;">
+                <h3>近期支出趨勢</h3>
+                <div style="height: 250px; position: relative;"><canvas id="trendChart"></canvas></div>
             </div>
         </div>
 
         <div class="page" id="page-records">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
                 <h2>記帳記錄</h2>
-                <button onclick="openModal('addRecordModal')" class="btn-primary" style="width:auto; padding: 8px 16px;">+ 新增</button>
+                <button onclick="openModal('addRecordModal')" class="btn-primary" style="width:auto;">+ 新增</button>
             </div>
             <div style="overflow-x:auto;">
                 <table class="records-table">
-                    <thead>
-                        <tr>
-                            <th>日期</th>
-                            <th>項目/付款人</th>
-                            <th>金額</th>
-                            <th>備註</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>日期</th><th>項目/付款人</th><th>金額</th><th>備註</th><th>操作</th></tr></thead>
                     <tbody id="recordsBody"></tbody>
                 </table>
             </div>
         </div>
 
         <div class="page" id="page-furniture">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
                 <h2>傢俱與裝修</h2>
-                <button onclick="openAddFurniture()" class="btn-primary" style="width:auto; padding: 8px 16px;">+ 新增</button>
+                <button onclick="openAddFurniture()" class="btn-primary" style="width:auto;">+ 新增</button>
             </div>
-            
             <div class="dashboard-grid">
-                <div class="stat-card">
-                    <div class="stat-label">總預估金額</div>
-                    <div class="stat-value" id="furnTotal">$0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">高優先級預算</div>
-                    <div class="stat-value" id="furnHigh">$0</div>
-                </div>
+                <div class="stat-card"><div class="stat-label">總預估金額</div><div class="stat-value" id="furnTotal">$0</div></div>
+                <div class="stat-card"><div class="stat-label">高優先級預算</div><div class="stat-value" id="furnHigh">$0</div></div>
             </div>
-
             <div style="overflow-x:auto;">
                 <table class="records-table">
-                    <thead>
-                        <tr>
-                            <th>品項</th>
-                            <th>價格</th>
-                            <th>優先級/建立者</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>品項</th><th>價格</th><th>優先級/建立者</th><th>操作</th></tr></thead>
                     <tbody id="furnitureBody"></tbody>
                 </table>
             </div>
         </div>
         
         <div class="page" id="page-reports">
-            <h2>年度統計</h2>
-            <div class="stat-card" style="margin-top: 15px; height: 250px; position: relative;">
-                <canvas id="yearlyChart"></canvas>
+            <h2>本年度統計</h2>
+            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; margin-top:15px;">
+                <div class="stat-card">
+                    <h3 style="font-size:16px; margin-bottom:15px;">成員分攤</h3>
+                    <div style="height:150px; position:relative; display:flex; justify-content:center;"><canvas id="memberChart"></canvas></div>
+                    <div id="memberStats" class="member-stat-list"></div>
+                </div>
+                <div class="stat-card">
+                    <h3 style="font-size:16px; margin-bottom:15px;">支出分類</h3>
+                    <div style="height:200px; position:relative; display:flex; justify-content:center;"><canvas id="pieChart"></canvas></div>
+                </div>
             </div>
-            
-            <h2 style="margin-top: 30px;">支出分類佔比</h2>
-            <div class="stat-card" style="margin-top: 15px; height: 350px; display: flex; justify-content: center; position: relative;">
-                <canvas id="pieChart"></canvas>
+            <div class="stat-card" style="margin-top: 15px;">
+                <h3 style="font-size:16px; margin-bottom:15px;">每月趨勢</h3>
+                <div style="height: 250px; position: relative;"><canvas id="yearlyChart"></canvas></div>
             </div>
         </div>
 
         <div class="page" id="page-settings">
             <h2>自動化設定</h2>
-            
-            <div class="stat-card" style="margin-top: 15px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <h3>自動記帳</h3>
-                    <button onclick="openModal('addAutoModal')" class="btn-primary" style="width:auto;font-size:12px;">+ 新增</button>
-                </div>
-                <p style="color:#666; font-size:13px; margin-bottom:10px;">每月固定日期自動記錄</p>
-                <div id="autoRecordList" style="display:flex;flex-direction:column;gap:10px;"></div>
-            </div>
-            
-            <div class="stat-card" style="margin-top: 20px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <h3>繳費提醒</h3>
-                    <button onclick="openModal('addReminderModal')" class="btn-primary" style="width:auto;font-size:12px;">+ 新增</button>
-                </div>
-                <p style="color:#666; font-size:13px; margin-bottom:10px;">設定 LINE 提醒通知</p>
-                <div id="reminderList" style="display:flex;flex-direction:column;gap:10px;"></div>
-            </div>
-
-            <button onclick="logout()" class="btn-secondary" style="margin-top: 30px; border-color: #ff4444; color: #ff4444;">登出系統</button>
+            <div class="stat-card" style="margin-top:15px;"><h3>自動記帳</h3><div id="autoRecordList"></div><button onclick="openModal('addAutoModal')" class="btn-primary" style="margin-top:10px;">+ 新增</button></div>
+            <div class="stat-card" style="margin-top:20px;"><h3>繳費提醒</h3><div id="reminderList"></div><button onclick="openModal('addReminderModal')" class="btn-primary" style="margin-top:10px;">+ 新增</button></div>
+            <button onclick="logout()" class="btn-secondary" style="margin-top:30px;color:red;border-color:red;">登出</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="addRecordModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>新增記錄</h3>
-                <button class="close-btn" onclick="closeModal('addRecordModal')">✕</button>
-            </div>
-            <div class="form-group">
-                <label class="form-label">類型</label>
-                <select id="recType" class="form-select"></select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">金額</label>
-                <input type="number" id="recAmount" class="form-input" placeholder="輸入金額">
-            </div>
-            <div class="form-group">
-                <label class="form-label">日期</label>
-                <input type="date" id="recDate" class="form-input">
-            </div>
-            <div class="form-group">
-                <label class="form-label">備註 (選填)</label>
-                <input type="text" id="recNote" class="form-input" placeholder="例如：聚餐">
-            </div>
-            <button onclick="saveRecord()" class="btn-primary">儲存</button>
+    <div class="modal-overlay" id="addRecordModal"><div class="modal">
+        <div class="modal-header"><h3>新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
+        <div class="form-group"><label>類型</label><select id="recType" class="form-select"></select></div>
+        <div class="form-group"><label>金額</label><input type="number" id="recAmount" class="form-input" placeholder="輸入金額"></div>
+        <div class="form-group"><label>日期</label><input type="date" id="recDate" class="form-input"></div>
+        
+        <div class="form-group">
+            <label class="form-label">付款人</label>
+            <select id="recPerson" class="form-select">
+                <option value="Jack">Jack</option>
+                <option value="Hsun">Hsun</option>
+            </select>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="addFurnitureModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="furnModalTitle">新增傢俱</h3>
-                <button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button>
-            </div>
-            <div class="form-group">
-                <label class="form-label">品項名稱</label>
-                <input type="text" id="furnName" class="form-input" placeholder="例如：沙發">
-            </div>
-            <div class="form-group">
-                <label class="form-label">品牌/廠商 (選填)</label>
-                <input type="text" id="furnBrand" class="form-input" placeholder="例如：IKEA">
-            </div>
-            <div class="form-group">
-                <label class="form-label">預估價格</label>
-                <input type="number" id="furnPrice" class="form-input" placeholder="0">
-            </div>
-            <div class="form-group">
-                <label class="form-label">優先級</label>
-                <select id="furnPriority" class="form-select">
-                    <option value="high">🔥 高 (必須購買)</option>
-                    <option value="mid">🔸 中 (有預算再買)</option>
-                    <option value="low">🌱 低 (以後再說)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">備註 (選填)</label>
-                <input type="text" id="furnNote" class="form-input" placeholder="規格尺寸等...">
-            </div>
-            <button id="furnSaveBtn" onclick="saveFurniture()" class="btn-primary">儲存</button>
-        </div>
-    </div>
+        <div class="form-group"><label>備註 (選填)</label><input type="text" id="recNote" class="form-input" placeholder="例如：聚餐"></div>
+        <button onclick="saveRecord()" class="btn-primary">儲存</button>
+    </div></div>
     
-    <div class="modal-overlay" id="addAutoModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>新增自動記帳</h3>
-                <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
-            </div>
-            <div class="form-group"><label>類型</label><select id="autoType" class="form-select"></select></div>
-            <div class="form-group"><label>金額</label><input type="number" id="autoAmount" class="form-input"></div>
-            <div class="form-group"><label>每月幾號</label><select id="autoDay" class="form-select"></select></div>
-            <button onclick="saveAuto()" class="btn-primary">儲存</button>
-        </div>
-    </div>
+    <div class="modal-overlay" id="addFurnitureModal"><div class="modal">
+        <div class="modal-header"><h3 id="furnModalTitle">新增傢俱</h3><button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button></div>
+        <div class="form-group"><label>品項</label><input type="text" id="furnName" class="form-input"></div>
+        <div class="form-group"><label>品牌</label><input type="text" id="furnBrand" class="form-input"></div>
+        <div class="form-group"><label>價格</label><input type="number" id="furnPrice" class="form-input"></div>
+        <div class="form-group"><label>優先級</label><select id="furnPriority" class="form-select"><option value="high">🔥 高</option><option value="mid">🔸 中</option><option value="low">🌱 低</option></select></div>
+        <div class="form-group"><label>備註</label><input type="text" id="furnNote" class="form-input"></div>
+        <button id="furnSaveBtn" onclick="saveFurniture()" class="btn-primary">儲存</button>
+    </div></div>
 
-    <div class="modal-overlay" id="addReminderModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>新增提醒</h3>
-                <button class="close-btn" onclick="closeModal('addReminderModal')">✕</button>
-            </div>
-            <div class="form-group"><label>項目</label><select id="remType" class="form-select"></select></div>
-            <div class="form-group"><label>提醒日期</label><select id="remDay" class="form-select"></select></div>
-            <div class="form-group">
-                <label>週期</label>
-                <select id="remCycle" class="form-select">
-                    <option value="1">每月</option>
-                    <option value="2">每2個月</option>
-                    <option value="12">每年</option>
-                </select>
-            </div>
-            <button onclick="saveReminder()" class="btn-primary">儲存</button>
-        </div>
-    </div>
+    <div class="modal-overlay" id="addAutoModal"><div class="modal"><div class="modal-header"><h3>新增自動記帳</h3><button class="close-btn" onclick="closeModal('addAutoModal')">✕</button></div><div class="form-group"><label>類型</label><select id="autoType" class="form-select"></select></div><div class="form-group"><label>金額</label><input type="number" id="autoAmount" class="form-input"></div><div class="form-group"><label>每月幾號</label><select id="autoDay" class="form-select"></select></div><button onclick="saveAuto()" class="btn-primary">儲存</button></div></div>
+    <div class="modal-overlay" id="addReminderModal"><div class="modal"><div class="modal-header"><h3>新增提醒</h3><button class="close-btn" onclick="closeModal('addReminderModal')">✕</button></div><div class="form-group"><label>項目</label><select id="remType" class="form-select"></select></div><div class="form-group"><label>日期</label><select id="remDay" class="form-select"></select></div><div class="form-group"><label>週期</label><select id="remCycle" class="form-select"><option value="1">每月</option><option value="2">每2月</option><option value="12">每年</option></select></div><button onclick="saveReminder()" class="btn-primary">儲存</button></div></div>
 
     <div class="toast" id="toast">訊息</div>
 
     <script>
-        // 🔴 設定區：請填入您的後端網址 (確保以 /exec 結尾)
+        // ✅ 必填：請將這裡換成您部署後的 Google Script 網址 (結尾為 /exec)
         const CONFIG = {
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwHCMUjnM-UeeiPTYRF68gvQ23yet52ai1jjgiS2vgCVe-DqG31z6uMHyWUtBtKJlSd5g/exec',
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz7o38g9ndKzSNO1g5HMikTUK_un3Bm6y5FxBqEXWskFMn59iRo2y0GhKQyKUyqpiRPKQ/exec',
             LINE_LOGIN_CHANNEL_ID: '2008934917'
         };
 
-        // 狀態管理
-        let state = {
-            user: null,
-            records: [],
-            furniture: [],
-            autoRecords: [],
-            reminders: [],
-            types: [
-                {name:'房貸', icon:'🏠'}, {name:'管理費', icon:'🏢'}, {name:'水費', icon:'💧'},
-                {name:'電費', icon:'💡'}, {name:'瓦斯', icon:'🔥'}, {name:'網路', icon:'📶'},
-                {name:'餐費', icon:'🍱'}, {name:'日常', icon:'🛒'}, {name:'其他', icon:'📦'}
-            ],
-            charts: {},
-            editingFurnId: null // 用於判斷是新增還是編輯
-        };
+        let state = { user: null, records: [], furniture: [], types: [{name:'房貸',icon:'🏠'},{name:'管理費',icon:'🏢'},{name:'水費',icon:'💧'},{name:'電費',icon:'💡'},{name:'瓦斯',icon:'🔥'},{name:'網路',icon:'📶'},{name:'餐費',icon:'🍱'},{name:'日常',icon:'🛒'},{name:'其他',icon:'📦'}], charts: {}, editingFurnId: null };
 
-        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            checkLoginStatus();
-            setupTabs();
-            // 初始化日期下拉選單
-            const days = Array.from({length:31}, (_,i)=>i+1).map(d=>`<option value="${d}">${d}號</option>`).join('');
-            ['autoDay', 'remDay'].forEach(id => document.getElementById(id).innerHTML = days);
+            initTheme(); checkLoginStatus(); setupTabs();
+            const days = Array.from({length:31},(_,i)=>i+1).map(d=>`<option value="${d}">${d}號</option>`).join('');
+            ['autoDay','remDay'].forEach(id=>document.getElementById(id).innerHTML=days);
         });
 
-        // 登入相關邏輯
-        function lineLogin() {
-            const redirectUri = window.location.href.split('?')[0];
-            const url = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${CONFIG.LINE_LOGIN_CHANNEL_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=123&scope=profile%20openid`;
-            window.location.href = url;
+        function lineLogin(){ window.location.href=`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${CONFIG.LINE_LOGIN_CHANNEL_ID}&redirect_uri=${encodeURIComponent(window.location.href.split('?')[0])}&state=123&scope=profile%20openid`; }
+        async function checkLoginStatus(){
+            const c=new URLSearchParams(window.location.search).get('code');
+            if(c){ const r=await fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=lineCallback&code=${c}`); const d=await r.json(); if(d.success){ localStorage.setItem('user',JSON.stringify(d.user)); window.history.replaceState({},document.title,window.location.pathname); loginSuccess(d.user); } }
+            else{ const s=localStorage.getItem('user'); if(s) loginSuccess(JSON.parse(s)); }
         }
+        function loginSuccess(u){ state.user=u; document.getElementById('loginScreen').style.display='none'; document.getElementById('appContainer').classList.add('active'); document.getElementById('userAvatar').src=u.pictureUrl; loadData(); }
+        function logout(){ localStorage.removeItem('user'); location.reload(); }
 
-        async function checkLoginStatus() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            if (code) {
-                try {
-                    const res = await fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=lineCallback&code=${code}`);
-                    const data = await res.json();
-                    if (data.success) {
-                        localStorage.setItem('user', JSON.stringify(data.user));
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        loginSuccess(data.user);
-                    } else { showToast('登入失敗: ' + data.error, 'error'); }
-                } catch(e) { console.error(e); }
-            } else {
-                const savedUser = localStorage.getItem('user');
-                if (savedUser) loginSuccess(JSON.parse(savedUser));
-            }
-        }
-
-        function loginSuccess(user) {
-            state.user = user;
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContainer').classList.add('active');
-            document.getElementById('userAvatar').src = user.pictureUrl;
-            loadData();
-        }
-        function logout() { localStorage.removeItem('user'); location.reload(); }
-
-        // 資料載入
-        async function loadData() {
-            try {
-                const [recRes, furnRes, typeRes] = await Promise.all([
-                    fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`),
-                    fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getFurnitureList`),
-                    fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`)
-                ]);
-                const recData = await recRes.json();
-                const furnData = await furnRes.json();
-                const typeData = await typeRes.json();
-                
-                if (recData.success) state.records = recData.records;
-                if (furnData.success) state.furniture = furnData.furnitureList;
-                if (typeData.success && typeData.types.length > 0) state.types = typeData.types;
-
+        async function loadData(){
+            try{
+                const [r,f,t]=await Promise.all([fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`),fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getFurnitureList`),fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`)]);
+                const rd=await r.json(), fd=await f.json(), td=await t.json();
+                if(rd.success)state.records=rd.records; if(fd.success)state.furniture=fd.furnitureList; if(td.success&&td.types.length>0)state.types=td.types;
                 renderUI();
-            } catch(e) { 
-                console.error('Load Error', e);
-                showToast('資料載入失敗，請檢查網路', 'error');
-            }
+            }catch(e){console.error(e); showToast('資料載入失敗，請檢查部署權限','error');}
         }
 
-        // 渲染 UI (主控台)
-        function renderUI() {
+        function renderUI(){
             renderDashboard(); renderRecords(); renderFurniture(); renderSettings(); renderCharts();
-            const opts = state.types.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
-            ['recType', 'autoType', 'remType'].forEach(id => document.getElementById(id).innerHTML = opts);
+            const opts=state.types.map(t=>`<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
+            ['recType','autoType','remType'].forEach(id=>document.getElementById(id).innerHTML=opts);
         }
 
-        function renderDashboard() {
-            const now = new Date();
-            const m = now.getMonth(), y = now.getFullYear();
-            const mRecs = state.records.filter(r => {
-                const d = new Date(r.date);
-                return d.getMonth() === m && d.getFullYear() === y;
-            });
-            const total = mRecs.reduce((a,b) => a + b.amount, 0);
-            const mort = mRecs.filter(r => r.type.includes('房貸')).reduce((a,b) => a + b.amount, 0);
-            const furnTotal = state.furniture.reduce((a,b) => a + b.price, 0);
-            
-            document.getElementById('dashTotal').textContent = '$' + total.toLocaleString();
-            document.getElementById('dashMortgage').textContent = '$' + mort.toLocaleString();
-            document.getElementById('dashFurniture').textContent = '$' + furnTotal.toLocaleString();
-            
-            document.getElementById('quickAddGrid').innerHTML = state.types.map(t => `
-                <div class="quick-add-btn" onclick="quickAdd('${t.name}')">
-                    <span class="icon">${t.icon}</span>
-                    <span>${t.name}</span>
-                </div>
-            `).join('');
+        function renderDashboard(){
+            const now=new Date(), m=now.getMonth(), y=now.getFullYear();
+            const rs=state.records.filter(r=>{ const d=new Date(r.date); return d.getMonth()===m && d.getFullYear()===y; });
+            const tot=rs.reduce((a,b)=>a+b.amount,0), mort=rs.filter(r=>r.type.includes('房貸')).reduce((a,b)=>a+b.amount,0);
+            const furnT=state.furniture.reduce((a,b)=>a+b.price,0);
+            document.getElementById('dashTotal').textContent='$'+tot.toLocaleString(); document.getElementById('dashMortgage').textContent='$'+mort.toLocaleString(); document.getElementById('dashFurniture').textContent='$'+furnT.toLocaleString();
+            document.getElementById('quickAddGrid').innerHTML=state.types.map(t=>`<div class="quick-add-btn" onclick="quickAdd('${t.name}')"><span class="icon">${t.icon}</span><span>${t.name}</span></div>`).join('');
         }
 
-        function renderRecords() {
-            const tbody = document.getElementById('recordsBody');
-            tbody.innerHTML = state.records
-                .sort((a,b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 50)
-                .map(r => `
-                    <tr>
-                        <td>${r.date.slice(5)}</td>
-                        <td>
-                            ${r.type}
-                            <div class="person-tag">👤 ${r.person||'未知'}</div>
-                        </td>
-                        <td class="record-amount">$${r.amount.toLocaleString()}</td>
-                        <td>${r.note}</td>
-                        <td><button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteRecord', ${r.id})">🗑️</button></td>
-                    </tr>
-                `).join('');
+        function renderRecords(){
+            document.getElementById('recordsBody').innerHTML=state.records.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,30).map(r=>`<tr><td>${r.date.slice(5)}</td><td>${r.type}<br><div class="person-tag">👤 ${r.person||'未知'}</div></td><td class="record-amount">$${r.amount.toLocaleString()}</td><td>${r.note}</td><td><button class="action-btn" style="color:red;" onclick="deleteItem('deleteRecord',${r.id})">🗑️</button></td></tr>`).join('');
         }
 
-        function renderFurniture() {
-            const tbody = document.getElementById('furnitureBody');
-            const total = state.furniture.reduce((a,b) => a + b.price, 0);
-            const high = state.furniture.filter(f => f.priority === 'high').reduce((a,b) => a + b.price, 0);
-            
-            document.getElementById('furnTotal').textContent = '$' + total.toLocaleString();
-            document.getElementById('furnHigh').textContent = '$' + high.toLocaleString();
-
-            const pMap = { high: '🔥 高', mid: '🔸 中', low: '🌱 低' };
-            const cMap = { high: 'p-high', mid: 'p-mid', low: 'p-low' };
-            
-            const sorted = [...state.furniture].sort((a,b) => {
-                const map = { high: 3, mid: 2, low: 1 };
-                return map[b.priority] - map[a.priority];
-            });
-
-            tbody.innerHTML = sorted.map(f => `
-                <tr>
-                    <td>
-                        <div style="font-weight:bold;">${f.name}</div>
-                        <div style="font-size:12px;color:#888;">${f.brand || ''}</div>
-                    </td>
-                    <td class="record-amount">$${f.price.toLocaleString()}</td>
-                    <td>
-                        <span class="priority-badge ${cMap[f.priority]}">${pMap[f.priority]}</span>
-                        <div class="person-tag">👤 ${f.person||'未知'}</div>
-                    </td>
-                    <td>
-                        <button class="action-btn" onclick="openEditFurniture(${f.id})">✏️</button>
-                        <button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteFurniture', ${f.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-        
-        function renderSettings() {
-            document.getElementById('autoRecordList').innerHTML = `<div style="text-align:center;color:#999;padding:10px;">目前尚無設定</div>`;
-            document.getElementById('reminderList').innerHTML = `<div style="text-align:center;color:#999;padding:10px;">目前尚無提醒</div>`;
+        function renderFurniture(){
+            const tot=state.furniture.reduce((a,b)=>a+b.price,0), high=state.furniture.filter(f=>f.priority==='high').reduce((a,b)=>a+b.price,0);
+            document.getElementById('furnTotal').textContent='$'+tot.toLocaleString(); document.getElementById('furnHigh').textContent='$'+high.toLocaleString();
+            const pm={high:'🔥 高',mid:'🔸 中',low:'🌱 低'}, cm={high:'p-high',mid:'p-mid',low:'p-low'};
+            document.getElementById('furnitureBody').innerHTML=state.furniture.sort((a,b)=>(a.priority==='high'?3:a.priority==='mid'?2:1)-(b.priority==='high'?3:b.priority==='mid'?2:1)).map(f=>`<tr><td><b>${f.name}</b><br><small>${f.brand}</small></td><td class="record-amount">$${f.price.toLocaleString()}</td><td><span class="furniture-priority ${cm[f.priority]}">${pm[f.priority]}</span><br><div class="person-tag">👤 ${f.person||'未知'}</div></td><td><button class="action-btn" onclick="openEditFurniture(${f.id})">✏️</button><button class="action-btn" style="color:red;" onclick="deleteItem('deleteFurniture',${f.id})">🗑️</button></td></tr>`).join('');
         }
 
-        // --- Chart.js 圖表邏輯 (最近 6 個月動態) ---
-        function renderCharts() {
-            const ctxTrend = document.getElementById('trendChart');
-            const ctxPie = document.getElementById('pieChart');
-            const ctxYear = document.getElementById('yearlyChart');
+        function renderCharts(){
+            const ctxTrend=document.getElementById('trendChart'), ctxPie=document.getElementById('pieChart'), ctxYear=document.getElementById('yearlyChart'), ctxMember=document.getElementById('memberChart');
+            const now=new Date(), currentYear=now.getFullYear();
             
-            // 趨勢圖
-            const labels = [];
-            const trendData = [];
-            const now = new Date();
-            
+            const labels=[], trendData=[];
             for(let i=5; i>=0; i--) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const year = d.getFullYear();
-                const month = d.getMonth() + 1;
-                labels.push(`${month}月`);
-                const monthlySum = state.records.reduce((sum, r) => {
-                    const rDate = new Date(r.date);
-                    if (rDate.getFullYear() === year && (rDate.getMonth() + 1) === month) {
-                        return sum + r.amount;
-                    }
-                    return sum;
-                }, 0);
-                trendData.push(monthlySum);
+                const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+                const yr=d.getFullYear(), mo=d.getMonth()+1;
+                labels.push(`${mo}月`);
+                trendData.push(state.records.reduce((s,r)=>{const rd=new Date(r.date); return (rd.getFullYear()===yr && (rd.getMonth()+1)===mo) ? s+r.amount : s;},0));
             }
+            if(state.charts.trend)state.charts.trend.destroy();
+            state.charts.trend=new Chart(ctxTrend, {type:'line', data:{labels:labels, datasets:[{label:'每月支出',data:trendData,borderColor:'#2D5A45',backgroundColor:'rgba(45,90,69,0.1)',fill:true,tension:0.3}]}, options:{maintainAspectRatio:false}});
+            
+            const typeMap={}; 
+            const yearRecords = state.records.filter(r => new Date(r.date).getFullYear() === currentYear);
+            yearRecords.forEach(r => typeMap[r.type] = (typeMap[r.type]||0) + r.amount);
+            if(state.charts.pie)state.charts.pie.destroy();
+            state.charts.pie=new Chart(ctxPie, {type:'doughnut', data:{labels:Object.keys(typeMap), datasets:[{data:Object.values(typeMap),backgroundColor:['#2D5A45','#3D7A5A','#E8B86D','#F5D69C','#1D3A2F','#5D8AA8','#BC8F8F']}]}, options:{maintainAspectRatio:false}});
 
-            if (state.charts.trend) state.charts.trend.destroy();
-            state.charts.trend = new Chart(ctxTrend, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '每月支出',
-                        data: trendData,
-                        borderColor: '#2D5A45',
-                        backgroundColor: 'rgba(45,90,69,0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { maintainAspectRatio: false }
-            });
+            const memberMap = {};
+            yearRecords.forEach(r => { const name = r.person || '未知'; memberMap[name] = (memberMap[name] || 0) + r.amount; });
+            if(state.charts.member) state.charts.member.destroy();
+            state.charts.member = new Chart(ctxMember, {type: 'pie', data: {labels: Object.keys(memberMap), datasets: [{data: Object.values(memberMap), backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0']}]}, options: { maintainAspectRatio: false }});
             
-            // 圓餅圖
-            const typeMap = {};
-            state.records.forEach(r => typeMap[r.type] = (typeMap[r.type] || 0) + r.amount);
-            
-            if (state.charts.pie) state.charts.pie.destroy();
-            state.charts.pie = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(typeMap),
-                    datasets: [{
-                        data: Object.values(typeMap),
-                        backgroundColor: ['#2D5A45', '#3D7A5A', '#E8B86D', '#F5D69C', '#1D3A2F', '#5D8AA8', '#D2B48C', '#BC8F8F']
-                    }]
-                },
-                options: { maintainAspectRatio: false }
-            });
+            document.getElementById('memberStats').innerHTML = Object.entries(memberMap).sort((a,b) => b[1] - a[1]).map(([n, a]) => `<div class="member-stat-item"><span class="member-name">👤 ${n}</span><span class="member-amount">$${a.toLocaleString()}</span></div>`).join('') || '<div style="text-align:center;color:#999;">尚無資料</div>';
+
+            if(state.charts.yearly) state.charts.yearly.destroy();
+            state.charts.yearly = new Chart(ctxYear, {type: 'bar', data: {labels: labels, datasets: [{label:'總支出', data:trendData, backgroundColor:'#2D5A45', borderRadius:4}]}, options: {maintainAspectRatio:false}});
         }
 
-        // ============================================
-        // 使用者操作 Actions
-        // ============================================
-        function quickAdd(type) {
-            document.getElementById('recType').value = type;
-            document.getElementById('recDate').valueAsDate = new Date();
-            document.getElementById('recAmount').value = '';
-            document.getElementById('recNote').value = '';
-            openModal('addRecordModal');
-        }
-
-        async function saveRecord() {
-            const record = {
-                type: document.getElementById('recType').value,
-                amount: +document.getElementById('recAmount').value,
-                date: document.getElementById('recDate').value,
-                note: document.getElementById('recNote').value,
-                person: state.user.displayName
+        function quickAdd(t){ document.getElementById('recType').value=t; document.getElementById('recDate').valueAsDate=new Date(); openModal('addRecordModal'); }
+        
+        async function saveRecord(){
+            // 關鍵：抓取使用者選擇的「付款人」
+            const r={
+                type:document.getElementById('recType').value, 
+                amount:+document.getElementById('recAmount').value, 
+                date:document.getElementById('recDate').value, 
+                note:document.getElementById('recNote').value, 
+                person:document.getElementById('recPerson').value // 取值：Jack 或 Hsun
             };
-            if (!record.amount) return showToast('請輸入金額', 'error');
-            
-            closeModal('addRecordModal');
-            state.records.unshift({ ...record, id: Date.now() });
-            renderUI();
-            
-            await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'addRecord', record })
-            });
-            showToast('記帳成功');
+            if(!r.amount)return showToast('輸入金額','error');
+            closeModal('addRecordModal'); state.records.unshift({...r,id:Date.now()}); renderUI();
+            await fetch(CONFIG.GOOGLE_SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'addRecord',record:r})}); showToast('記帳成功');
         }
 
-        // --- 傢俱新增與編輯 (關鍵邏輯) ---
-        function openAddFurniture() {
-            state.editingFurnId = null;
-            document.getElementById('furnModalTitle').textContent = '新增傢俱';
-            document.getElementById('furnSaveBtn').textContent = '儲存';
-            document.getElementById('furnName').value = '';
-            document.getElementById('furnBrand').value = '';
-            document.getElementById('furnPrice').value = '';
-            document.getElementById('furnNote').value = '';
+        function openAddFurniture(){ state.editingFurnId=null; document.getElementById('furnModalTitle').textContent='新增傢俱'; document.getElementById('furnSaveBtn').textContent='儲存'; document.getElementById('furnName').value=''; document.getElementById('furnBrand').value=''; document.getElementById('furnPrice').value=''; openModal('addFurnitureModal'); }
+        function openEditFurniture(id){
+            const f=state.furniture.find(i=>i.id===id); if(!f)return;
+            state.editingFurnId=id; document.getElementById('furnModalTitle').textContent='編輯傢俱'; document.getElementById('furnSaveBtn').textContent='更新';
+            document.getElementById('furnName').value=f.name; document.getElementById('furnBrand').value=f.brand; document.getElementById('furnPrice').value=f.price; document.getElementById('furnPriority').value=f.priority; document.getElementById('furnNote').value=f.note;
             openModal('addFurnitureModal');
         }
-
-        function openEditFurniture(id) {
-            const item = state.furniture.find(f => f.id === id);
-            if (!item) return;
-            state.editingFurnId = id;
-            document.getElementById('furnModalTitle').textContent = '編輯傢俱';
-            document.getElementById('furnSaveBtn').textContent = '更新';
-            document.getElementById('furnName').value = item.name;
-            document.getElementById('furnBrand').value = item.brand || '';
-            document.getElementById('furnPrice').value = item.price;
-            document.getElementById('furnPriority').value = item.priority;
-            document.getElementById('furnNote').value = item.note || '';
-            openModal('addFurnitureModal');
-        }
-
-        async function saveFurniture() {
+        async function saveFurniture(){
             const item = {
                 id: state.editingFurnId ? state.editingFurnId : Date.now(),
                 name: document.getElementById('furnName').value,
@@ -777,105 +435,35 @@
                 price: +document.getElementById('furnPrice').value,
                 priority: document.getElementById('furnPriority').value,
                 note: document.getElementById('furnNote').value,
-                // 這裡的邏輯：
-                // 如果是編輯，嘗試保留原本的建立者 (person)。如果原本沒人，就填入當前修改者。
-                // 如果是新增，直接填入當前使用者。
-                person: state.editingFurnId 
-                    ? (state.furniture.find(f => f.id === state.editingFurnId).person || state.user.displayName)
-                    : state.user.displayName
+                person: state.editingFurnId ? (state.furniture.find(f=>f.id===state.editingFurnId).person || state.user.displayName) : state.user.displayName
             };
-            
-            if (!item.name) return showToast('請輸入名稱', 'error');
+            if(!item.name) return showToast('輸入名稱','error');
             closeModal('addFurnitureModal');
             
-            if (state.editingFurnId) {
-                const idx = state.furniture.findIndex(f => f.id === item.id);
-                if (idx !== -1) state.furniture[idx] = { ...state.furniture[idx], ...item };
-            } else {
-                state.furniture.push(item);
-            }
+            if(state.editingFurnId){ const idx=state.furniture.findIndex(f=>f.id===item.id); if(idx!==-1)state.furniture[idx]={...state.furniture[idx],...item}; }
+            else{ state.furniture.push(item); }
             renderUI();
             
-            const action = state.editingFurnId ? 'updateFurniture' : 'addFurniture';
-            try {
-                const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: action, item: item })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(state.editingFurnId ? '更新成功' : '新增成功');
-                } else {
-                    alert('儲存失敗：' + data.error);
-                    loadData();
-                }
-            } catch (e) {
-                alert('網路錯誤，請檢查連線');
-            }
+            const act = state.editingFurnId ? 'updateFurniture' : 'addFurniture';
+            const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {method:'POST', body:JSON.stringify({action:act, item:item})});
+            const d=await res.json(); if(d.success) showToast('成功'); else {alert(d.error); loadData();}
         }
 
-        async function deleteItem(action, id) {
-            if (!confirm('確定要刪除嗎？')) return;
-            
-            if (action === 'deleteRecord') state.records = state.records.filter(r => r.id !== id);
-            if (action === 'deleteFurniture') state.furniture = state.furniture.filter(f => f.id !== id);
+        function deleteItem(act,id){
+            if(!confirm('確定刪除?'))return;
+            if(act==='deleteRecord') state.records=state.records.filter(r=>r.id!==id);
+            if(act==='deleteFurniture') state.furniture=state.furniture.filter(f=>f.id!==id);
             renderUI();
-            
-            try {
-                const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: action, recordId: id, itemId: id })
-                });
-                const data = await res.json();
-                if (!data.success) {
-                    alert('刪除失敗：' + data.error);
-                    loadData();
-                } else {
-                    showToast('已刪除');
-                }
-            } catch (e) {
-                alert('網路錯誤');
-            }
+            fetch(CONFIG.GOOGLE_SCRIPT_URL,{method:'POST',body:JSON.stringify({action:act, recordId:id, itemId:id})});
         }
 
-        async function saveAuto() { closeModal('addAutoModal'); showToast('設定已儲存 (前端模擬)'); }
-        async function saveReminder() { closeModal('addReminderModal'); showToast('設定已儲存 (前端模擬)'); }
-
-        // ============================================
-        // 工具函式
-        // ============================================
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        async function saveAuto(){ closeModal('addAutoModal'); showToast('設定成功(前端模擬)'); }
+        async function saveReminder(){ closeModal('addReminderModal'); showToast('設定成功(前端模擬)'); }
         
-        function setupTabs() {
-            document.querySelectorAll('.nav-tab').forEach(t => {
-                t.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-tab').forEach(x => x.classList.remove('active'));
-                    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-                    t.classList.add('active');
-                    document.getElementById('page-' + t.dataset.page).classList.add('active');
-                });
-            });
-        }
-        
-        function toggleTheme() {
-            const body = document.body;
-            const current = body.getAttribute('data-theme');
-            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-        }
-        
-        function initTheme() {
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.setAttribute('data-theme', 'dark');
-            }
-        }
-        
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast show ${type}`;
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
+        function openModal(id){document.getElementById(id).classList.add('active');} function closeModal(id){document.getElementById(id).classList.remove('active');}
+        function setupTabs(){document.querySelectorAll('.nav-tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.getElementById('page-'+t.dataset.page).classList.add('active');});});}
+        function toggleTheme(){const b=document.body,c=b.getAttribute('data-theme');b.setAttribute('data-theme',c==='dark'?'light':'dark');} function initTheme(){if(window.matchMedia('(prefers-color-scheme: dark)').matches)document.body.setAttribute('data-theme','dark');}
+        function showToast(m,t='success'){const x=document.getElementById('toast');x.textContent=m;x.className=`toast show ${t}`;setTimeout(()=>x.classList.remove('show'),3000);}
     </script>
 </body>
 </html>
