@@ -67,6 +67,7 @@
         .records-table td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; }
         .record-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
         .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; }
+        .action-btn.delete { color: #ff4444; }
         .action-btn:hover { background: var(--bg-primary); }
         
         /* Modal */
@@ -240,9 +241,9 @@
     <div class="toast" id="toast">訊息</div>
 
     <script>
-        // 🔴 請填入您的後端網址 (Google Apps Script Deploy URL)
+        // ✅ 已經填入您的專屬後端網址
         const CONFIG = {
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyN4FBrCfvTnIgg7RGtbVIdyPzaMmuVtMAgA71Fl2jsfpfLxnq3MivEDUEq_yrlMgXYzA/exec', // 替換這裡
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz7o38g9ndKzSNO1g5HMikTUK_un3Bm6y5FxBqEXWskFMn59iRo2y0GhKQyKUyqpiRPKQ/exec',
             LINE_LOGIN_CHANNEL_ID: '2008934917'
         };
 
@@ -291,6 +292,8 @@
                         localStorage.setItem('user', JSON.stringify(data.user));
                         window.history.replaceState({}, document.title, window.location.pathname);
                         loginSuccess(data.user);
+                    } else {
+                        alert('登入失敗：' + data.error);
                     }
                 } catch(e) { console.error(e); }
             } else {
