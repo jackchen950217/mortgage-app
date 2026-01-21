@@ -131,7 +131,7 @@
         .records-table th { background: var(--bg-primary); text-align: left; padding: 12px 15px; font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
         .records-table td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
         .record-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: var(--primary); }
-        .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 5px; min-width: 36px; }
         .action-btn:hover { background: var(--bg-primary); }
 
         /* Modals */
@@ -187,9 +187,9 @@
 
         /* Responsive */
         @media (max-width: 600px) {
-            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; }
             .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
             .form-row { grid-template-columns: 1fr; }
+            .records-table td, .records-table th { padding: 10px 8px; font-size: 13px; }
         }
     </style>
 </head>
@@ -262,7 +262,7 @@
             </div>
             <div style="overflow-x:auto;">
                 <table class="records-table">
-                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>備註</th><th></th></tr></thead>
+                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>備註</th><th style="width:50px;"></th></tr></thead>
                     <tbody id="recordsBody"></tbody>
                 </table>
             </div>
@@ -293,7 +293,7 @@
             </div>
             <div style="overflow-x:auto;">
                 <table class="records-table">
-                    <thead><tr><th>品項</th><th>價格</th><th>優先級</th><th></th></tr></thead>
+                    <thead><tr><th>品項</th><th>價格</th><th>優先級</th><th style="width:80px;">操作</th></tr></thead>
                     <tbody id="furnitureBody"></tbody>
                 </table>
             </div>
@@ -785,9 +785,8 @@
                     <td class="record-amount">$${(f.price || 0).toLocaleString()}</td>
                     <td>
                         <span class="priority-badge ${priorityClass[f.priority] || 'p-mid'}">${priorityText[f.priority] || '中'}</span>
-                        ${f.person ? `<div class="person-tag">👤 ${f.person}</div>` : ''}
                     </td>
-                    <td>
+                    <td style="white-space:nowrap;">
                         <button class="action-btn" onclick="editFurniture(${f.id})" title="編輯">✏️</button>
                         <button class="action-btn" onclick="deleteFurniture(${f.id})" title="刪除">🗑️</button>
                     </td>
