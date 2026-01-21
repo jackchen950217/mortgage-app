@@ -957,7 +957,11 @@
             try {
                 await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'addRecord', record: record })
+                    body: JSON.stringify({ 
+                        action: 'addRecord', 
+                        record: record,
+                        userId: state.user ? state.user.userId : null // 傳遞 userId 以排除自己
+                    })
                 });
                 showToast('記帳成功喵！🐱');
             } catch (e) {
