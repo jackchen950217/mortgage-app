@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -2249,6 +2250,7 @@
             LINE_LOGIN_CHANNEL_ID: '2008934917',
             LINE_LOGIN_CALLBACK_URL: window.location.origin + window.location.pathname,
             GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz76O7MqByh87V98aP_2VEoZAYoVZiSHllG2w8gknD3e-JDu64tSwGqKuEmekP2Q101GQ/exec',
+            LIFF_ID: '2008934917-TFTGt0p7',
         };
 
         // ============================================
@@ -2275,25 +2277,73 @@
         };
 
         // ============================================
-        // LINE Login
+        // LINE Login / LIFF
         // ============================================
-        function lineLogin() {
-            const state = generateRandomState();
-            localStorage.setItem('line_login_state', state);
-            
-            const params = new URLSearchParams({
-                response_type: 'code',
-                client_id: CONFIG.LINE_LOGIN_CHANNEL_ID,
-                redirect_uri: CONFIG.LINE_LOGIN_CALLBACK_URL,
-                state: state,
-                scope: 'profile openid'
-            });
-            
-            window.location.href = `https://access.line.me/oauth2/v2.1/authorize?${params}`;
+        let isLiffInitialized = false;
+        let isInLiff = false;
+
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: CONFIG.LIFF_ID });
+                isLiffInitialized = true;
+                isInLiff = liff.isInClient();
+                console.log('LIFF initialized, isInClient:', isInLiff);
+                return true;
+            } catch (error) {
+                console.error('LIFF init error:', error);
+                return false;
+            }
+        }
+
+        async function lineLogin() {
+            if (isLiffInitialized && isInLiff) {
+                // 在 LINE App 內，使用 LIFF 登入
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+            } else if (isLiffInitialized) {
+                // 在外部瀏覽器但 LIFF 已初始化
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+            } else {
+                // LIFF 未初始化，使用傳統 LINE Login
+                const loginState = generateRandomState();
+                localStorage.setItem('line_login_state', loginState);
+                
+                const params = new URLSearchParams({
+                    response_type: 'code',
+                    client_id: CONFIG.LINE_LOGIN_CHANNEL_ID,
+                    redirect_uri: CONFIG.LINE_LOGIN_CALLBACK_URL,
+                    state: loginState,
+                    scope: 'profile openid'
+                });
+                
+                window.location.href = `https://access.line.me/oauth2/v2.1/authorize?${params}`;
+            }
         }
 
         function generateRandomState() {
             return Math.random().toString(36).substring(2, 15);
+        }
+
+        async function handleLiffLogin() {
+            try {
+                const profile = await liff.getProfile();
+                state.user = {
+                    userId: profile.userId,
+                    displayName: profile.displayName,
+                    pictureUrl: profile.pictureUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.displayName) + '&background=2D5A45&color=fff'
+                };
+                localStorage.setItem('user', JSON.stringify(state.user));
+                showApp();
+                return true;
+            } catch (error) {
+                console.error('LIFF get profile error:', error);
+                return false;
+            }
         }
 
         async function handleLineCallback() {
@@ -2337,19 +2387,37 @@
             showApp();
         }
 
-        function checkLoginStatus() {
+        async function checkLoginStatus() {
+            // 先嘗試初始化 LIFF
+            await initializeLiff();
+            
+            // 檢查是否已有本地登入資訊
             const savedUser = localStorage.getItem('user');
             if (savedUser) {
                 state.user = JSON.parse(savedUser);
                 showApp();
-            } else {
-                handleLineCallback();
+                return;
             }
+            
+            // 如果 LIFF 已登入，取得用戶資訊
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                const success = await handleLiffLogin();
+                if (success) return;
+            }
+            
+            // 檢查傳統 LINE Login callback
+            await handleLineCallback();
         }
 
         function logout() {
             localStorage.removeItem('user');
             state.user = null;
+            
+            // 如果是 LIFF 環境，也要登出 LIFF
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                liff.logout();
+            }
+            
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('appContainer').classList.remove('active');
         }
