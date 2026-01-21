@@ -212,7 +212,7 @@
         .p-low { background: #E8F5E9; color: #2E7D32; }
 
         @media (max-width: 600px) {
-            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; } /* 手機隱藏備註 */
+            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; }
             .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
@@ -369,36 +369,70 @@
 
     <div class="modal-overlay" id="addRecordModal">
         <div class="modal">
-            <div class="modal-header"><h3>新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
-            <div class="form-group"><label class="form-label">類型</label><select id="recType" class="form-select"></select></div>
-            <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="輸入金額"></div>
-            <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
-            <div class="form-group"><label class="form-label">備註 (選填)</label><input type="text" id="recNote" class="form-input" placeholder="例如：聚餐"></div>
+            <div class="modal-header">
+                <h3>新增記錄</h3>
+                <button class="close-btn" onclick="closeModal('addRecordModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">類型</label>
+                <select id="recType" class="form-select"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">金額</label>
+                <input type="number" id="recAmount" class="form-input" placeholder="輸入金額">
+            </div>
+            <div class="form-group">
+                <label class="form-label">日期</label>
+                <input type="date" id="recDate" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">備註 (選填)</label>
+                <input type="text" id="recNote" class="form-input" placeholder="例如：聚餐">
+            </div>
             <button onclick="saveRecord()" class="btn-primary">儲存</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="addFurnitureModal">
         <div class="modal">
-            <div class="modal-header"><h3 id="furnModalTitle">新增傢俱</h3><button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button></div>
-            <div class="form-group"><label class="form-label">品項名稱</label><input type="text" id="furnName" class="form-input" placeholder="例如：沙發"></div>
-            <div class="form-group"><label class="form-label">品牌/廠商 (選填)</label><input type="text" id="furnBrand" class="form-input" placeholder="例如：IKEA"></div>
-            <div class="form-group"><label class="form-label">預估價格</label><input type="number" id="furnPrice" class="form-input" placeholder="0"></div>
-            <div class="form-group"><label class="form-label">優先級</label>
+            <div class="modal-header">
+                <h3 id="furnModalTitle">新增傢俱</h3>
+                <button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">品項名稱</label>
+                <input type="text" id="furnName" class="form-input" placeholder="例如：沙發">
+            </div>
+            <div class="form-group">
+                <label class="form-label">品牌/廠商 (選填)</label>
+                <input type="text" id="furnBrand" class="form-input" placeholder="例如：IKEA">
+            </div>
+            <div class="form-group">
+                <label class="form-label">預估價格</label>
+                <input type="number" id="furnPrice" class="form-input" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">優先級</label>
                 <select id="furnPriority" class="form-select">
                     <option value="high">🔥 高 (必須購買)</option>
                     <option value="mid">🔸 中 (有預算再買)</option>
                     <option value="low">🌱 低 (以後再說)</option>
                 </select>
             </div>
-            <div class="form-group"><label class="form-label">備註 (選填)</label><input type="text" id="furnNote" class="form-input" placeholder="規格尺寸等..."></div>
+            <div class="form-group">
+                <label class="form-label">備註 (選填)</label>
+                <input type="text" id="furnNote" class="form-input" placeholder="規格尺寸等...">
+            </div>
             <button id="furnSaveBtn" onclick="saveFurniture()" class="btn-primary">儲存</button>
         </div>
     </div>
     
     <div class="modal-overlay" id="addAutoModal">
         <div class="modal">
-            <div class="modal-header"><h3>新增自動記帳</h3><button class="close-btn" onclick="closeModal('addAutoModal')">✕</button></div>
+            <div class="modal-header">
+                <h3>新增自動記帳</h3>
+                <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
+            </div>
             <div class="form-group"><label>類型</label><select id="autoType" class="form-select"></select></div>
             <div class="form-group"><label>金額</label><input type="number" id="autoAmount" class="form-input"></div>
             <div class="form-group"><label>每月幾號</label><select id="autoDay" class="form-select"></select></div>
@@ -408,10 +442,20 @@
 
     <div class="modal-overlay" id="addReminderModal">
         <div class="modal">
-            <div class="modal-header"><h3>新增提醒</h3><button class="close-btn" onclick="closeModal('addReminderModal')">✕</button></div>
+            <div class="modal-header">
+                <h3>新增提醒</h3>
+                <button class="close-btn" onclick="closeModal('addReminderModal')">✕</button>
+            </div>
             <div class="form-group"><label>項目</label><select id="remType" class="form-select"></select></div>
             <div class="form-group"><label>提醒日期</label><select id="remDay" class="form-select"></select></div>
-            <div class="form-group"><label>週期</label><select id="remCycle" class="form-select"><option value="1">每月</option><option value="2">每2個月</option><option value="12">每年</option></select></div>
+            <div class="form-group">
+                <label>週期</label>
+                <select id="remCycle" class="form-select">
+                    <option value="1">每月</option>
+                    <option value="2">每2個月</option>
+                    <option value="12">每年</option>
+                </select>
+            </div>
             <button onclick="saveReminder()" class="btn-primary">儲存</button>
         </div>
     </div>
@@ -423,8 +467,8 @@
         // 🔴 設定區：請填入您的後端網址
         // ============================================
         const CONFIG = {
-            // 請填入您最新的 Google Apps Script 網址
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwHCMUjnM-UeeiPTYRF68gvQ23yet52ai1jjgiS2vgCVe-DqG31z6uMHyWUtBtKJlSd5g/exec',
+            // 請確認這裡填入的是您最新的 Google Apps Script 網址
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz7o38g9ndKzSNO1g5HMikTUK_un3Bm6y5FxBqEXWskFMn59iRo2y0GhKQyKUyqpiRPKQ/exec',
             LINE_LOGIN_CHANNEL_ID: '2008934917'
         };
 
@@ -453,7 +497,7 @@
             initTheme();
             checkLoginStatus();
             setupTabs();
-            // 初始化日期選單
+            // 初始化日期選單 (1-31號)
             const days = Array.from({length:31}, (_,i)=>i+1).map(d=>`<option value="${d}">${d}號</option>`).join('');
             ['autoDay', 'remDay'].forEach(id => document.getElementById(id).innerHTML = days);
         });
@@ -569,11 +613,13 @@
             const tbody = document.getElementById('furnitureBody');
             const total = state.furniture.reduce((a,b) => a + b.price, 0);
             const high = state.furniture.filter(f => f.priority === 'high').reduce((a,b) => a + b.price, 0);
+            
             document.getElementById('furnTotal').textContent = '$' + total.toLocaleString();
             document.getElementById('furnHigh').textContent = '$' + high.toLocaleString();
 
             const pMap = { high: '🔥 高', mid: '🔸 中', low: '🌱 低' };
             const cMap = { high: 'p-high', mid: 'p-mid', low: 'p-low' };
+            
             const sorted = [...state.furniture].sort((a,b) => {
                 const map = { high: 3, mid: 2, low: 1 };
                 return map[b.priority] - map[a.priority];
@@ -581,9 +627,15 @@
 
             tbody.innerHTML = sorted.map(f => `
                 <tr>
-                    <td><div style="font-weight:bold;">${f.name}</div><div style="font-size:12px;color:#888;">${f.brand || ''}</div></td>
+                    <td>
+                        <div style="font-weight:bold;">${f.name}</div>
+                        <div style="font-size:12px;color:#888;">${f.brand || ''}</div>
+                    </td>
                     <td class="record-amount">$${f.price.toLocaleString()}</td>
-                    <td><span class="priority-badge ${cMap[f.priority]}">${pMap[f.priority]}</span></td>
+                    <td>
+                        <span class="priority-badge ${cMap[f.priority]}">${pMap[f.priority]}</span>
+                        <div style="font-size:12px;color:#666;margin-top:4px;">👤 ${f.person||'未知'}</div>
+                    </td>
                     <td>
                         <button class="action-btn" onclick="openEditFurniture(${f.id})">✏️</button>
                         <button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteFurniture', ${f.id})">🗑️</button>
@@ -603,20 +655,18 @@
         function renderCharts() {
             const ctxTrend = document.getElementById('trendChart');
             const ctxPie = document.getElementById('pieChart');
+            const ctxYear = document.getElementById('yearlyChart');
             
-            // 1. 趨勢圖 (動態計算前 6 個月)
+            // 1. 趨勢圖
             const labels = [];
             const trendData = [];
             const now = new Date();
             
             for(let i=5; i>=0; i--) {
-                // 建立該月份的日期物件 (處理跨年邏輯)
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 const year = d.getFullYear();
-                const month = d.getMonth() + 1; // 1-12
+                const month = d.getMonth() + 1;
                 labels.push(`${month}月`);
-                
-                // 統計該月總額
                 const monthlySum = state.records.reduce((sum, r) => {
                     const rDate = new Date(r.date);
                     if (rDate.getFullYear() === year && (rDate.getMonth() + 1) === month) {
@@ -694,9 +744,9 @@
             showToast('記帳成功');
         }
 
-        // 傢俱新增與編輯
+        // 🛋️ 傢俱新增與編輯 (關鍵邏輯)
         function openAddFurniture() {
-            state.editingFurnId = null;
+            state.editingFurnId = null; // 設定為新增模式
             document.getElementById('furnModalTitle').textContent = '新增傢俱';
             document.getElementById('furnSaveBtn').textContent = '儲存';
             document.getElementById('furnName').value = '';
@@ -727,13 +777,16 @@
                 brand: document.getElementById('furnBrand').value,
                 price: +document.getElementById('furnPrice').value,
                 priority: document.getElementById('furnPriority').value,
-                note: document.getElementById('furnNote').value
+                note: document.getElementById('furnNote').value,
+                // 邏輯：新增時用當前用戶，編輯時如果有原作者就用原作者，否則用當前用戶
+                person: state.editingFurnId 
+                    ? (state.furniture.find(f => f.id === state.editingFurnId).person || state.user.displayName) 
+                    : state.user.displayName
             };
-            if (!item.name) return showToast('請輸入名稱', 'error');
             
+            if (!item.name) return showToast('請輸入名稱', 'error');
             closeModal('addFurnitureModal');
             
-            // 更新前端
             if (state.editingFurnId) {
                 const idx = state.furniture.findIndex(f => f.id === item.id);
                 if (idx !== -1) state.furniture[idx] = { ...state.furniture[idx], ...item };
@@ -743,24 +796,45 @@
             renderUI();
             
             const action = state.editingFurnId ? 'updateFurniture' : 'addFurniture';
-            await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: action, item: item })
-            });
-            showToast(state.editingFurnId ? '更新成功' : '新增成功');
+            try {
+                const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, item: item })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(state.editingFurnId ? '更新成功' : '新增成功');
+                } else {
+                    alert('儲存失敗：' + data.error);
+                    loadData(); // 資料不同步，重新載入
+                }
+            } catch (e) {
+                alert('網路錯誤，請檢查連線');
+            }
         }
 
-        function deleteItem(action, id) {
+        async function deleteItem(action, id) {
             if (!confirm('確定要刪除嗎？')) return;
             
             if (action === 'deleteRecord') state.records = state.records.filter(r => r.id !== id);
             if (action === 'deleteFurniture') state.furniture = state.furniture.filter(f => f.id !== id);
             renderUI();
             
-            fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: action, recordId: id, itemId: id })
-            });
+            try {
+                const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, recordId: id, itemId: id })
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    alert('刪除失敗：' + data.error);
+                    loadData();
+                } else {
+                    showToast('已刪除');
+                }
+            } catch (e) {
+                alert('網路錯誤');
+            }
         }
 
         async function saveAuto() { closeModal('addAutoModal'); showToast('設定已儲存 (前端模擬)'); }
@@ -771,6 +845,7 @@
         // ============================================
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
         function setupTabs() {
             document.querySelectorAll('.nav-tab').forEach(t => {
                 t.addEventListener('click', () => {
@@ -781,16 +856,19 @@
                 });
             });
         }
+        
         function toggleTheme() {
             const body = document.body;
             const current = body.getAttribute('data-theme');
             body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
+        
         function initTheme() {
             if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.setAttribute('data-theme', 'dark');
             }
         }
+        
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
