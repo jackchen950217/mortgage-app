@@ -9,109 +9,240 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* === 全局變數定義 === */
         :root {
-            --primary: #2D5A45; --primary-light: #3D7A5A; --primary-dark: #1D3A2F; --accent: #E8B86D; --accent-light: #F5D69C;
-            --bg-primary: #F7F5F2; --bg-secondary: #FFFFFF; --bg-card: #FFFFFF; --text-primary: #1A1A1A; --text-secondary: #666666;
-            --border: #E5E2DD; --success: #4CAF50; --warning: #FF9800; --danger: #F44336;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08); --shadow-md: 0 4px 12px rgba(0,0,0,0.1); --radius-md: 12px;
+            --primary: #2D5A45;
+            --primary-light: #3D7A5A;
+            --primary-dark: #1D3A2F;
+            --accent: #E8B86D;
+            --accent-light: #F5D69C;
+            --bg-primary: #F7F5F2;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --border: #E5E2DD;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --radius-md: 12px;
+            /* 貓咪腳印背景圖 */
             --cat-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 25c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm-8 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5zm16 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5z' fill='%232D5A45' fill-opacity='0.03'/%3E%3C/svg%3E");
         }
+
+        /* === 夜間模式 === */
         [data-theme="dark"] {
-            --primary: #4A9D7C; --primary-light: #5AB88E; --primary-dark: #3A8A6A; --accent: #E8B86D;
-            --bg-primary: #121212; --bg-secondary: #1E1E1E; --bg-card: #252525; --text-primary: #E8E8E8; --text-secondary: #A0A0A0; --border: #333333;
+            --primary: #4A9D7C;
+            --primary-light: #5AB88E;
+            --primary-dark: #3A8A6A;
+            --accent: #E8B86D;
+            --bg-primary: #121212;
+            --bg-secondary: #1E1E1E;
+            --bg-card: #252525;
+            --text-primary: #E8E8E8;
+            --text-secondary: #A0A0A0;
+            --border: #333333;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-primary); background-image: var(--cat-pattern); color: var(--text-primary); min-height: 100vh; }
         
-        /* 登入畫面 */
-        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary-dark), var(--primary)); z-index: 2000; }
-        .login-card { background: var(--bg-secondary); padding: 50px 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-width: 400px; width: 90%; }
-        .line-login-btn { background: #06C755; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; font-size: 16px; }
-        
-        /* App 主體 */
-        .app-container { display: none; padding-bottom: 80px; }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg-primary);
+            background-image: var(--cat-pattern);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 80px; /* 預留底部空間給手機瀏覽器 */
+        }
+
+        /* === 登入畫面 === */
+        .login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            z-index: 2000;
+        }
+        .login-card {
+            background: var(--bg-secondary); padding: 40px; border-radius: 20px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%; max-width: 400px;
+        }
+        .line-login-btn {
+            background: #06C755; color: white; border: none; padding: 12px;
+            border-radius: 8px; font-weight: bold; width: 100%; margin-top: 20px;
+            font-size: 16px; cursor: pointer; transition: 0.2s;
+        }
+        .line-login-btn:hover { background: #05B34C; transform: translateY(-2px); }
+
+        /* === App 主容器 === */
+        .app-container { display: none; }
         .app-container.active { display: block; }
-        
-        .header { background: var(--bg-secondary); padding: 15px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+        /* === Header === */
+        .header {
+            background: var(--bg-secondary); padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
         .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
-        
-        /* 導航列 */
-        .nav-tabs { background: var(--bg-secondary); border-bottom: 1px solid var(--border); white-space: nowrap; overflow-x: auto; padding: 0 10px; }
-        .nav-tab { display: inline-block; padding: 15px 20px; color: var(--text-secondary); cursor: pointer; font-weight: 500; position: relative; }
+
+        /* === 導航 Tab === */
+        .nav-tabs {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+            overflow-x: auto; white-space: nowrap; padding: 0 10px;
+            -webkit-overflow-scrolling: touch; /* iOS 滾動優化 */
+        }
+        .nav-tab {
+            display: inline-block; padding: 15px 20px; color: var(--text-secondary);
+            cursor: pointer; font-weight: 500; position: relative;
+        }
         .nav-tab.active { color: var(--primary); font-weight: 700; }
-        .nav-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); }
-        
+        .nav-tab.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 3px; background: var(--primary);
+        }
+
+        /* === 頁面內容 === */
         .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .page.active { display: block; animation: fadeIn 0.3s; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 卡片與統計 */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--bg-card); padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
-        .stat-card.highlight { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; }
+
+        /* === 儀表板卡片 === */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin-bottom: 25px;
+        }
+        .stat-card {
+            background: var(--bg-card); padding: 20px; border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+        }
+        .stat-card.highlight {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; border: none;
+        }
         .stat-card.highlight .stat-label { color: rgba(255,255,255,0.8); }
         .stat-card.highlight .stat-value { color: white; }
         .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
         .stat-value { font-size: 24px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
-        
-        /* 快速記帳按鈕 */
-        .quick-add-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px; }
-        .quick-add-btn { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+
+        /* === 快速記帳按鈕 === */
+        .quick-add-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px; margin-bottom: 25px;
+        }
+        .quick-add-btn {
+            background: var(--bg-secondary); border: 1px solid var(--border);
+            border-radius: 12px; padding: 15px; text-align: center; cursor: pointer;
+            transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
         .quick-add-btn:hover { border-color: var(--primary); background: var(--bg-primary); }
-        .quick-add-btn .icon { font-size: 24px; display: block; margin-bottom: 5px; }
-        
-        /* 表格與列表 */
-        .records-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
-        .records-table th { background: var(--bg-primary); text-align: left; padding: 12px 15px; font-size: 13px; color: var(--text-secondary); }
-        .records-table td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .quick-add-btn .icon { font-size: 24px; }
+
+        /* === 表格樣式 === */
+        .records-table {
+            width: 100%; border-collapse: collapse; background: var(--bg-card);
+            border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
+        }
+        .records-table th {
+            background: var(--bg-primary); text-align: left; padding: 12px 15px;
+            font-size: 13px; color: var(--text-secondary); white-space: nowrap;
+        }
+        .records-table td {
+            padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px;
+        }
         .record-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
-        .action-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; border-radius: 5px; }
-        .action-btn.delete { color: #ff4444; }
+        
+        /* 表格操作按鈕 */
+        .action-btn {
+            background: none; border: none; cursor: pointer; font-size: 16px;
+            padding: 5px; border-radius: 5px; margin-right: 5px;
+        }
         .action-btn:hover { background: var(--bg-primary); }
-        
-        /* Modal */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+
+        /* === Modal 彈窗 === */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+            padding: 20px;
+        }
         .modal-overlay.active { display: flex; }
-        .modal { background: var(--bg-secondary); width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 18px; font-weight: 700; }
+        .modal {
+            background: var(--bg-secondary); width: 100%; max-width: 450px;
+            border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; font-size: 18px; }
+        .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
+
+        /* === 表單元件 === */
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 15px; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; }
-        .btn-secondary { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border); padding: 12px 20px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-right: 10px; }
-        
-        /* Toast 通知 */
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; opacity: 0; transition: 0.3s; z-index: 3000; }
+        .form-input, .form-select {
+            width: 100%; padding: 12px; border: 1px solid var(--border);
+            border-radius: 8px; background: var(--bg-secondary);
+            color: var(--text-primary); font-size: 15px;
+        }
+        .btn-primary {
+            background: var(--primary); color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-secondary {
+            background: var(--bg-primary); color: var(--text-primary);
+            border: 1px solid var(--border); padding: 12px 20px;
+            border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer;
+        }
+
+        /* === Toast 提示訊息 === */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #333; color: white; padding: 12px 24px; border-radius: 30px;
+            font-size: 14px; opacity: 0; transition: 0.3s; z-index: 3000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        
-        .furniture-priority { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .toast.error { background: var(--danger); }
+
+        /* === 優先級標籤 (傢俱用) === */
+        .priority-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .p-high { background: #FFEBEE; color: #D32F2F; }
         .p-mid { background: #FFF3E0; color: #EF6C00; }
         .p-low { background: #E8F5E9; color: #2E7D32; }
 
+        /* 手機版優化 */
         @media (max-width: 600px) {
-            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; } /* 隱藏備註 */
+            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; } /* 隱藏備註欄位 */
+            .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
+
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
             <h1 style="font-size: 40px; margin-bottom: 10px;">😺</h1>
             <h2>房貸記帳系統</h2>
             <p style="color: #666; margin-bottom: 20px;">與伴侶一起管理未來的家</p>
-            <button class="line-login-btn" onclick="lineLogin()">使用 LINE 登入</button>
+            <button class="line-login-btn" onclick="lineLogin()">
+                <svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align: text-bottom; margin-right: 5px;">
+                    <path fill="#fff" d="M24 10.3c0-5.7-5.4-10.3-12-10.3S0 4.6 0 10.3c0 5.1 4.5 9.4 10.6 10.1.4.1.9.3 1.1.7.1.3.1.8 0 1.2-.1.3-.2 1.1-.4 1.7-.3 1-.7 2.6 1.1 1.4 1.8-1.2 9.7-5.7 9.7-13.4 0-.5-.1-.9-.1-1.3z"/>
+                </svg>
+                使用 LINE 登入
+            </button>
         </div>
     </div>
 
     <div class="app-container" id="appContainer">
         <header class="header">
             <h1>😺 房貸記帳</h1>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button onclick="toggleTheme()" style="background:none; border:none; font-size:20px; cursor:pointer;">🌓</button>
+            <div class="user-info">
+                <button onclick="toggleTheme()" style="background:none;border:none;font-size:20px;cursor:pointer;" title="切換主題">🌓</button>
                 <img id="userAvatar" class="user-avatar" src="" alt="User">
             </div>
         </header>
@@ -127,7 +258,7 @@
         <div class="page active" id="page-dashboard">
             <div class="dashboard-grid">
                 <div class="stat-card highlight">
-                    <div class="stat-label">本月支出</div>
+                    <div class="stat-label">本月總支出</div>
                     <div class="stat-value" id="dashTotal">$0</div>
                 </div>
                 <div class="stat-card">
@@ -141,40 +272,68 @@
             </div>
 
             <h3 style="margin-bottom: 15px;">快速記帳</h3>
-            <div class="quick-add-grid" id="quickAddGrid"></div>
+            <div class="quick-add-grid" id="quickAddGrid">
+                </div>
 
             <div class="stat-card" style="margin-top: 20px;">
-                <h3 style="margin-bottom: 15px;">近期趨勢</h3>
+                <h3 style="margin-bottom: 15px;">近期支出趨勢</h3>
                 <canvas id="trendChart" height="200"></canvas>
             </div>
         </div>
 
         <div class="page" id="page-records">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                 <h2>記帳記錄</h2>
-                <button onclick="openModal('addRecordModal')" class="btn-primary" style="width: auto;">+ 新增</button>
+                <button onclick="openModal('addRecordModal')" class="btn-primary" style="width:auto; padding: 8px 16px;">+ 新增</button>
             </div>
-            <div style="overflow-x: auto;">
+            <div style="overflow-x:auto;">
                 <table class="records-table">
-                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>備註</th><th>操作</th></tr></thead>
-                    <tbody id="recordsBody"></tbody>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>項目</th>
+                            <th>金額</th>
+                            <th>備註</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        </tbody>
                 </table>
             </div>
         </div>
 
         <div class="page" id="page-furniture">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                 <h2>傢俱與裝修</h2>
-                <button onclick="openModal('addFurnitureModal')" class="btn-primary" style="width: auto;">+ 新增</button>
+                <button onclick="openAddFurniture()" class="btn-primary" style="width:auto; padding: 8px 16px;">+ 新增</button>
             </div>
+            
             <div class="dashboard-grid">
-                <div class="stat-card"><div class="stat-label">總預估</div><div class="stat-value" id="furnTotal">$0</div></div>
-                <div class="stat-card"><div class="stat-label">高優先級</div><div class="stat-value" id="furnHigh">$0</div></div>
+                <div class="stat-card">
+                    <div class="stat-label">總預估金額</div>
+                    <div class="stat-value" id="furnTotal">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">高優先級預算</div>
+                    <div class="stat-value" id="furnHigh">$0</div>
+                </div>
             </div>
-            <table class="records-table">
-                <thead><tr><th>品項</th><th>價格</th><th>優先</th><th>操作</th></tr></thead>
-                <tbody id="furnitureBody"></tbody>
-            </table>
+
+            <div style="overflow-x:auto;">
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>品項</th>
+                            <th>價格</th>
+                            <th>優先</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="furnitureBody">
+                        </tbody>
+                </table>
+            </div>
         </div>
         
         <div class="page" id="page-reports">
@@ -182,26 +341,34 @@
             <div class="stat-card" style="margin-top: 15px;">
                 <canvas id="yearlyChart"></canvas>
             </div>
-            <h2 style="margin-top: 20px;">支出分佈</h2>
-            <div class="stat-card" style="margin-top: 15px; height: 300px; display: flex; justify-content: center;">
+            
+            <h2 style="margin-top: 30px;">支出分類佔比</h2>
+            <div class="stat-card" style="margin-top: 15px; height: 350px; display: flex; justify-content: center;">
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
 
         <div class="page" id="page-settings">
             <h2>自動化設定</h2>
+            
             <div class="stat-card" style="margin-top: 15px;">
-                <h3>自動記帳</h3>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h3>自動記帳</h3>
+                    <button onclick="openModal('addAutoModal')" class="btn-primary" style="width:auto;font-size:12px;">+ 新增</button>
+                </div>
                 <p style="color:#666; font-size:13px; margin-bottom:10px;">每月固定日期自動記錄</p>
-                <div id="autoRecordList"></div>
-                <button onclick="openModal('addAutoModal')" class="btn-primary" style="margin-top:10px;">+ 新增自動記帳</button>
+                <div id="autoRecordList" style="display:flex;flex-direction:column;gap:10px;">
+                    </div>
             </div>
             
             <div class="stat-card" style="margin-top: 20px;">
-                <h3>繳費提醒</h3>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h3>繳費提醒</h3>
+                    <button onclick="openModal('addReminderModal')" class="btn-primary" style="width:auto;font-size:12px;">+ 新增</button>
+                </div>
                 <p style="color:#666; font-size:13px; margin-bottom:10px;">設定 LINE 提醒通知</p>
-                <div id="reminderList"></div>
-                <button onclick="openModal('addReminderModal')" class="btn-primary" style="margin-top:10px;">+ 新增提醒</button>
+                <div id="reminderList" style="display:flex;flex-direction:column;gap:10px;">
+                    </div>
             </div>
 
             <button onclick="logout()" class="btn-secondary" style="margin-top: 30px; border-color: #ff4444; color: #ff4444;">登出系統</button>
@@ -210,43 +377,112 @@
 
     <div class="modal-overlay" id="addRecordModal">
         <div class="modal">
-            <div class="modal-header"><h3>新增記錄</h3><button onclick="closeModal('addRecordModal')" style="border:none;background:none;font-size:20px;">✕</button></div>
-            <div class="form-group"><label class="form-label">類型</label><select id="recType" class="form-select"></select></div>
-            <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input"></div>
-            <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
-            <div class="form-group"><label class="form-label">備註</label><input type="text" id="recNote" class="form-input"></div>
+            <div class="modal-header">
+                <h3>新增記錄</h3>
+                <button class="close-btn" onclick="closeModal('addRecordModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">類型</label>
+                <select id="recType" class="form-select"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">金額</label>
+                <input type="number" id="recAmount" class="form-input" placeholder="輸入金額">
+            </div>
+            <div class="form-group">
+                <label class="form-label">日期</label>
+                <input type="date" id="recDate" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">備註 (選填)</label>
+                <input type="text" id="recNote" class="form-input" placeholder="例如：聚餐、水電費">
+            </div>
             <button onclick="saveRecord()" class="btn-primary">儲存</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="addFurnitureModal">
         <div class="modal">
-            <div class="modal-header"><h3>新增傢俱</h3><button onclick="closeModal('addFurnitureModal')" style="border:none;background:none;font-size:20px;">✕</button></div>
-            <div class="form-group"><label class="form-label">品項</label><input type="text" id="furnName" class="form-input"></div>
-            <div class="form-group"><label class="form-label">預估價格</label><input type="number" id="furnPrice" class="form-input"></div>
-            <div class="form-group"><label class="form-label">優先級</label>
+            <div class="modal-header">
+                <h3 id="furnModalTitle">新增傢俱</h3>
+                <button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">品項名稱</label>
+                <input type="text" id="furnName" class="form-input" placeholder="例如：沙發">
+            </div>
+            <div class="form-group">
+                <label class="form-label">品牌/廠商 (選填)</label>
+                <input type="text" id="furnBrand" class="form-input" placeholder="例如：IKEA">
+            </div>
+            <div class="form-group">
+                <label class="form-label">預估價格</label>
+                <input type="number" id="furnPrice" class="form-input" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">優先級</label>
                 <select id="furnPriority" class="form-select">
-                    <option value="high">🔥 高 (必須)</option>
-                    <option value="mid">🔸 中 (需要)</option>
-                    <option value="low">🌱 低 (想要)</option>
+                    <option value="high">🔥 高 (必須購買)</option>
+                    <option value="mid">🔸 中 (有預算再買)</option>
+                    <option value="low">🌱 低 (以後再說)</option>
                 </select>
             </div>
-            <button onclick="saveFurniture()" class="btn-primary">儲存</button>
+            <div class="form-group">
+                <label class="form-label">備註 (選填)</label>
+                <input type="text" id="furnNote" class="form-input" placeholder="規格尺寸等...">
+            </div>
+            <button id="furnSaveBtn" onclick="saveFurniture()" class="btn-primary">儲存</button>
         </div>
     </div>
     
-    <div class="modal-overlay" id="addAutoModal"><div class="modal"><div class="modal-header"><h3>新增自動記帳</h3><button onclick="closeModal('addAutoModal')" style="border:none;background:none;">✕</button></div><div class="form-group"><label>類型</label><select id="autoType" class="form-select"></select></div><div class="form-group"><label>金額</label><input type="number" id="autoAmount" class="form-input"></div><div class="form-group"><label>每月幾號</label><select id="autoDay" class="form-select"></select></div><button onclick="saveAuto()" class="btn-primary">儲存</button></div></div>
-    <div class="modal-overlay" id="addReminderModal"><div class="modal"><div class="modal-header"><h3>新增提醒</h3><button onclick="closeModal('addReminderModal')" style="border:none;background:none;">✕</button></div><div class="form-group"><label>項目</label><select id="remType" class="form-select"></select></div><div class="form-group"><label>日期</label><select id="remDay" class="form-select"></select></div><div class="form-group"><label>週期</label><select id="remCycle" class="form-select"><option value="1">每月</option><option value="2">每2月</option><option value="12">每年</option></select></div><button onclick="saveReminder()" class="btn-primary">儲存</button></div></div>
+    <div class="modal-overlay" id="addAutoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>新增自動記帳</h3>
+                <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
+            </div>
+            <div class="form-group"><label>類型</label><select id="autoType" class="form-select"></select></div>
+            <div class="form-group"><label>金額</label><input type="number" id="autoAmount" class="form-input"></div>
+            <div class="form-group"><label>每月幾號</label><select id="autoDay" class="form-select"></select></div>
+            <button onclick="saveAuto()" class="btn-primary">儲存</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addReminderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>新增提醒</h3>
+                <button class="close-btn" onclick="closeModal('addReminderModal')">✕</button>
+            </div>
+            <div class="form-group"><label>項目</label><select id="remType" class="form-select"></select></div>
+            <div class="form-group"><label>提醒日期</label><select id="remDay" class="form-select"></select></div>
+            <div class="form-group">
+                <label>週期</label>
+                <select id="remCycle" class="form-select">
+                    <option value="1">每月</option>
+                    <option value="2">每2個月</option>
+                    <option value="12">每年</option>
+                </select>
+            </div>
+            <button onclick="saveReminder()" class="btn-primary">儲存</button>
+        </div>
+    </div>
 
     <div class="toast" id="toast">訊息</div>
 
     <script>
-        // ✅ 已經填入您的專屬後端網址
+        // ============================================
+        // 🔴 設定區：請填入您的後端網址
+        // ============================================
         const CONFIG = {
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxhEjWumdCaet-oo1sKSH7i7wOjM0hujD2M72TX2mKXj99Y4Q1JEnb37Hu86Jg21YZK7w/exec',
+            // 請將下方的網址替換為您部署好的 Google Apps Script 網址 (以 / 結尾)
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzFkr_B27qKeOgEyPoueCpBBG22F7IcHm-v8Lb2bfDohpMlH6PpjqHo2S6ZntMI6ckusA/exec',
             LINE_LOGIN_CHANNEL_ID: '2008934917'
         };
 
+        // ============================================
+        // 狀態管理
+        // ============================================
         let state = {
             user: null,
             records: [],
@@ -258,47 +494,49 @@
                 {name:'電費', icon:'💡'}, {name:'瓦斯', icon:'🔥'}, {name:'網路', icon:'📶'},
                 {name:'餐費', icon:'🍱'}, {name:'日常', icon:'🛒'}, {name:'其他', icon:'📦'}
             ],
-            charts: {}
+            charts: {},
+            editingFurnId: null // 用於判斷傢俱是新增還是編輯
         };
 
-        // 初始化
+        // ============================================
+        // 初始化與登入
+        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             checkLoginStatus();
             setupTabs();
-            // Populate day selects
-            const days = Array.from({length:31}, (_,i)=>i+1);
-            ['autoDay', 'remDay'].forEach(id => {
-                document.getElementById(id).innerHTML = days.map(d=>`<option value="${d}">${d}號</option>`).join('');
-            });
+            // 初始化日期選單 (1-31號)
+            const days = Array.from({length:31}, (_,i)=>i+1).map(d=>`<option value="${d}">${d}號</option>`).join('');
+            ['autoDay', 'remDay'].forEach(id => document.getElementById(id).innerHTML = days);
         });
 
-        // 登入邏輯
         function lineLogin() {
             const redirectUri = window.location.href.split('?')[0];
-            const url = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${CONFIG.LINE_LOGIN_CHANNEL_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=12345&scope=profile%20openid`;
+            const url = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${CONFIG.LINE_LOGIN_CHANNEL_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=123&scope=profile%20openid`;
             window.location.href = url;
         }
 
         async function checkLoginStatus() {
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
             
             if (code) {
+                // 有 Code 代表剛從 LINE 登入回來
                 try {
                     const res = await fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=lineCallback&code=${code}`);
                     const data = await res.json();
                     if (data.success) {
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        window.history.replaceState({}, document.title, window.location.pathname);
+                        window.history.replaceState({}, document.title, window.location.pathname); // 清除網址參數
                         loginSuccess(data.user);
                     } else {
-                        alert('登入失敗：' + data.error);
+                        showToast('登入失敗: ' + data.error, 'error');
                     }
                 } catch(e) { console.error(e); }
             } else {
-                const saved = localStorage.getItem('user');
-                if (saved) loginSuccess(JSON.parse(saved));
+                // 檢查是否已登入
+                const savedUser = localStorage.getItem('user');
+                if (savedUser) loginSuccess(JSON.parse(savedUser));
             }
         }
 
@@ -307,7 +545,7 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContainer').classList.add('active');
             document.getElementById('userAvatar').src = user.pictureUrl;
-            loadData();
+            loadData(); // 開始載入資料
         }
         
         function logout() {
@@ -315,35 +553,47 @@
             location.reload();
         }
 
+        // ============================================
         // 資料載入
+        // ============================================
         async function loadData() {
             try {
-                const [recRes, furnRes, typeRes] = await Promise.all([
+                // 平行發送多個請求以加快速度
+                const [recRes, furnRes, typeRes, autoRes, remRes] = await Promise.all([
                     fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`),
                     fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getFurnitureList`),
-                    fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`)
+                    fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`),
+                    // 假設有這些API，若無可省略
+                    // fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getAutoRecords`),
+                    // fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getReminders`)
                 ]);
+
                 const recData = await recRes.json();
                 const furnData = await furnRes.json();
                 const typeData = await typeRes.json();
                 
-                if(recData.success) state.records = recData.records;
-                if(furnData.success) state.furniture = furnData.furnitureList;
-                if(typeData.success && typeData.types.length > 0) state.types = typeData.types;
+                if (recData.success) state.records = recData.records;
+                if (furnData.success) state.furniture = furnData.furnitureList;
+                if (typeData.success && typeData.types.length > 0) state.types = typeData.types;
 
                 renderUI();
-            } catch(e) { console.error('Load Error', e); }
+            } catch(e) { 
+                console.error('Load Error', e);
+                showToast('資料載入失敗，請檢查網路', 'error');
+            }
         }
 
-        // UI 渲染
+        // ============================================
+        // UI 渲染邏輯
+        // ============================================
         function renderUI() {
             renderDashboard();
             renderRecords();
             renderFurniture();
-            renderSettings();
+            renderSettings(); // 這裡簡單實作
             renderCharts();
             
-            // Update Selects
+            // 更新所有下拉選單的選項
             const opts = state.types.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
             ['recType', 'autoType', 'remType'].forEach(id => document.getElementById(id).innerHTML = opts);
         }
@@ -353,19 +603,22 @@
             const m = now.getMonth();
             const y = now.getFullYear();
             
+            // 篩選本月記錄
             const mRecs = state.records.filter(r => {
                 const d = new Date(r.date);
                 return d.getMonth() === m && d.getFullYear() === y;
             });
             
-            const total = mRecs.reduce((a,b)=>a+b.amount,0);
-            const mort = mRecs.filter(r=>r.type.includes('房貸')).reduce((a,b)=>a+b.amount,0);
+            const total = mRecs.reduce((a,b) => a + b.amount, 0);
+            const mort = mRecs.filter(r => r.type.includes('房貸')).reduce((a,b) => a + b.amount, 0);
+            const furnTotal = state.furniture.reduce((a,b) => a + b.price, 0);
             
             document.getElementById('dashTotal').textContent = '$' + total.toLocaleString();
             document.getElementById('dashMortgage').textContent = '$' + mort.toLocaleString();
+            document.getElementById('dashFurniture').textContent = '$' + furnTotal.toLocaleString();
             
-            const quickGrid = document.getElementById('quickAddGrid');
-            quickGrid.innerHTML = state.types.map(t => `
+            // 渲染快速記帳按鈕
+            document.getElementById('quickAddGrid').innerHTML = state.types.map(t => `
                 <div class="quick-add-btn" onclick="quickAdd('${t.name}')">
                     <span class="icon">${t.icon}</span>
                     <span>${t.name}</span>
@@ -375,42 +628,62 @@
 
         function renderRecords() {
             const tbody = document.getElementById('recordsBody');
-            tbody.innerHTML = state.records.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,20).map(r => `
-                <tr>
-                    <td>${r.date.slice(5)}</td>
-                    <td>${r.type}</td>
-                    <td class="record-amount">$${r.amount.toLocaleString()}</td>
-                    <td>${r.note}</td>
-                    <td><button class="action-btn" onclick="deleteItem('deleteRecord', ${r.id})">🗑️</button></td>
-                </tr>
-            `).join('');
+            // 按日期排序 (新到舊)，取前 50 筆
+            tbody.innerHTML = state.records
+                .sort((a,b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 50)
+                .map(r => `
+                    <tr>
+                        <td>${r.date.slice(5)}</td>
+                        <td>${r.type}</td>
+                        <td class="record-amount">$${r.amount.toLocaleString()}</td>
+                        <td>${r.note}</td>
+                        <td>
+                            <button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteRecord', ${r.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
         }
 
         function renderFurniture() {
             const tbody = document.getElementById('furnitureBody');
-            const total = state.furniture.reduce((a,b)=>a+b.price,0);
-            const high = state.furniture.filter(f=>f.priority==='high').reduce((a,b)=>a+b.price,0);
+            
+            // 更新上方統計卡片
+            const total = state.furniture.reduce((a,b) => a + b.price, 0);
+            const high = state.furniture.filter(f => f.priority === 'high').reduce((a,b) => a + b.price, 0);
             
             document.getElementById('furnTotal').textContent = '$' + total.toLocaleString();
             document.getElementById('furnHigh').textContent = '$' + high.toLocaleString();
-            document.getElementById('dashFurniture').textContent = '$' + total.toLocaleString();
 
-            const pMap = {high:'🔥 高', mid:'🔸 中', low:'🌱 低'};
-            const cMap = {high:'p-high', mid:'p-mid', low:'p-low'};
+            const pMap = { high: '🔥 高', mid: '🔸 中', low: '🌱 低' };
+            const cMap = { high: 'p-high', mid: 'p-mid', low: 'p-low' };
             
-            tbody.innerHTML = state.furniture.map(f => `
+            // 排序：高優先級在前
+            const sorted = [...state.furniture].sort((a,b) => {
+                const map = { high: 3, mid: 2, low: 1 };
+                return map[b.priority] - map[a.priority];
+            });
+
+            tbody.innerHTML = sorted.map(f => `
                 <tr>
-                    <td>${f.name}</td>
+                    <td>
+                        <div style="font-weight:bold;">${f.name}</div>
+                        <div style="font-size:12px;color:#888;">${f.brand || ''}</div>
+                    </td>
                     <td class="record-amount">$${f.price.toLocaleString()}</td>
-                    <td><span class="furniture-priority ${cMap[f.priority]}">${pMap[f.priority]}</span></td>
-                    <td><button class="action-btn" onclick="deleteItem('deleteRecord', ${f.id})">🗑️</button></td>
+                    <td><span class="priority-badge ${cMap[f.priority]}">${pMap[f.priority]}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="openEditFurniture(${f.id})">✏️</button>
+                        <button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteFurniture', ${f.id})">🗑️</button>
+                    </td>
                 </tr>
             `).join('');
         }
         
         function renderSettings() {
-             // 這裡通常會再呼叫一次後端取得最新的自動記帳/提醒列表
-             // 為簡化範例，假設資料已同步
+            // 此處可擴充渲染自動記帳列表
+            document.getElementById('autoRecordList').innerHTML = `<div style="text-align:center;color:#999;padding:10px;">目前尚無設定</div>`;
+            document.getElementById('reminderList').innerHTML = `<div style="text-align:center;color:#999;padding:10px;">目前尚無提醒</div>`;
         }
 
         function renderCharts() {
@@ -418,45 +691,68 @@
             const ctxPie = document.getElementById('pieChart');
             const ctxYear = document.getElementById('yearlyChart');
             
-            // 趨勢圖 (最近6個月)
-            if(state.charts.trend) state.charts.trend.destroy();
+            // 1. 趨勢圖 (最近6個月)
+            const labels = [];
+            const data = [];
+            const now = new Date();
+            for(let i=5; i>=0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+                const k = d.toISOString().slice(0, 7); // YYYY-MM
+                labels.push(`${d.getMonth()+1}月`);
+                data.push(state.records.filter(r => r.date.startsWith(k)).reduce((a,b)=>a+b.amount,0));
+            }
+
+            if (state.charts.trend) state.charts.trend.destroy();
             state.charts.trend = new Chart(ctxTrend, {
                 type: 'line',
                 data: {
-                    labels: ['8月','9月','10月','11月','12月','1月'],
+                    labels: labels,
                     datasets: [{
-                        label: '支出',
-                        data: [0,0,0,0,0, state.records.reduce((a,b)=>a+b.amount,0)], // 簡易 Mock
+                        label: '每月支出',
+                        data: data,
                         borderColor: '#2D5A45',
                         backgroundColor: 'rgba(45,90,69,0.1)',
-                        fill: true
+                        fill: true,
+                        tension: 0.3
                     }]
-                }
+                },
+                options: { maintainAspectRatio: false }
             });
             
-            // 圓餅圖
-            const types = {};
-            state.records.forEach(r => types[r.type] = (types[r.type]||0)+r.amount);
-            if(state.charts.pie) state.charts.pie.destroy();
+            // 2. 圓餅圖 (分類佔比)
+            const typeMap = {};
+            state.records.forEach(r => typeMap[r.type] = (typeMap[r.type] || 0) + r.amount);
+            
+            if (state.charts.pie) state.charts.pie.destroy();
             state.charts.pie = new Chart(ctxPie, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(types),
+                    labels: Object.keys(typeMap),
                     datasets: [{
-                        data: Object.values(types),
-                        backgroundColor: ['#2D5A45','#3D7A5A','#E8B86D','#F5D69C','#1D3A2F']
+                        data: Object.values(typeMap),
+                        backgroundColor: ['#2D5A45', '#3D7A5A', '#E8B86D', '#F5D69C', '#1D3A2F', '#5D8AA8', '#D2B48C', '#BC8F8F']
                     }]
-                }
+                },
+                options: { maintainAspectRatio: false }
             });
+            
+            // 3. 年度圖 (略，邏輯類似趨勢圖)
         }
 
-        // Actions
+        // ============================================
+        // 使用者操作 Actions
+        // ============================================
+        
+        // 快速記帳
         function quickAdd(type) {
             document.getElementById('recType').value = type;
             document.getElementById('recDate').valueAsDate = new Date();
+            document.getElementById('recAmount').value = '';
+            document.getElementById('recNote').value = '';
             openModal('addRecordModal');
         }
 
+        // 儲存記錄
         async function saveRecord() {
             const record = {
                 type: document.getElementById('recType').value,
@@ -465,89 +761,148 @@
                 note: document.getElementById('recNote').value,
                 person: state.user.displayName
             };
-            if(!record.amount) return showToast('請輸入金額', 'error');
+            if (!record.amount) return showToast('請輸入金額', 'error');
             
             closeModal('addRecordModal');
-            state.records.unshift({...record, id: Date.now()});
+            
+            // 樂觀更新 (先更新 UI)
+            state.records.unshift({ ...record, id: Date.now() });
             renderUI();
             
+            // 發送請求
             await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify({action: 'addRecord', record})
+                body: JSON.stringify({ action: 'addRecord', record })
             });
             showToast('記帳成功');
         }
 
+        // --- 傢俱相關 (新增/編輯) ---
+        function openAddFurniture() {
+            state.editingFurnId = null; // 設定為新增模式
+            document.getElementById('furnModalTitle').textContent = '新增傢俱';
+            document.getElementById('furnSaveBtn').textContent = '儲存';
+            
+            // 清空表單
+            document.getElementById('furnName').value = '';
+            document.getElementById('furnBrand').value = '';
+            document.getElementById('furnPrice').value = '';
+            document.getElementById('furnPriority').value = 'mid';
+            document.getElementById('furnNote').value = '';
+            
+            openModal('addFurnitureModal');
+        }
+
+        function openEditFurniture(id) {
+            const item = state.furniture.find(f => f.id === id);
+            if (!item) return;
+            
+            state.editingFurnId = id; // 設定為編輯模式
+            document.getElementById('furnModalTitle').textContent = '編輯傢俱';
+            document.getElementById('furnSaveBtn').textContent = '更新';
+            
+            // 填入舊資料
+            document.getElementById('furnName').value = item.name;
+            document.getElementById('furnBrand').value = item.brand || '';
+            document.getElementById('furnPrice').value = item.price;
+            document.getElementById('furnPriority').value = item.priority;
+            document.getElementById('furnNote').value = item.note || '';
+            
+            openModal('addFurnitureModal');
+        }
+
         async function saveFurniture() {
             const item = {
-                id: Date.now(),
+                id: state.editingFurnId ? state.editingFurnId : Date.now(),
                 name: document.getElementById('furnName').value,
+                brand: document.getElementById('furnBrand').value,
                 price: +document.getElementById('furnPrice').value,
-                priority: document.getElementById('furnPriority').value
+                priority: document.getElementById('furnPriority').value,
+                note: document.getElementById('furnNote').value
             };
-            if(!item.name) return showToast('請輸入名稱', 'error');
+            
+            if (!item.name) return showToast('請輸入名稱', 'error');
             
             closeModal('addFurnitureModal');
-            state.furniture.push(item);
+            
+            // 更新前端資料
+            if (state.editingFurnId) {
+                // 編輯模式：找到並取代
+                const idx = state.furniture.findIndex(f => f.id === item.id);
+                if (idx !== -1) state.furniture[idx] = { ...state.furniture[idx], ...item };
+            } else {
+                // 新增模式：加入陣列
+                state.furniture.push(item);
+            }
             renderUI();
             
-            // 存入 Local 暫存或送後端 (後端需實作 saveFurnitureList)
+            // 判斷呼叫後端哪個 Action
+            const action = state.editingFurnId ? 'updateFurniture' : 'addFurniture';
             await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify({action: 'saveFurnitureList', furnitureList: state.furniture})
+                body: JSON.stringify({ action: action, item: item })
             });
-            showToast('新增傢俱成功');
-        }
-        
-        async function saveAuto() {
-             // 實作自動記帳儲存
-             closeModal('addAutoModal');
-             showToast('已設定自動記帳');
-        }
-        async function saveReminder() {
-             // 實作提醒儲存
-             closeModal('addReminderModal');
-             showToast('已設定提醒');
+            
+            showToast(state.editingFurnId ? '更新成功' : '新增成功');
         }
 
+        // 刪除項目 (通用)
         function deleteItem(action, id) {
-             if(!confirm('確定刪除?')) return;
-             // 簡易前端刪除
-             state.records = state.records.filter(r=>r.id !== id);
-             renderUI();
-             // 後端刪除
-             fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+            if (!confirm('確定要刪除嗎？')) return;
+            
+            // 前端刪除
+            if (action === 'deleteRecord') {
+                state.records = state.records.filter(r => r.id !== id);
+            } else if (action === 'deleteFurniture') {
+                state.furniture = state.furniture.filter(f => f.id !== id);
+            }
+            renderUI();
+            
+            // 後端刪除
+            fetch(CONFIG.GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify({action, recordId: id})
+                body: JSON.stringify({ action: action, recordId: id, itemId: id })
             });
         }
 
-        // Utils
+        // 簡單的自動記帳與提醒儲存 (Placeholder)
+        async function saveAuto() { closeModal('addAutoModal'); showToast('設定已儲存 (前端模擬)'); }
+        async function saveReminder() { closeModal('addReminderModal'); showToast('設定已儲存 (前端模擬)'); }
+
+        // ============================================
+        // 工具函式
+        // ============================================
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
         function setupTabs() {
             document.querySelectorAll('.nav-tab').forEach(t => {
                 t.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
-                    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+                    document.querySelectorAll('.nav-tab').forEach(x => x.classList.remove('active'));
+                    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
                     t.classList.add('active');
-                    document.getElementById('page-'+t.dataset.page).classList.add('active');
+                    document.getElementById('page-' + t.dataset.page).classList.add('active');
                 });
             });
         }
+        
         function toggleTheme() {
             const body = document.body;
             const current = body.getAttribute('data-theme');
-            body.setAttribute('data-theme', current==='dark'?'light':'dark');
+            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
+        
         function initTheme() {
-            if(window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.setAttribute('data-theme', 'dark');
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.setAttribute('data-theme', 'dark');
+            }
         }
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(()=>t.classList.remove('show'), 3000);
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
     </script>
 </body>
