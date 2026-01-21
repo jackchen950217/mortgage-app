@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>房貸記帳系統</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         /* =========================================
-           CSS 樣式表 (完整版)
+           1. CSS 樣式表 (完整定義)
            ========================================= */
         :root {
             --primary: #2D5A45;
@@ -27,9 +26,11 @@
             --danger: #F44336;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
             --radius-md: 12px;
+            /* 貓咪背景圖樣 */
             --cat-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 25c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm-8 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5zm16 0c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5z' fill='%232D5A45' fill-opacity='0.03'/%3E%3C/svg%3E");
         }
 
+        /* 夜間模式變數 */
         [data-theme="dark"] {
             --primary: #4A9D7C;
             --primary-light: #5AB88E;
@@ -54,7 +55,7 @@
             padding-bottom: 80px; /* 避開手機底部手勢區 */
         }
 
-        /* 登入畫面 */
+        /* --- 登入畫面 --- */
         .login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -73,11 +74,11 @@
         }
         .line-login-btn:hover { background: #05B34C; transform: translateY(-2px); }
 
-        /* App 容器 */
+        /* --- App 主容器 --- */
         .app-container { display: none; }
         .app-container.active { display: block; }
 
-        /* 頂部 Header */
+        /* --- 頂部 Header --- */
         .header {
             background: var(--bg-secondary); padding: 15px 20px;
             border-bottom: 1px solid var(--border);
@@ -87,7 +88,7 @@
         .header h1 { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
         .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
 
-        /* 導航分頁 Tab */
+        /* --- 導航分頁 Tab --- */
         .nav-tabs {
             background: var(--bg-secondary); border-bottom: 1px solid var(--border);
             overflow-x: auto; white-space: nowrap; padding: 0 10px;
@@ -103,12 +104,12 @@
             width: 100%; height: 3px; background: var(--primary);
         }
 
-        /* 頁面通用 */
+        /* --- 頁面通用 --- */
         .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
         .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 統計卡片 */
+        /* --- 統計卡片 --- */
         .dashboard-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px; margin-bottom: 25px;
@@ -126,7 +127,7 @@
         .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 5px; }
         .stat-value { font-size: 24px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 
-        /* 快速記帳區 */
+        /* --- 快速記帳區 --- */
         .quick-add-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px; margin-bottom: 25px;
@@ -139,7 +140,7 @@
         .quick-add-btn:hover { border-color: var(--primary); background: var(--bg-primary); }
         .quick-add-btn .icon { font-size: 24px; }
 
-        /* 表格樣式 */
+        /* --- 表格樣式 --- */
         .records-table {
             width: 100%; border-collapse: collapse; background: var(--bg-card);
             border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
@@ -159,7 +160,7 @@
         }
         .action-btn:hover { background: var(--bg-primary); }
 
-        /* 彈出視窗 (Modal) */
+        /* --- 彈出視窗 (Modal) --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
@@ -177,7 +178,7 @@
         .modal-header h3 { margin: 0; font-size: 18px; }
         .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
 
-        /* 表單元素 */
+        /* --- 表單元素 --- */
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
         .form-input, .form-select {
@@ -196,7 +197,7 @@
             border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer;
         }
 
-        /* 提示訊息 (Toast) */
+        /* --- 提示訊息 (Toast) --- */
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #333; color: white; padding: 12px 24px; border-radius: 30px;
@@ -205,14 +206,20 @@
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.error { background: var(--danger); }
 
-        /* 傢俱優先級標籤 */
+        /* --- 標籤樣式 --- */
         .priority-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .p-high { background: #FFEBEE; color: #D32F2F; }
         .p-mid { background: #FFF3E0; color: #EF6C00; }
         .p-low { background: #E8F5E9; color: #2E7D32; }
+        
+        .person-tag {
+            display: inline-block; font-size: 11px; background: var(--bg-primary); 
+            border: 1px solid var(--border); color: var(--text-secondary);
+            padding: 2px 6px; border-radius: 4px; margin-top: 4px;
+        }
 
         @media (max-width: 600px) {
-            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; }
+            .records-table th:nth-child(4), .records-table td:nth-child(4) { display: none; } /* 手機版隱藏備註 */
             .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
@@ -288,7 +295,7 @@
                     <thead>
                         <tr>
                             <th>日期</th>
-                            <th>項目</th>
+                            <th>項目/付款人</th>
                             <th>金額</th>
                             <th>備註</th>
                             <th>操作</th>
@@ -322,7 +329,7 @@
                         <tr>
                             <th>品項</th>
                             <th>價格</th>
-                            <th>優先</th>
+                            <th>優先級/建立者</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -345,6 +352,7 @@
 
         <div class="page" id="page-settings">
             <h2>自動化設定</h2>
+            
             <div class="stat-card" style="margin-top: 15px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <h3>自動記帳</h3>
@@ -463,18 +471,13 @@
     <div class="toast" id="toast">訊息</div>
 
     <script>
-        // ============================================
-        // 🔴 設定區：請填入您的後端網址
-        // ============================================
+        // 🔴 設定區：請填入您的後端網址 (確保以 /exec 結尾)
         const CONFIG = {
-            // 請確認這裡填入的是您最新的 Google Apps Script 網址
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz7o38g9ndKzSNO1g5HMikTUK_un3Bm6y5FxBqEXWskFMn59iRo2y0GhKQyKUyqpiRPKQ/exec',
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwHCMUjnM-UeeiPTYRF68gvQ23yet52ai1jjgiS2vgCVe-DqG31z6uMHyWUtBtKJlSd5g/exec',
             LINE_LOGIN_CHANNEL_ID: '2008934917'
         };
 
-        // ============================================
         // 狀態管理
-        // ============================================
         let state = {
             user: null,
             records: [],
@@ -487,21 +490,20 @@
                 {name:'餐費', icon:'🍱'}, {name:'日常', icon:'🛒'}, {name:'其他', icon:'📦'}
             ],
             charts: {},
-            editingFurnId: null // 用於判斷傢俱是新增還是編輯
+            editingFurnId: null // 用於判斷是新增還是編輯
         };
 
-        // ============================================
-        // 初始化與登入
-        // ============================================
+        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             checkLoginStatus();
             setupTabs();
-            // 初始化日期選單 (1-31號)
+            // 初始化日期下拉選單
             const days = Array.from({length:31}, (_,i)=>i+1).map(d=>`<option value="${d}">${d}號</option>`).join('');
             ['autoDay', 'remDay'].forEach(id => document.getElementById(id).innerHTML = days);
         });
 
+        // 登入相關邏輯
         function lineLogin() {
             const redirectUri = window.location.href.split('?')[0];
             const url = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${CONFIG.LINE_LOGIN_CHANNEL_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=123&scope=profile%20openid`;
@@ -536,9 +538,7 @@
         }
         function logout() { localStorage.removeItem('user'); location.reload(); }
 
-        // ============================================
         // 資料載入
-        // ============================================
         async function loadData() {
             try {
                 const [recRes, furnRes, typeRes] = await Promise.all([
@@ -561,9 +561,7 @@
             }
         }
 
-        // ============================================
-        // UI 渲染邏輯
-        // ============================================
+        // 渲染 UI (主控台)
         function renderUI() {
             renderDashboard(); renderRecords(); renderFurniture(); renderSettings(); renderCharts();
             const opts = state.types.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
@@ -601,7 +599,10 @@
                 .map(r => `
                     <tr>
                         <td>${r.date.slice(5)}</td>
-                        <td>${r.type}</td>
+                        <td>
+                            ${r.type}
+                            <div class="person-tag">👤 ${r.person||'未知'}</div>
+                        </td>
                         <td class="record-amount">$${r.amount.toLocaleString()}</td>
                         <td>${r.note}</td>
                         <td><button class="action-btn" style="color:#d32f2f;" onclick="deleteItem('deleteRecord', ${r.id})">🗑️</button></td>
@@ -634,7 +635,7 @@
                     <td class="record-amount">$${f.price.toLocaleString()}</td>
                     <td>
                         <span class="priority-badge ${cMap[f.priority]}">${pMap[f.priority]}</span>
-                        <div style="font-size:12px;color:#666;margin-top:4px;">👤 ${f.person||'未知'}</div>
+                        <div class="person-tag">👤 ${f.person||'未知'}</div>
                     </td>
                     <td>
                         <button class="action-btn" onclick="openEditFurniture(${f.id})">✏️</button>
@@ -649,15 +650,13 @@
             document.getElementById('reminderList').innerHTML = `<div style="text-align:center;color:#999;padding:10px;">目前尚無提醒</div>`;
         }
 
-        // ============================================
-        // 📊 修正後的圖表邏輯 (動態最近6個月)
-        // ============================================
+        // --- Chart.js 圖表邏輯 (最近 6 個月動態) ---
         function renderCharts() {
             const ctxTrend = document.getElementById('trendChart');
             const ctxPie = document.getElementById('pieChart');
             const ctxYear = document.getElementById('yearlyChart');
             
-            // 1. 趨勢圖
+            // 趨勢圖
             const labels = [];
             const trendData = [];
             const now = new Date();
@@ -694,7 +693,7 @@
                 options: { maintainAspectRatio: false }
             });
             
-            // 2. 圓餅圖
+            // 圓餅圖
             const typeMap = {};
             state.records.forEach(r => typeMap[r.type] = (typeMap[r.type] || 0) + r.amount);
             
@@ -744,9 +743,9 @@
             showToast('記帳成功');
         }
 
-        // 🛋️ 傢俱新增與編輯 (關鍵邏輯)
+        // --- 傢俱新增與編輯 (關鍵邏輯) ---
         function openAddFurniture() {
-            state.editingFurnId = null; // 設定為新增模式
+            state.editingFurnId = null;
             document.getElementById('furnModalTitle').textContent = '新增傢俱';
             document.getElementById('furnSaveBtn').textContent = '儲存';
             document.getElementById('furnName').value = '';
@@ -778,9 +777,11 @@
                 price: +document.getElementById('furnPrice').value,
                 priority: document.getElementById('furnPriority').value,
                 note: document.getElementById('furnNote').value,
-                // 邏輯：新增時用當前用戶，編輯時如果有原作者就用原作者，否則用當前用戶
+                // 這裡的邏輯：
+                // 如果是編輯，嘗試保留原本的建立者 (person)。如果原本沒人，就填入當前修改者。
+                // 如果是新增，直接填入當前使用者。
                 person: state.editingFurnId 
-                    ? (state.furniture.find(f => f.id === state.editingFurnId).person || state.user.displayName) 
+                    ? (state.furniture.find(f => f.id === state.editingFurnId).person || state.user.displayName)
                     : state.user.displayName
             };
             
@@ -806,7 +807,7 @@
                     showToast(state.editingFurnId ? '更新成功' : '新增成功');
                 } else {
                     alert('儲存失敗：' + data.error);
-                    loadData(); // 資料不同步，重新載入
+                    loadData();
                 }
             } catch (e) {
                 alert('網路錯誤，請檢查連線');
