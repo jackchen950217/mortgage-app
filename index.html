@@ -1615,7 +1615,10 @@
             <div class="page" id="page-furniture">
                 <div class="page-header">
                     <h2 class="page-title">傢俱/裝修清單</h2>
-                    <button class="btn btn-primary" onclick="openFurnitureModal()">➕ 新增項目</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="refreshFurnitureList()" title="重新整理">🔄</button>
+                        <button class="btn btn-primary" onclick="openFurnitureModal()">➕ 新增項目</button>
+                    </div>
                 </div>
 
                 <!-- 統計卡片 -->
@@ -2892,7 +2895,25 @@
         // ============================================
         // 傢俱/裝修清單功能
         // ============================================
-        function loadFurnitureList() {
+        async function loadFurnitureList() {
+            // 先嘗試從雲端載入
+            if (CONFIG.GOOGLE_SCRIPT_URL) {
+                try {
+                    const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=getFurnitureList');
+                    const result = await response.json();
+                    if (result.success && result.furnitureList && result.furnitureList.length > 0) {
+                        state.furnitureList = result.furnitureList;
+                        localStorage.setItem('furnitureList', JSON.stringify(state.furnitureList));
+                        renderFurnitureList();
+                        updateFurnitureStats();
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Load furniture list from cloud error:', error);
+                }
+            }
+            
+            // 雲端沒資料，使用本地或預設
             const saved = localStorage.getItem('furnitureList');
             if (saved) {
                 state.furnitureList = JSON.parse(saved);
@@ -2918,9 +2939,29 @@
                     { id: 17, name: '電動沙發 2人座', category: '傢俱', brand: '', price: 22900, priority: '高', spec: 'UM01 N-S布', note: '防潑水貓抓布 AQ-MGY', purchased: false },
                     { id: 18, name: '氣密窗', category: '裝修', brand: '', price: 50000, priority: '高', spec: '', note: '全室更換', purchased: false },
                 ];
+                // 初次載入預設清單，同步到雲端
+                syncFurnitureListToBackend();
             }
             renderFurnitureList();
             updateFurnitureStats();
+        }
+
+        async function syncFurnitureListToBackend() {
+            localStorage.setItem('furnitureList', JSON.stringify(state.furnitureList));
+            
+            if (!CONFIG.GOOGLE_SCRIPT_URL) return;
+            
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'saveFurnitureList',
+                        furnitureList: state.furnitureList
+                    })
+                });
+            } catch (error) {
+                console.error('Sync furniture list error:', error);
+            }
         }
 
         function renderFurnitureList() {
@@ -3067,13 +3108,16 @@
                 // 新增
                 const newItem = {
                     id: Date.now(),
-                    name, category, priority, brand, price, spec, note, purchased
+                    name, category, priority, brand, price, spec, note, purchased,
+                    createdAt: new Date().toISOString()
                 };
                 state.furnitureList.push(newItem);
                 showToast('新增成功喵！🐱');
             }
             
-            localStorage.setItem('furnitureList', JSON.stringify(state.furnitureList));
+            // 同步到雲端
+            syncFurnitureListToBackend();
+            
             closeModal('furnitureModal');
             renderFurnitureList();
             updateFurnitureStats();
@@ -3083,7 +3127,8 @@
             const item = state.furnitureList.find(i => i.id === id);
             if (item) {
                 item.purchased = !item.purchased;
-                localStorage.setItem('furnitureList', JSON.stringify(state.furnitureList));
+                // 同步到雲端
+                syncFurnitureListToBackend();
                 renderFurnitureList();
                 updateFurnitureStats();
                 showToast(item.purchased ? '已標記為購買 ✅' : '已標記為未購買');
@@ -3094,10 +3139,17 @@
             if (!confirm('確定要刪除這個項目嗎？')) return;
             
             state.furnitureList = state.furnitureList.filter(i => i.id !== id);
-            localStorage.setItem('furnitureList', JSON.stringify(state.furnitureList));
+            // 同步到雲端
+            syncFurnitureListToBackend();
             renderFurnitureList();
             updateFurnitureStats();
             showToast('已刪除');
+        }
+
+        async function refreshFurnitureList() {
+            showToast('正在同步...');
+            await loadFurnitureList();
+            showToast('已同步最新資料 🔄');
         }
 
         // ============================================
