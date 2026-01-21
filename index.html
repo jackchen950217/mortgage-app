@@ -2897,20 +2897,26 @@
             if (saved) {
                 state.furnitureList = JSON.parse(saved);
             } else {
-                // 預設清單（根據圖片內容）
+                // 預設清單
                 state.furnitureList = [
-                    { id: 1, name: '冷氣', category: '家電', brand: 'Panasonic', price: 45000, priority: '高', spec: '變頻分離式', note: '客廳+主臥', purchased: false },
-                    { id: 2, name: '冰箱', category: '家電', brand: 'LG', price: 35000, priority: '高', spec: '500L', note: '', purchased: false },
-                    { id: 3, name: '洗衣機', category: '家電', brand: 'Panasonic', price: 28000, priority: '高', spec: '滾筒式', note: '', purchased: false },
-                    { id: 4, name: '電視', category: '家電', brand: 'Sony', price: 40000, priority: '中', spec: '65吋', note: '', purchased: false },
-                    { id: 5, name: '沙發', category: '傢俱', brand: '', price: 30000, priority: '高', spec: 'L型', note: '', purchased: false },
-                    { id: 6, name: '餐桌椅', category: '傢俱', brand: '', price: 15000, priority: '中', spec: '4人座', note: '', purchased: false },
-                    { id: 7, name: '床架+床墊', category: '傢俱', brand: '', price: 25000, priority: '高', spec: '雙人', note: '主臥', purchased: false },
-                    { id: 8, name: '衣櫃', category: '傢俱', brand: '', price: 20000, priority: '中', spec: '', note: '', purchased: false },
-                    { id: 9, name: '電視櫃', category: '傢俱', brand: '', price: 8000, priority: '中', spec: '', note: '', purchased: false },
-                    { id: 10, name: '窗簾', category: '裝修', brand: '', price: 15000, priority: '中', spec: '全室', note: '遮光款', purchased: false },
-                    { id: 11, name: '燈具', category: '裝修', brand: '', price: 10000, priority: '中', spec: '全室', note: 'LED', purchased: false },
-                    { id: 12, name: '熱水器', category: '家電', brand: '', price: 12000, priority: '高', spec: '', note: '', purchased: false },
+                    { id: 1, name: '超薄鞋櫃', category: '傢俱', brand: '', price: 4169, priority: '中', spec: '', note: '', purchased: false },
+                    { id: 2, name: '微波爐', category: '家電', brand: '', price: 3150, priority: '中', spec: '', note: '', purchased: false },
+                    { id: 3, name: '免治馬桶', category: '裝修', brand: '', price: 5000, priority: '中', spec: '', note: '', purchased: false },
+                    { id: 4, name: '智慧攝影機 C100', category: '家電', brand: '小米', price: 455, priority: '低', spec: '', note: '', purchased: false },
+                    { id: 5, name: '感應夜燈2 藍牙版', category: '家電', brand: '米家', price: 269, priority: '低', spec: '', note: '', purchased: false },
+                    { id: 6, name: '烤麵包機', category: '家電', brand: '小米', price: 546, priority: '低', spec: '', note: '', purchased: false },
+                    { id: 7, name: '無線吸塵器 G20 Lite', category: '家電', brand: '小米', price: 2273, priority: '中', spec: '', note: '', purchased: false },
+                    { id: 8, name: '掃拖機器人 S40 Pro', category: '家電', brand: '小米', price: 5284, priority: '中', spec: '', note: '', purchased: false },
+                    { id: 9, name: '智慧氣炸鍋 5.5L', category: '家電', brand: '小米', price: 2182, priority: '中', spec: '白色', note: '', purchased: false },
+                    { id: 10, name: 'Soundbar Pro 2.1ch', category: '家電', brand: '小米', price: 4555, priority: '低', spec: '', note: '', purchased: false },
+                    { id: 11, name: '藍牙溫濕度計 3 mini', category: '家電', brand: '小米', price: 199, priority: '低', spec: '', note: '', purchased: false },
+                    { id: 12, name: '智慧直流變頻電風扇 2 Pro', category: '家電', brand: '小米', price: 2369, priority: '中', spec: '白色', note: '', purchased: false },
+                    { id: 13, name: '65吋4K聯網電視', category: '家電', brand: '飛利浦', price: 21999, priority: '高', spec: '65PUH8507', note: '', purchased: false },
+                    { id: 14, name: '無邊框鋼板四門冰箱', category: '家電', brand: 'Panasonic', price: 33900, priority: '高', spec: 'NR-D611XV-L 610L', note: '絲紋灰', purchased: false },
+                    { id: 15, name: '床墊', category: '傢俱', brand: '晚安奈特/眠豆腐', price: 22990, priority: '高', spec: '穩穩支撐', note: '二選一：晚安奈特21990/眠豆腐23990', purchased: false },
+                    { id: 16, name: '加高加厚後掀床架', category: '傢俱', brand: 'ASSARI', price: 6500, priority: '高', spec: '雙大6尺', note: '', purchased: false },
+                    { id: 17, name: '電動沙發 2人座', category: '傢俱', brand: '', price: 22900, priority: '高', spec: 'UM01 N-S布', note: '防潑水貓抓布 AQ-MGY', purchased: false },
+                    { id: 18, name: '氣密窗', category: '裝修', brand: '', price: 50000, priority: '高', spec: '', note: '全室更換', purchased: false },
                 ];
             }
             renderFurnitureList();
