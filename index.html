@@ -524,6 +524,243 @@
             color: var(--text-primary);
         }
 
+        /* 🏠 Mortgage Progress Card */
+        .mortgage-progress-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mortgage-progress-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), #FFD700, var(--primary-light));
+        }
+
+        .mortgage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .mortgage-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .mortgage-icon {
+            font-size: 24px;
+        }
+
+        .mortgage-percentage {
+            font-size: 28px;
+            font-weight: 800;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--primary), #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mortgage-progress-bar {
+            position: relative;
+            height: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: visible;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .mortgage-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                #5D9C84 0%, 
+                #7AB8A0 30%, 
+                #FFD700 70%, 
+                #FFA500 100%
+            );
+            border-radius: 12px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 0%;
+            box-shadow: 0 2px 10px rgba(93, 156, 132, 0.4);
+        }
+
+        .mortgage-progress-glow {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+            border-radius: 0 12px 12px 0;
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .mortgage-milestones {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .milestone {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .milestone-dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .milestone.reached .milestone-dot {
+            background: var(--primary);
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .mortgage-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mortgage-stat {
+            text-align: center;
+            padding: 12px 8px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+        }
+
+        .mortgage-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .mortgage-stat-value {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .mortgage-stat-value.highlight-green {
+            color: #27AE60;
+        }
+
+        .mortgage-stat-value.highlight-orange {
+            color: #E67E22;
+        }
+
+        .mortgage-details {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+        }
+
+        .mortgage-details-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mortgage-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .mortgage-detail-item:hover {
+            background: rgba(93, 156, 132, 0.1);
+        }
+
+        .mortgage-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .mortgage-detail-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mortgage-detail-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .mortgage-detail-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mortgage-detail-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .mortgage-detail-amount {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+            color: #27AE60;
+        }
+
+        .mortgage-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
         /* Quick Add */
         .section-header {
             display: flex;
@@ -1358,6 +1595,53 @@
                 <div class="stat-card">
                     <div class="stat-label">本月筆數</div>
                     <div class="stat-value" id="dashCount">0</div>
+                </div>
+            </div>
+
+            <!-- 🏠 房貸還款進度 -->
+            <div class="mortgage-progress-card">
+                <div class="mortgage-header">
+                    <div class="mortgage-title">
+                        <span class="mortgage-icon">🏠</span>
+                        <span>房貸還款進度</span>
+                    </div>
+                    <div class="mortgage-percentage" id="mortgagePercent">0%</div>
+                </div>
+                
+                <div class="mortgage-progress-bar">
+                    <div class="mortgage-progress-fill" id="mortgageProgressFill">
+                        <div class="mortgage-progress-glow"></div>
+                    </div>
+                    <div class="mortgage-milestones">
+                        <div class="milestone" style="left: 10%;" title="斡旋金">
+                            <div class="milestone-dot"></div>
+                        </div>
+                        <div class="milestone" style="left: 20%;" title="第一期頭款 10%">
+                            <div class="milestone-dot"></div>
+                        </div>
+                        <div class="milestone" style="left: 30%;" title="第二期頭款 10%">
+                            <div class="milestone-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mortgage-stats">
+                    <div class="mortgage-stat">
+                        <div class="mortgage-stat-label">房屋總價</div>
+                        <div class="mortgage-stat-value" id="mortgageTotal">$8,060,000</div>
+                    </div>
+                    <div class="mortgage-stat">
+                        <div class="mortgage-stat-label">已繳金額</div>
+                        <div class="mortgage-stat-value highlight-green" id="mortgagePaid">$0</div>
+                    </div>
+                    <div class="mortgage-stat">
+                        <div class="mortgage-stat-label">剩餘金額</div>
+                        <div class="mortgage-stat-value highlight-orange" id="mortgageRemaining">$8,060,000</div>
+                    </div>
+                </div>
+                
+                <div class="mortgage-details" id="mortgageDetails">
+                    <!-- 動態生成付款明細 -->
                 </div>
             </div>
 
@@ -2229,6 +2513,113 @@
                     <span>${t.name}</span>
                 </div>`
             ).join('');
+            
+            // 渲染房貸進度
+            renderMortgageProgress();
+        }
+
+        // ============================================
+        // 🏠 房貸還款進度
+        // ============================================
+        const MORTGAGE_CONFIG = {
+            totalPrice: 8060000,  // 房屋總價 806 萬
+            // 房貸相關的關鍵字（用於篩選記帳記錄）
+            keywords: ['房貸', '頭款', '斡旋', '簽約金', '貸款'],
+            // 里程碑設定
+            milestones: [
+                { percent: 10, label: '斡旋金' },
+                { percent: 20, label: '第一期頭款' },
+                { percent: 30, label: '第二期頭款' }
+            ]
+        };
+
+        function renderMortgageProgress() {
+            // 從記帳記錄中篩選房貸相關項目
+            const mortgageRecords = state.records.filter(r => {
+                const type = (r.type || '').toLowerCase();
+                const note = (r.note || '').toLowerCase();
+                return MORTGAGE_CONFIG.keywords.some(keyword => 
+                    type.includes(keyword) || note.includes(keyword)
+                );
+            });
+            
+            // 計算已繳金額
+            const paidAmount = mortgageRecords.reduce((sum, r) => sum + (r.amount || 0), 0);
+            const remainingAmount = MORTGAGE_CONFIG.totalPrice - paidAmount;
+            const percentage = Math.min((paidAmount / MORTGAGE_CONFIG.totalPrice) * 100, 100);
+            
+            // 更新進度條
+            const progressFill = document.getElementById('mortgageProgressFill');
+            if (progressFill) {
+                progressFill.style.width = percentage + '%';
+            }
+            
+            // 更新百分比顯示
+            const percentEl = document.getElementById('mortgagePercent');
+            if (percentEl) {
+                percentEl.textContent = percentage.toFixed(2) + '%';
+            }
+            
+            // 更新統計數字
+            document.getElementById('mortgageTotal').textContent = '$' + MORTGAGE_CONFIG.totalPrice.toLocaleString();
+            document.getElementById('mortgagePaid').textContent = '$' + paidAmount.toLocaleString();
+            document.getElementById('mortgageRemaining').textContent = '$' + remainingAmount.toLocaleString();
+            
+            // 更新里程碑狀態
+            document.querySelectorAll('.milestone').forEach((milestone, index) => {
+                const milestonePercent = MORTGAGE_CONFIG.milestones[index]?.percent || 0;
+                if (percentage >= milestonePercent) {
+                    milestone.classList.add('reached');
+                } else {
+                    milestone.classList.remove('reached');
+                }
+            });
+            
+            // 渲染付款明細
+            const detailsContainer = document.getElementById('mortgageDetails');
+            if (detailsContainer) {
+                if (mortgageRecords.length === 0) {
+                    detailsContainer.innerHTML = `
+                        <div class="mortgage-details-title">
+                            <span>📋</span>
+                            <span>付款明細</span>
+                        </div>
+                        <div class="mortgage-empty">
+                            😿 尚無房貸還款記錄<br>
+                            <small>記帳時使用「房貸」、「頭款」、「斡旋」等關鍵字即可自動追蹤</small>
+                        </div>
+                    `;
+                } else {
+                    // 按日期排序（最新的在前）
+                    const sortedRecords = [...mortgageRecords].sort((a, b) => 
+                        new Date(b.date) - new Date(a.date)
+                    );
+                    
+                    detailsContainer.innerHTML = `
+                        <div class="mortgage-details-title">
+                            <span>📋</span>
+                            <span>付款明細（共 ${mortgageRecords.length} 筆）</span>
+                        </div>
+                        ${sortedRecords.slice(0, 10).map(r => `
+                            <div class="mortgage-detail-item">
+                                <div class="mortgage-detail-info">
+                                    <div class="mortgage-detail-icon">🏠</div>
+                                    <div>
+                                        <div class="mortgage-detail-name">${r.type}${r.note ? ' - ' + r.note : ''}</div>
+                                        <div class="mortgage-detail-date">${r.date || '未知日期'} · ${r.person || '未知'}</div>
+                                    </div>
+                                </div>
+                                <div class="mortgage-detail-amount">+$${(r.amount || 0).toLocaleString()}</div>
+                            </div>
+                        `).join('')}
+                        ${sortedRecords.length > 10 ? `
+                            <div class="mortgage-empty">
+                                還有 ${sortedRecords.length - 10} 筆記錄...
+                            </div>
+                        ` : ''}
+                    `;
+                }
+            }
         }
 
         function renderRecords() {
