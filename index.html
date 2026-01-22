@@ -576,68 +576,72 @@
             background-clip: text;
         }
 
+        .mortgage-progress-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
         .mortgage-progress-bar {
             position: relative;
-            height: 24px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            overflow: visible;
-            margin-bottom: 20px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            height: 28px;
+            background: rgba(128, 128, 128, 0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+            border: 2px solid rgba(93, 156, 132, 0.3);
         }
 
         .mortgage-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, 
                 #5D9C84 0%, 
-                #7AB8A0 30%, 
-                #FFD700 70%, 
+                #7AB8A0 40%, 
+                #90EE90 60%,
+                #FFD700 80%, 
                 #FFA500 100%
             );
-            border-radius: 12px;
+            border-radius: 14px;
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            min-width: 0%;
-            box-shadow: 0 2px 10px rgba(93, 156, 132, 0.4);
+            min-width: 8px;
+            box-shadow: 0 0 15px rgba(93, 156, 132, 0.6), inset 0 1px 0 rgba(255,255,255,0.3);
         }
 
         .mortgage-progress-glow {
             position: absolute;
             top: 0;
             right: 0;
-            width: 30px;
+            width: 40px;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
-            border-radius: 0 12px 12px 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5));
+            border-radius: 0 14px 14px 0;
             animation: progressGlow 2s ease-in-out infinite;
         }
 
         @keyframes progressGlow {
-            0%, 100% { opacity: 0.5; }
+            0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
 
         .mortgage-milestones {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5%;
+            margin-top: 10px;
         }
 
         .milestone {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
 
         .milestone-dot {
-            width: 12px;
-            height: 12px;
-            background: white;
-            border: 3px solid var(--primary);
+            width: 14px;
+            height: 14px;
+            background: rgba(128, 128, 128, 0.5);
+            border: 3px solid var(--border);
             border-radius: 50%;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
@@ -646,7 +650,18 @@
         .milestone.reached .milestone-dot {
             background: var(--primary);
             border-color: #FFD700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+        }
+
+        .milestone-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .milestone.reached .milestone-label {
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .mortgage-stats {
@@ -1608,19 +1623,28 @@
                     <div class="mortgage-percentage" id="mortgagePercent">0%</div>
                 </div>
                 
-                <div class="mortgage-progress-bar">
-                    <div class="mortgage-progress-fill" id="mortgageProgressFill">
-                        <div class="mortgage-progress-glow"></div>
+                <div class="mortgage-progress-wrapper">
+                    <div class="mortgage-progress-bar">
+                        <div class="mortgage-progress-fill" id="mortgageProgressFill">
+                            <div class="mortgage-progress-glow"></div>
+                        </div>
                     </div>
-                    <div class="mortgage-milestones">
-                        <div class="milestone" style="left: 10%;" title="斡旋金">
+                    <div class="mortgage-milestones" id="mortgageMilestones">
+                        <div class="milestone" data-percent="1" title="斡旋金 ~1%">
                             <div class="milestone-dot"></div>
+                            <span class="milestone-label">斡旋</span>
                         </div>
-                        <div class="milestone" style="left: 20%;" title="第一期頭款 10%">
+                        <div class="milestone" data-percent="10" title="第一期頭款 10%">
                             <div class="milestone-dot"></div>
+                            <span class="milestone-label">頭款1</span>
                         </div>
-                        <div class="milestone" style="left: 30%;" title="第二期頭款 10%">
+                        <div class="milestone" data-percent="20" title="第二期頭款 10%">
                             <div class="milestone-dot"></div>
+                            <span class="milestone-label">頭款2</span>
+                        </div>
+                        <div class="milestone" data-percent="100" title="全部還清 🎉">
+                            <div class="milestone-dot"></div>
+                            <span class="milestone-label">還清</span>
                         </div>
                     </div>
                 </div>
@@ -2548,10 +2572,12 @@
             const remainingAmount = MORTGAGE_CONFIG.totalPrice - paidAmount;
             const percentage = Math.min((paidAmount / MORTGAGE_CONFIG.totalPrice) * 100, 100);
             
-            // 更新進度條
+            // 更新進度條 - 確保最小寬度讓小百分比也能看到
             const progressFill = document.getElementById('mortgageProgressFill');
             if (progressFill) {
-                progressFill.style.width = percentage + '%';
+                // 最小顯示 1%，讓使用者知道有進度
+                const displayWidth = Math.max(percentage, percentage > 0 ? 1 : 0);
+                progressFill.style.width = displayWidth + '%';
             }
             
             // 更新百分比顯示
@@ -2565,9 +2591,9 @@
             document.getElementById('mortgagePaid').textContent = '$' + paidAmount.toLocaleString();
             document.getElementById('mortgageRemaining').textContent = '$' + remainingAmount.toLocaleString();
             
-            // 更新里程碑狀態
-            document.querySelectorAll('.milestone').forEach((milestone, index) => {
-                const milestonePercent = MORTGAGE_CONFIG.milestones[index]?.percent || 0;
+            // 更新里程碑狀態 - 使用 data-percent 屬性
+            document.querySelectorAll('#mortgageMilestones .milestone').forEach(milestone => {
+                const milestonePercent = parseFloat(milestone.dataset.percent) || 0;
                 if (percentage >= milestonePercent) {
                     milestone.classList.add('reached');
                 } else {
