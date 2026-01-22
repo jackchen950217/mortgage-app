@@ -868,6 +868,18 @@
             color: white;
         }
 
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .modal-actions .btn-danger {
+            padding: 12px;
+            font-size: 14px;
+        }
+
         /* Toast */
         .toast {
             position: fixed;
@@ -1185,7 +1197,7 @@
                             <th>項目</th>
                             <th>金額</th>
                             <th>備註</th>
-                            <th style="width:90px;">操作</th>
+                            <th style="width:50px;"></th>
                         </tr>
                     </thead>
                     <tbody id="recordsBody"></tbody>
@@ -1228,7 +1240,7 @@
                             <th>價格</th>
                             <th>優先級</th>
                             <th>備註</th>
-                            <th style="width:80px;">操作</th>
+                            <th style="width:50px;"></th>
                         </tr>
                     </thead>
                     <tbody id="furnitureBody"></tbody>
@@ -1331,7 +1343,10 @@
                 <label class="form-label">備註（選填）</label>
                 <input type="text" id="recNote" class="form-input" placeholder="例如：一月份">
             </div>
-            <button onclick="saveRecord()" class="btn-primary">儲存</button>
+            <div class="modal-actions">
+                <button onclick="saveRecord()" class="btn-primary">儲存</button>
+                <button id="recDeleteBtn" onclick="deleteRecordFromModal()" class="btn-secondary btn-danger" style="display:none;">🗑️ 刪除此記錄</button>
+            </div>
         </div>
     </div>
 
@@ -1369,7 +1384,10 @@
                 <label class="form-label">備註</label>
                 <input type="text" id="furnNote" class="form-input" placeholder="例如：等特價再買">
             </div>
-            <button onclick="saveFurniture()" class="btn-primary">儲存</button>
+            <div class="modal-actions">
+                <button onclick="saveFurniture()" class="btn-primary">儲存</button>
+                <button id="furnDeleteBtn" onclick="deleteFurnitureFromModal()" class="btn-secondary btn-danger" style="display:none;">🗑️ 刪除此項目</button>
+            </div>
         </div>
     </div>
 
@@ -1858,9 +1876,8 @@
                     </td>
                     <td class="record-amount">$${(r.amount || 0).toLocaleString()}</td>
                     <td style="color: var(--text-secondary);">${r.note || '-'}</td>
-                    <td style="white-space: nowrap;">
+                    <td>
                         <button class="action-btn" onclick="editRecord(${r.id})" title="編輯">✏️</button>
-                        <button class="action-btn" onclick="deleteRecord(${r.id})" title="刪除">🗑️</button>
                     </td>
                 </tr>
             `).join('');
@@ -1903,9 +1920,8 @@
                         <span class="priority-badge ${priorityClass[f.priority] || 'p-mid'}">${priorityText[f.priority] || '中'}</span>
                     </td>
                     <td style="color: var(--text-secondary); font-size: 13px;">${f.note || '-'}</td>
-                    <td style="white-space: nowrap;">
+                    <td>
                         <button class="action-btn" onclick="editFurniture(${f.id})" title="編輯">✏️</button>
-                        <button class="action-btn" onclick="deleteFurniture(${f.id})" title="刪除">🗑️</button>
                     </td>
                 </tr>
             `).join('');
@@ -2085,6 +2101,7 @@
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
             document.getElementById('recPerson').value = 'Jack';
+            document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
 
@@ -2096,6 +2113,7 @@
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
             document.getElementById('recPerson').value = 'Jack';
+            document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
 
@@ -2110,6 +2128,7 @@
             document.getElementById('recAmount').value = record.amount || '';
             document.getElementById('recNote').value = record.note || '';
             document.getElementById('recPerson').value = record.person || 'Jack';
+            document.getElementById('recDeleteBtn').style.display = 'block';
             openModal('addRecordModal');
         }
 
@@ -2179,6 +2198,29 @@
             }
         }
 
+        async function deleteRecordFromModal() {
+            const editId = document.getElementById('recEditId').value;
+            if (!editId) return;
+            
+            if (!confirm('確定要刪除這筆記錄嗎？')) return;
+            
+            closeModal('addRecordModal');
+            
+            state.records = state.records.filter(r => r.id !== parseInt(editId));
+            clearCache();
+            renderAll();
+            
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'deleteRecord', recordId: parseInt(editId) })
+                });
+                showToast('已刪除 🗑️');
+            } catch (e) {
+                showToast('刪除失敗', 'error');
+            }
+        }
+
         // ============================================
         // 傢俱清單功能
         // ============================================
@@ -2190,6 +2232,7 @@
             document.getElementById('furnPrice').value = '';
             document.getElementById('furnPriority').value = '中';
             document.getElementById('furnNote').value = '';
+            document.getElementById('furnDeleteBtn').style.display = 'none';
             openModal('addFurnitureModal');
         }
 
@@ -2204,6 +2247,7 @@
             document.getElementById('furnPrice').value = item.price || '';
             document.getElementById('furnPriority').value = item.priority || '中';
             document.getElementById('furnNote').value = item.note || '';
+            document.getElementById('furnDeleteBtn').style.display = 'block';
             openModal('addFurnitureModal');
         }
 
@@ -2265,6 +2309,16 @@
             } catch (e) {
                 showToast('刪除失敗', 'error');
             }
+        }
+
+        async function deleteFurnitureFromModal() {
+            const editId = document.getElementById('furnEditId').value;
+            if (!editId) return;
+            
+            if (!confirm('確定要刪除這個項目嗎？')) return;
+            
+            closeModal('addFurnitureModal');
+            await deleteFurniture(parseInt(editId));
         }
 
         async function refreshFurniture() {
