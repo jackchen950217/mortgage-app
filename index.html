@@ -1227,6 +1227,7 @@
                             <th>品項</th>
                             <th>價格</th>
                             <th>優先級</th>
+                            <th>備註</th>
                             <th style="width:80px;">操作</th>
                         </tr>
                     </thead>
@@ -1901,6 +1902,7 @@
                     <td>
                         <span class="priority-badge ${priorityClass[f.priority] || 'p-mid'}">${priorityText[f.priority] || '中'}</span>
                     </td>
+                    <td style="color: var(--text-secondary); font-size: 13px;">${f.note || '-'}</td>
                     <td style="white-space: nowrap;">
                         <button class="action-btn" onclick="editFurniture(${f.id})" title="編輯">✏️</button>
                         <button class="action-btn" onclick="deleteFurniture(${f.id})" title="刪除">🗑️</button>
