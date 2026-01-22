@@ -591,6 +591,26 @@
             border: 2px solid rgba(93, 156, 132, 0.3);
         }
 
+        /* 進度條刻度線 - 主要節點和次要節點 */
+        .mortgage-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                /* 主要節點刻度線 (1%, 10%, 20%) */
+                linear-gradient(90deg, transparent 0.5%, rgba(255,255,255,0.15) 1%, transparent 1.5%),
+                linear-gradient(90deg, transparent 9.5%, rgba(255,255,255,0.15) 10%, transparent 10.5%),
+                linear-gradient(90deg, transparent 19.5%, rgba(255,255,255,0.15) 20%, transparent 20.5%),
+                /* 次要節點刻度線 (25%, 50%, 75%) */
+                linear-gradient(90deg, transparent 24.5%, rgba(255,255,255,0.25) 25%, transparent 25.5%),
+                linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,0.25) 50%, transparent 50.5%),
+                linear-gradient(90deg, transparent 74.5%, rgba(255,255,255,0.25) 75%, transparent 75.5%);
+            pointer-events: none;
+        }
+
         .mortgage-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, 
@@ -624,17 +644,48 @@
         }
 
         .mortgage-milestones {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 5%;
-            margin-top: 10px;
+            position: relative;
+            height: 40px;
+            margin-top: 0;
         }
 
         .milestone {
+            position: absolute;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            transform: translateX(-50%);
+            top: 0;
+        }
+
+        /* 里程碑連接線 */
+        .milestone::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 8px;
+            background: var(--border);
+        }
+
+        .milestone.reached::before {
+            background: var(--primary);
+        }
+
+        /* 次要里程碑連接線較細 */
+        .milestone-quarter::before {
+            width: 1px;
+            height: 6px;
+            top: -6px;
+            opacity: 0.6;
+        }
+
+        .milestone-quarter.reached::before {
+            background: var(--primary-light);
+            opacity: 1;
         }
 
         .milestone-dot {
@@ -657,11 +708,36 @@
             font-size: 10px;
             color: var(--text-secondary);
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .milestone.reached .milestone-label {
             color: var(--primary);
             font-weight: 600;
+        }
+
+        /* 次要里程碑 (25%, 50%, 75%) - 較小的圓點 */
+        .milestone-dot.small {
+            width: 10px;
+            height: 10px;
+            border-width: 2px;
+            background: rgba(100, 100, 100, 0.4);
+        }
+
+        .milestone-quarter .milestone-label {
+            font-size: 9px;
+            opacity: 0.7;
+        }
+
+        .milestone-quarter.reached .milestone-dot.small {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(93, 156, 132, 0.5);
+        }
+
+        .milestone-quarter.reached .milestone-label {
+            opacity: 1;
+            color: var(--primary-light);
         }
 
         .mortgage-stats {
@@ -1607,10 +1683,6 @@
                     <div class="stat-label">傢俱預算</div>
                     <div class="stat-value" id="dashFurniture">$0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">本月筆數</div>
-                    <div class="stat-value" id="dashCount">0</div>
-                </div>
             </div>
 
             <!-- 🏠 房貸還款進度 -->
@@ -1630,19 +1702,31 @@
                         </div>
                     </div>
                     <div class="mortgage-milestones" id="mortgageMilestones">
-                        <div class="milestone" data-percent="1" title="斡旋金 ~1%">
+                        <div class="milestone" data-percent="1" style="left: 1%;" title="斡旋金 ~1%">
                             <div class="milestone-dot"></div>
                             <span class="milestone-label">斡旋</span>
                         </div>
-                        <div class="milestone" data-percent="10" title="第一期頭款 10%">
+                        <div class="milestone" data-percent="10" style="left: 10%;" title="第一期頭款 10%">
                             <div class="milestone-dot"></div>
                             <span class="milestone-label">頭款1</span>
                         </div>
-                        <div class="milestone" data-percent="20" title="第二期頭款 10%">
+                        <div class="milestone" data-percent="20" style="left: 20%;" title="第二期頭款 20%">
                             <div class="milestone-dot"></div>
                             <span class="milestone-label">頭款2</span>
                         </div>
-                        <div class="milestone" data-percent="100" title="全部還清 🎉">
+                        <div class="milestone milestone-quarter" data-percent="25" style="left: 25%;" title="25%">
+                            <div class="milestone-dot small"></div>
+                            <span class="milestone-label">25%</span>
+                        </div>
+                        <div class="milestone milestone-quarter" data-percent="50" style="left: 50%;" title="50%">
+                            <div class="milestone-dot small"></div>
+                            <span class="milestone-label">50%</span>
+                        </div>
+                        <div class="milestone milestone-quarter" data-percent="75" style="left: 75%;" title="75%">
+                            <div class="milestone-dot small"></div>
+                            <span class="milestone-label">75%</span>
+                        </div>
+                        <div class="milestone" data-percent="100" style="left: 98%;" title="全部還清 🎉">
                             <div class="milestone-dot"></div>
                             <span class="milestone-label">還清</span>
                         </div>
@@ -2514,7 +2598,6 @@
             
             document.getElementById('dashTotal').textContent = '$' + total.toLocaleString();
             document.getElementById('dashFurniture').textContent = '$' + furnTotal.toLocaleString();
-            document.getElementById('dashCount').textContent = thisMonth.length;
             
             // 確保 types 有預設值
             const defaultTypes = [
