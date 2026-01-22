@@ -1027,6 +1027,201 @@
             gap: 10px;
         }
 
+        /* Budget Page Styles */
+        .budget-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .budget-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .budget-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .budget-card-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .budget-card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .budget-card-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .budget-card-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .income-card .budget-card-value {
+            color: #27AE60;
+        }
+
+        .expense-card .budget-card-value {
+            color: #E74C3C;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border: none;
+            color: white;
+        }
+
+        .balance-card .budget-card-label {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .balance-card .budget-card-value {
+            color: white;
+        }
+
+        /* Person Tabs */
+        .person-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .person-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .person-tab:hover {
+            border-color: var(--primary);
+            background: rgba(93, 156, 132, 0.05);
+        }
+
+        .person-tab.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(93, 156, 132, 0.3);
+        }
+
+        .person-tab-icon {
+            font-size: 20px;
+        }
+
+        .budget-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .budget-section .section-header {
+            margin-bottom: 16px;
+        }
+
+        .budget-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .budget-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .budget-item:hover {
+            background: rgba(93, 156, 132, 0.05);
+        }
+
+        .budget-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .budget-item-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .budget-item-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .budget-item-amount {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            margin-left: auto;
+            padding-right: 8px;
+        }
+
+        .budget-item-amount.income {
+            color: #27AE60;
+        }
+
+        .budget-item-amount.expense {
+            color: #E74C3C;
+        }
+
+        .empty-state-mini {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .budget-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .budget-card {
+                padding: 14px;
+            }
+            
+            .budget-card-value {
+                font-size: 16px;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .quick-add-grid {
@@ -1134,6 +1329,10 @@
             <button class="nav-tab" data-page="furniture">
                 <span class="nav-tab-icon">🛋️</span>
                 <span>清單</span>
+            </button>
+            <button class="nav-tab" data-page="budget">
+                <span class="nav-tab-icon">💰</span>
+                <span>收支</span>
             </button>
             <button class="nav-tab" data-page="reports">
                 <span class="nav-tab-icon">📈</span>
@@ -1249,6 +1448,83 @@
             <div id="furnitureEmpty" class="empty-state" style="display:none;">
                 <div class="empty-state-icon">🛋️</div>
                 <p class="empty-state-text">還沒有清單項目喵～</p>
+            </div>
+        </div>
+
+        <!-- 個人收支頁 -->
+        <div class="page" id="page-budget">
+            <div class="page-header" style="margin-bottom: 16px;">
+                <h2 class="page-title">💰 個人收支管理</h2>
+                <button onclick="refreshBudget()" class="btn-icon" title="同步資料">
+                    🔄
+                </button>
+            </div>
+            
+            <!-- 人員切換 -->
+            <div class="person-tabs">
+                <button class="person-tab active" data-person="Jack" onclick="switchBudgetPerson('Jack')">
+                    <span class="person-tab-icon">👨</span>
+                    <span>Jack</span>
+                </button>
+                <button class="person-tab" data-person="Hsun" onclick="switchBudgetPerson('Hsun')">
+                    <span class="person-tab-icon">👩</span>
+                    <span>Hsun</span>
+                </button>
+            </div>
+            
+            <!-- 收支總覽卡片 -->
+            <div class="budget-summary">
+                <div class="budget-card income-card">
+                    <div class="budget-card-icon">📈</div>
+                    <div class="budget-card-content">
+                        <div class="budget-card-label">總收入</div>
+                        <div class="budget-card-value" id="totalIncome">$0</div>
+                    </div>
+                </div>
+                <div class="budget-card expense-card">
+                    <div class="budget-card-icon">📉</div>
+                    <div class="budget-card-content">
+                        <div class="budget-card-label">總支出</div>
+                        <div class="budget-card-value" id="totalExpense">$0</div>
+                    </div>
+                </div>
+                <div class="budget-card balance-card">
+                    <div class="budget-card-icon">💵</div>
+                    <div class="budget-card-content">
+                        <div class="budget-card-label">結餘</div>
+                        <div class="budget-card-value" id="totalBalance">$0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 收入區塊 -->
+            <div class="budget-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <span class="section-icon">💵</span>
+                        收入項目
+                    </h3>
+                    <button onclick="openAddIncome()" class="btn-icon" title="新增收入">➕</button>
+                </div>
+                <div class="budget-list" id="incomeList"></div>
+                <div id="incomeEmpty" class="empty-state-mini" style="display:none;">
+                    <span>尚無收入項目</span>
+                </div>
+            </div>
+
+            <!-- 支出區塊 -->
+            <div class="budget-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <span class="section-icon">💳</span>
+                        固定支出
+                    </h3>
+                    <button onclick="openAddExpense()" class="btn-icon" title="新增支出">➕</button>
+                </div>
+                <div class="budget-list" id="expenseList"></div>
+                <div id="expenseEmpty" class="empty-state-mini" style="display:none;">
+                    <span>尚無支出項目</span>
+                </div>
             </div>
         </div>
 
@@ -1455,6 +1731,93 @@
         </div>
     </div>
 
+    <!-- 新增/編輯收入 Modal -->
+    <div class="modal-overlay" id="addIncomeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="incomeModalTitle">💵 新增收入</h3>
+                <button class="close-btn" onclick="closeModal('addIncomeModal')">✕</button>
+            </div>
+            <input type="hidden" id="incomeEditId">
+            <div class="form-group">
+                <label class="form-label">項目名稱 *</label>
+                <input type="text" id="incomeName" class="form-input" placeholder="例如：薪水、利息">
+            </div>
+            <div class="form-group">
+                <label class="form-label">金額 *</label>
+                <input type="number" id="incomeAmount" class="form-input" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">圖示</label>
+                <select id="incomeIcon" class="form-select">
+                    <option value="💰">💰 金錢</option>
+                    <option value="💵">💵 薪資</option>
+                    <option value="🏦">🏦 利息</option>
+                    <option value="📈">📈 投資</option>
+                    <option value="🎁">🎁 獎金</option>
+                    <option value="💼">💼 兼職</option>
+                    <option value="🏠">🏠 租金收入</option>
+                    <option value="📦">📦 其他</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveIncome()" class="btn-primary">儲存</button>
+                <button id="incomeDeleteBtn" onclick="deleteIncomeFromModal()" class="btn-secondary btn-danger" style="display:none;">🗑️ 刪除此項目</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/編輯支出 Modal -->
+    <div class="modal-overlay" id="addExpenseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="expenseModalTitle">💳 新增支出</h3>
+                <button class="close-btn" onclick="closeModal('addExpenseModal')">✕</button>
+            </div>
+            <input type="hidden" id="expenseEditId">
+            <div class="form-group">
+                <label class="form-label">項目名稱 *</label>
+                <input type="text" id="expenseName" class="form-input" placeholder="例如：電話費、Netflix">
+            </div>
+            <div class="form-group">
+                <label class="form-label">金額 *</label>
+                <input type="number" id="expenseAmount" class="form-input" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">分類</label>
+                <select id="expenseCategory" class="form-select">
+                    <option value="subscription">📱 訂閱服務</option>
+                    <option value="loan">🏦 貸款</option>
+                    <option value="insurance">🛡️ 保險</option>
+                    <option value="transport">🚗 交通</option>
+                    <option value="utility">💡 水電</option>
+                    <option value="other">📦 其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">圖示</label>
+                <select id="expenseIcon" class="form-select">
+                    <option value="📱">📱 電話/訂閱</option>
+                    <option value="🎬">🎬 串流影音</option>
+                    <option value="☁️">☁️ 雲端服務</option>
+                    <option value="🎵">🎵 音樂</option>
+                    <option value="🤖">🤖 AI 服務</option>
+                    <option value="🏦">🏦 貸款</option>
+                    <option value="🚗">🚗 車貸/車險</option>
+                    <option value="🛡️">🛡️ 保險</option>
+                    <option value="🅿️">🅿️ 停車</option>
+                    <option value="🏠">🏠 房貸</option>
+                    <option value="✈️">✈️ 旅遊基金</option>
+                    <option value="📦">📦 其他</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveExpense()" class="btn-primary">儲存</button>
+                <button id="expenseDeleteBtn" onclick="deleteExpenseFromModal()" class="btn-secondary btn-danger" style="display:none;">🗑️ 刪除此項目</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast">訊息</div>
 
@@ -1479,6 +1842,9 @@
             furniture: [],
             autoRecords: [],
             reminders: [],
+            income: [],
+            expenses: [],
+            budgetPerson: 'Jack',  // 當前選擇的人
             types: [
                 { name: '房貸', icon: '🏠' },
                 { name: '管理費', icon: '🏢' },
@@ -1696,7 +2062,9 @@
                         furniture: result.furnitureList || [],
                         types: (result.types && result.types.length > 0) ? result.types : null,
                         autoRecords: result.autoRecords || [],
-                        reminders: result.reminders || []
+                        reminders: result.reminders || [],
+                        income: result.income || [],
+                        expenses: result.expenses || []
                     };
                 }
             } catch (e) {
@@ -1706,20 +2074,22 @@
         }
 
         async function fetchDataSeparately() {
-            const [recordsRes, furnitureRes, typesRes, autoRes, remRes] = await Promise.all([
+            const [recordsRes, furnitureRes, typesRes, autoRes, remRes, budgetRes] = await Promise.all([
                 fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`),
                 fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getFurnitureList`),
                 fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`),
                 fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getAutoRecords`),
-                fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getReminders`)
+                fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getReminders`),
+                fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getBudget`)
             ]);
             
-            const [records, furniture, types, auto, rem] = await Promise.all([
+            const [records, furniture, types, auto, rem, budget] = await Promise.all([
                 recordsRes.json(),
                 furnitureRes.json(),
                 typesRes.json(),
                 autoRes.json(),
-                remRes.json()
+                remRes.json(),
+                budgetRes.json().catch(() => ({ success: false }))
             ]);
             
             const data = {
@@ -1727,7 +2097,9 @@
                 furniture: furniture.success ? furniture.furnitureList || [] : [],
                 types: (types.success && types.types && types.types.length > 0) ? types.types : state.types,
                 autoRecords: auto.success ? auto.autoRecords || [] : [],
-                reminders: rem.success ? rem.reminders || [] : []
+                reminders: rem.success ? rem.reminders || [] : [],
+                income: budget.success ? budget.income || [] : [],
+                expenses: budget.success ? budget.expenses || [] : []
             };
             
             applyData(data);
@@ -1739,20 +2111,22 @@
                 let data = await fetchAllData();
                 if (!data) {
                     // 回退到分開請求
-                    const [recordsRes, furnitureRes, typesRes, autoRes, remRes] = await Promise.all([
+                    const [recordsRes, furnitureRes, typesRes, autoRes, remRes, budgetRes] = await Promise.all([
                         fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`),
                         fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getFurnitureList`),
                         fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getTypes`),
                         fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getAutoRecords`),
-                        fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getReminders`)
+                        fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getReminders`),
+                        fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getBudget`)
                     ]);
                     
-                    const [records, furniture, types, auto, rem] = await Promise.all([
+                    const [records, furniture, types, auto, rem, budget] = await Promise.all([
                         recordsRes.json(),
                         furnitureRes.json(),
                         typesRes.json(),
                         autoRes.json(),
-                        remRes.json()
+                        remRes.json(),
+                        budgetRes.json().catch(() => ({ success: false }))
                     ]);
                     
                     data = {
@@ -1760,7 +2134,9 @@
                         furniture: furniture.success ? furniture.furnitureList || [] : state.furniture,
                         types: (types.success && types.types && types.types.length > 0) ? types.types : state.types,
                         autoRecords: auto.success ? auto.autoRecords || [] : state.autoRecords,
-                        reminders: rem.success ? rem.reminders || [] : state.reminders
+                        reminders: rem.success ? rem.reminders || [] : state.reminders,
+                        income: budget.success ? budget.income || [] : state.income,
+                        expenses: budget.success ? budget.expenses || [] : state.expenses
                     };
                 }
                 
@@ -1778,6 +2154,8 @@
             state.types = (data.types && data.types.length > 0) ? data.types : state.types;
             state.autoRecords = data.autoRecords || [];
             state.reminders = data.reminders || [];
+            state.income = data.income || [];
+            state.expenses = data.expenses || [];
         }
 
         // ============================================
@@ -1787,6 +2165,7 @@
             renderDashboard();
             renderRecords();
             renderFurniture();
+            renderBudget();
             renderSettings();
             renderCharts();
             updateTypeSelects();
@@ -2334,6 +2713,283 @@
                 }
             } catch (e) {
                 showToast('同步失敗', 'error');
+            }
+        }
+
+        // ============================================
+        // 個人收支功能
+        // ============================================
+        function renderBudget() {
+            // 篩選當前選擇人員的收支
+            const currentPerson = state.budgetPerson;
+            const personIncome = state.income.filter(i => i.person === currentPerson);
+            const personExpenses = state.expenses.filter(e => e.person === currentPerson);
+            
+            const totalIncome = personIncome.reduce((sum, i) => sum + (i.amount || 0), 0);
+            const totalExpense = personExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+            const balance = totalIncome - totalExpense;
+            
+            document.getElementById('totalIncome').textContent = '$' + totalIncome.toLocaleString();
+            document.getElementById('totalExpense').textContent = '$' + totalExpense.toLocaleString();
+            document.getElementById('totalBalance').textContent = '$' + balance.toLocaleString();
+            
+            // 更新人員 tabs 狀態
+            document.querySelectorAll('.person-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.person === currentPerson);
+            });
+            
+            // 渲染收入列表
+            const incomeList = document.getElementById('incomeList');
+            const incomeEmpty = document.getElementById('incomeEmpty');
+            
+            if (personIncome.length === 0) {
+                incomeList.innerHTML = '';
+                incomeEmpty.style.display = 'block';
+            } else {
+                incomeEmpty.style.display = 'none';
+                incomeList.innerHTML = personIncome.map(i => `
+                    <div class="budget-item" onclick="editIncome(${i.id})">
+                        <div class="budget-item-info">
+                            <span class="budget-item-icon">${i.icon || '💰'}</span>
+                            <span class="budget-item-name">${i.name}</span>
+                        </div>
+                        <span class="budget-item-amount income">+$${(i.amount || 0).toLocaleString()}</span>
+                        <button class="action-btn" onclick="event.stopPropagation(); editIncome(${i.id})" title="編輯">✏️</button>
+                    </div>
+                `).join('');
+            }
+            
+            // 渲染支出列表
+            const expenseList = document.getElementById('expenseList');
+            const expenseEmpty = document.getElementById('expenseEmpty');
+            
+            if (personExpenses.length === 0) {
+                expenseList.innerHTML = '';
+                expenseEmpty.style.display = 'block';
+            } else {
+                expenseEmpty.style.display = 'none';
+                expenseList.innerHTML = personExpenses.map(e => `
+                    <div class="budget-item" onclick="editExpense(${e.id})">
+                        <div class="budget-item-info">
+                            <span class="budget-item-icon">${e.icon || '💳'}</span>
+                            <span class="budget-item-name">${e.name}</span>
+                        </div>
+                        <span class="budget-item-amount expense">-$${(e.amount || 0).toLocaleString()}</span>
+                        <button class="action-btn" onclick="event.stopPropagation(); editExpense(${e.id})" title="編輯">✏️</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 切換人員
+        function switchBudgetPerson(person) {
+            state.budgetPerson = person;
+            renderBudget();
+        }
+
+        // 同步收支資料
+        async function refreshBudget() {
+            showToast('同步中...');
+            clearCache();
+            try {
+                const res = await fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getBudget`);
+                const data = await res.json();
+                if (data.success) {
+                    state.income = data.income || [];
+                    state.expenses = data.expenses || [];
+                    renderBudget();
+                    showToast('已同步最新資料 🔄');
+                }
+            } catch (e) {
+                showToast('同步失敗', 'error');
+            }
+        }
+
+        // 收入 CRUD
+        function openAddIncome() {
+            document.getElementById('incomeEditId').value = '';
+            document.getElementById('incomeModalTitle').textContent = '💵 新增收入';
+            document.getElementById('incomeName').value = '';
+            document.getElementById('incomeAmount').value = '';
+            document.getElementById('incomeIcon').value = '💰';
+            document.getElementById('incomeDeleteBtn').style.display = 'none';
+            openModal('addIncomeModal');
+        }
+
+        function editIncome(id) {
+            const item = state.income.find(i => i.id === id);
+            if (!item) return;
+            
+            document.getElementById('incomeEditId').value = id;
+            document.getElementById('incomeModalTitle').textContent = '✏️ 編輯收入';
+            document.getElementById('incomeName').value = item.name || '';
+            document.getElementById('incomeAmount').value = item.amount || '';
+            document.getElementById('incomeIcon').value = item.icon || '💰';
+            document.getElementById('incomeDeleteBtn').style.display = 'block';
+            openModal('addIncomeModal');
+        }
+
+        async function saveIncome() {
+            const editId = document.getElementById('incomeEditId').value;
+            const item = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name: document.getElementById('incomeName').value.trim(),
+                amount: parseInt(document.getElementById('incomeAmount').value) || 0,
+                icon: document.getElementById('incomeIcon').value,
+                person: state.budgetPerson  // 加入人員
+            };
+            
+            if (!item.name || !item.amount) {
+                showToast('請填寫名稱和金額', 'error');
+                return;
+            }
+            
+            closeModal('addIncomeModal');
+            
+            if (editId) {
+                const idx = state.income.findIndex(i => i.id === item.id);
+                if (idx !== -1) state.income[idx] = item;
+            } else {
+                state.income.push(item);
+            }
+            
+            clearCache();
+            renderBudget();
+            
+            // 使用獨立 API
+            const action = editId ? 'updateIncome' : 'addIncome';
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, item: item })
+                });
+                showToast(editId ? '收入已更新 ✅' : '收入已新增 ✅');
+            } catch (e) {
+                showToast('同步失敗', 'error');
+            }
+        }
+
+        async function deleteIncomeFromModal() {
+            const editId = document.getElementById('incomeEditId').value;
+            if (!editId || !confirm('確定要刪除這筆收入嗎？')) return;
+            
+            closeModal('addIncomeModal');
+            state.income = state.income.filter(i => i.id !== parseInt(editId));
+            clearCache();
+            renderBudget();
+            
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'deleteIncome', itemId: parseInt(editId) })
+                });
+                showToast('已刪除 🗑️');
+            } catch (e) {
+                showToast('刪除失敗', 'error');
+            }
+        }
+
+        // 支出 CRUD
+        function openAddExpense() {
+            document.getElementById('expenseEditId').value = '';
+            document.getElementById('expenseModalTitle').textContent = '💳 新增支出';
+            document.getElementById('expenseName').value = '';
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseCategory').value = 'subscription';
+            document.getElementById('expenseIcon').value = '📱';
+            document.getElementById('expenseDeleteBtn').style.display = 'none';
+            openModal('addExpenseModal');
+        }
+
+        function editExpense(id) {
+            const item = state.expenses.find(e => e.id === id);
+            if (!item) return;
+            
+            document.getElementById('expenseEditId').value = id;
+            document.getElementById('expenseModalTitle').textContent = '✏️ 編輯支出';
+            document.getElementById('expenseName').value = item.name || '';
+            document.getElementById('expenseAmount').value = item.amount || '';
+            document.getElementById('expenseCategory').value = item.category || 'subscription';
+            document.getElementById('expenseIcon').value = item.icon || '📱';
+            document.getElementById('expenseDeleteBtn').style.display = 'block';
+            openModal('addExpenseModal');
+        }
+
+        async function saveExpense() {
+            const editId = document.getElementById('expenseEditId').value;
+            const item = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name: document.getElementById('expenseName').value.trim(),
+                amount: parseInt(document.getElementById('expenseAmount').value) || 0,
+                category: document.getElementById('expenseCategory').value,
+                icon: document.getElementById('expenseIcon').value,
+                person: state.budgetPerson  // 加入人員
+            };
+            
+            if (!item.name || !item.amount) {
+                showToast('請填寫名稱和金額', 'error');
+                return;
+            }
+            
+            closeModal('addExpenseModal');
+            
+            if (editId) {
+                const idx = state.expenses.findIndex(e => e.id === item.id);
+                if (idx !== -1) state.expenses[idx] = item;
+            } else {
+                state.expenses.push(item);
+            }
+            
+            clearCache();
+            renderBudget();
+            
+            // 使用獨立 API
+            const action = editId ? 'updateExpense' : 'addExpense';
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, item: item })
+                });
+                showToast(editId ? '支出已更新 ✅' : '支出已新增 ✅');
+            } catch (e) {
+                showToast('同步失敗', 'error');
+            }
+        }
+
+        async function deleteExpenseFromModal() {
+            const editId = document.getElementById('expenseEditId').value;
+            if (!editId || !confirm('確定要刪除這筆支出嗎？')) return;
+            
+            closeModal('addExpenseModal');
+            state.expenses = state.expenses.filter(e => e.id !== parseInt(editId));
+            clearCache();
+            renderBudget();
+            
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'deleteExpense', itemId: parseInt(editId) })
+                });
+                showToast('已刪除 🗑️');
+            } catch (e) {
+                showToast('刪除失敗', 'error');
+            }
+        }
+
+        // 儲存收支到後端
+        async function saveBudgetToServer() {
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'saveBudget',
+                        income: state.income,
+                        expenses: state.expenses,
+                        userId: state.user ? state.user.userId : null
+                    })
+                });
+            } catch (e) {
+                console.warn('Budget sync failed:', e);
             }
         }
 
