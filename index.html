@@ -1126,7 +1126,7 @@
                 <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="0"></div>
                 <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
             </div>
-            <div class="form-group"><label class="form-label">付款人</label><select id="recPerson" class="form-select"><option value="Jack">Jack</option><option value="Hsun">Hsun</option></select></div>
+            <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label><select id="recPerson" class="form-select"><option value="Jack">Jack</option><option value="Hsun">Hsun</option></select></div>
             <div class="form-group"><label class="form-label">備註（選填）</label><input type="text" id="recNote" class="form-input" placeholder="例如：一月份"></div>
             <div class="modal-actions">
                 <button onclick="saveRecord()" class="btn-primary">儲存</button>
@@ -1525,18 +1525,28 @@
             document.getElementById('recDirection').value = direction;
             const expBtn = document.getElementById('dirExpenseBtn');
             const incBtn = document.getElementById('dirIncomeBtn');
-
+            const personLabel = document.getElementById('recPersonLabel');  // ← 新增
+        
             if (direction === 'income') {
                 expBtn.className = 'direction-btn';
                 incBtn.className = 'direction-btn active-income';
-                // 填入收入類型
+                personLabel.textContent = '收款人';  // ← 新增
+                document.getElementById('recPerson').innerHTML = `
+                    <option value="Jack">Jack</option>
+                    <option value="Hsun">Hsun</option>
+                    <option value="共同">共同（兩人）</option>
+                `;  // ← 新增「共同」選項
                 document.getElementById('recType').innerHTML = state.incomeTypes.map(t =>
                     `<option value="${t.name}">${t.icon} ${t.name}</option>`
                 ).join('');
             } else {
                 expBtn.className = 'direction-btn active-expense';
                 incBtn.className = 'direction-btn';
-                // 填入支出類型
+                personLabel.textContent = '付款人';  // ← 新增
+                document.getElementById('recPerson').innerHTML = `
+                    <option value="Jack">Jack</option>
+                    <option value="Hsun">Hsun</option>
+                `;  // ← 支出不需要「共同」
                 const defaultExpenseTypes = [
                     { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                     { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
