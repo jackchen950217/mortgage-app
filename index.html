@@ -216,17 +216,49 @@
         .page.active { display: block; animation: pageIn 0.4s ease; }
         @keyframes pageIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-        /* Dashboard */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        /* ============================================
+           儀表板 - 收支結餘卡片
+           ============================================ */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 16px; }
+
+        /* 結餘大卡 */
+        .balance-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-md);
+            padding: 20px 22px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        .balance-banner::before {
+            content: '💵';
+            position: absolute;
+            right: 16px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 52px;
+            opacity: 0.15;
+        }
+        .balance-banner-label { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 6px; }
+        .balance-banner-value { font-size: 30px; font-weight: 800; font-family: 'Quicksand', sans-serif; color: white; }
+        .balance-banner-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+        .balance-banner-left { position: relative; z-index: 1; }
+
         .stat-card { background: var(--bg-card); padding: 22px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--primary), var(--primary-light)); opacity: 0; transition: opacity 0.3s ease; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; opacity: 0; transition: opacity 0.3s ease; }
         .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         .stat-card:hover::before { opacity: 1; }
-        .stat-card.highlight { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border: none; }
-        .stat-card.highlight .stat-label { color: rgba(255,255,255,0.85); }
-        .stat-card.highlight .stat-value { color: white; }
+        .stat-card.income-card::before { background: linear-gradient(90deg, #27AE60, #6BCB77); }
+        .stat-card.expense-card::before { background: linear-gradient(90deg, #E74C3C, #FF6B6B); }
+        .stat-card.furn-card::before { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
         .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
         .stat-value { font-size: 26px; font-weight: 700; font-family: 'Quicksand', sans-serif; color: var(--text-primary); }
+        .stat-value.income-val { color: #27AE60; }
+        .stat-value.expense-val { color: #E74C3C; }
+        .stat-value.furn-val { color: var(--accent); }
 
         /* Mortgage */
         .mortgage-progress-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -273,9 +305,43 @@
         .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
         .section-title { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .section-icon { font-size: 22px; }
+
+        /* ============================================
+           快速記帳 - 收入/支出分頁
+           ============================================ */
+        .quick-add-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .quick-add-tab {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .quick-add-tab.active-expense {
+            border-color: #E74C3C;
+            background: rgba(231,76,60,0.08);
+            color: #E74C3C;
+        }
+        .quick-add-tab.active-income {
+            border-color: #27AE60;
+            background: rgba(39,174,96,0.08);
+            color: #27AE60;
+        }
+
         .quick-add-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 12px; margin-bottom: 28px; }
         .quick-add-btn { background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius-md); padding: 18px 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .quick-add-btn:hover { border-color: var(--primary); background: linear-gradient(135deg, rgba(93,156,132,0.05), rgba(93,156,132,0.1)); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+        .quick-add-btn.income-btn:hover { border-color: #27AE60; background: rgba(39,174,96,0.08); }
         .quick-add-btn .icon { font-size: 28px; }
         .quick-add-btn span:last-child { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 
@@ -283,7 +349,9 @@
         .chart-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
         .chart-container { height: 220px; position: relative; }
 
-        /* Tables */
+        /* ============================================
+           記錄表格 - 收入/支出顏色
+           ============================================ */
         .table-wrapper { background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
         .records-table { width: 100%; border-collapse: collapse; }
         .records-table th { background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); text-align: left; padding: 14px 16px; font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
@@ -291,15 +359,23 @@
         .records-table tr:last-child td { border-bottom: none; }
         .records-table tbody tr { transition: background 0.2s ease; }
         .records-table tbody tr:hover { background: rgba(93,156,132,0.03); }
-        .record-amount { font-family: 'Quicksand', sans-serif; font-weight: 700; color: var(--primary); font-size: 15px; }
+        .records-table tbody tr.income-row { background: rgba(39,174,96,0.03); }
+        .records-table tbody tr.income-row:hover { background: rgba(39,174,96,0.07); }
+        .record-amount { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 15px; }
+        .record-amount.expense { color: var(--primary); }
+        .record-amount.income { color: #27AE60; }
+        .direction-chip {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px;
+        }
+        .direction-chip.income { background: rgba(39,174,96,0.12); color: #27AE60; }
+        .direction-chip.expense { background: rgba(93,156,132,0.12); color: var(--primary-dark); }
         .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: var(--radius-sm); min-width: 38px; transition: all 0.2s ease; }
         .action-btn:hover { background: var(--bg-primary); transform: scale(1.1); }
 
         /* ============================================
-           傢俱清單增強樣式
+           傢俱清單
            ============================================ */
-
-        /* 傢俱統計卡片 - 四格 */
         .furn-stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -329,7 +405,6 @@
         .furn-stat-card.purchased::before { background: linear-gradient(90deg, #27AE60, #6BCB77); }
         .furn-stat-card.pending::before { background: linear-gradient(90deg, #E67E22, #FFB366); }
         .furn-stat-card.high-priority::before { background: linear-gradient(90deg, #E74C3C, #FF6B6B); }
-
         .furn-stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 
         .furn-stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; display: flex; align-items: center; gap: 5px; }
@@ -339,7 +414,6 @@
         .furn-stat-card.pending .furn-stat-value { color: #E67E22; }
         .furn-stat-card.high-priority .furn-stat-value { color: #E74C3C; }
 
-        /* 購買進度條 */
         .purchase-progress-wrap {
             background: var(--bg-card);
             border-radius: var(--radius-md);
@@ -393,7 +467,6 @@
             margin-top: 6px;
         }
 
-        /* 篩選 tabs */
         .furn-filter-tabs {
             display: flex;
             gap: 8px;
@@ -436,7 +509,6 @@
             color: var(--text-secondary);
         }
 
-        /* 傢俱卡片（取代 table） */
         .furniture-cards {
             display: flex;
             flex-direction: column;
@@ -474,7 +546,6 @@
             border-color: #27AE60;
         }
 
-        /* 左側優先級色條 */
         .furniture-card::before {
             content: '';
             position: absolute;
@@ -624,6 +695,41 @@
         .form-textarea { min-height: 80px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
+        /* ============================================
+           記錄 Modal - 收入/支出切換
+           ============================================ */
+        .direction-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 13px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .direction-btn.active-expense {
+            border-color: #E74C3C;
+            background: rgba(231,76,60,0.1);
+            color: #E74C3C;
+        }
+
+        .direction-btn.active-income {
+            border-color: #27AE60;
+            background: rgba(39,174,96,0.1);
+            color: #27AE60;
+        }
+
         /* 購買狀態切換 */
         .purchase-status-toggle {
             display: flex;
@@ -742,6 +848,7 @@
             .reports-grid { grid-template-columns: 1fr; }
             .budget-summary { grid-template-columns: 1fr; }
             .furn-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .balance-banner-value { font-size: 24px; }
         }
     </style>
 </head>
@@ -795,18 +902,29 @@
 
         <!-- 總覽頁 -->
         <div class="page active" id="page-dashboard">
+
+            <!-- 本月結餘大橫幅 -->
+            <div class="balance-banner">
+                <div class="balance-banner-left">
+                    <div class="balance-banner-label">💵 本月家用結餘</div>
+                    <div class="balance-banner-value" id="dashBalance">$0</div>
+                    <div class="balance-banner-sub" id="dashBalanceSub">收入 $0 ／ 支出 $0</div>
+                </div>
+            </div>
+
+            <!-- 三小卡：本月收入、本月支出、傢俱待購 -->
             <div class="dashboard-grid">
-                <div class="stat-card highlight">
-                    <div class="stat-label">本月總支出</div>
-                    <div class="stat-value" id="dashTotal">$0</div>
+                <div class="stat-card income-card">
+                    <div class="stat-label">📥 本月收入</div>
+                    <div class="stat-value income-val" id="dashIncome">$0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">傢俱已購買</div>
-                    <div class="stat-value" id="dashFurnitureBought" style="color:#27AE60">$0</div>
+                <div class="stat-card expense-card">
+                    <div class="stat-label">📤 本月支出</div>
+                    <div class="stat-value expense-val" id="dashExpense">$0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">傢俱待購買</div>
-                    <div class="stat-value" id="dashFurniturePending" style="color:#E67E22">$0</div>
+                <div class="stat-card furn-card">
+                    <div class="stat-label">🛋️ 傢俱待購</div>
+                    <div class="stat-value furn-val" id="dashFurniturePending">$0</div>
                 </div>
             </div>
 
@@ -839,7 +957,12 @@
                 <div class="mortgage-details" id="mortgageDetails"></div>
             </div>
 
+            <!-- 快速記帳 - 收入/支出切換 -->
             <div class="section-header"><h3 class="section-title"><span class="section-icon">🐾</span>快速記帳</h3></div>
+            <div class="quick-add-tabs">
+                <button class="quick-add-tab active-expense" id="qaTabExpense" onclick="switchQuickAddTab('expense')">📤 記支出</button>
+                <button class="quick-add-tab" id="qaTabIncome" onclick="switchQuickAddTab('income')">📥 記收入</button>
+            </div>
             <div class="quick-add-grid" id="quickAddGrid"></div>
 
             <div class="chart-card">
@@ -873,7 +996,6 @@
                 </div>
             </div>
 
-            <!-- 統計卡片 -->
             <div class="furn-stats-grid">
                 <div class="furn-stat-card total">
                     <div class="furn-stat-label">🛒 清單總預算</div>
@@ -893,7 +1015,6 @@
                 </div>
             </div>
 
-            <!-- 購買進度條 -->
             <div class="purchase-progress-wrap">
                 <div class="purchase-progress-header">
                     <div class="purchase-progress-title">🎯 購買完成度</div>
@@ -905,7 +1026,6 @@
                 <div class="purchase-progress-sub" id="purchaseProgressSub">尚無項目</div>
             </div>
 
-            <!-- 篩選 tabs -->
             <div class="furn-filter-tabs">
                 <button class="furn-filter-tab active" data-filter="all" onclick="setFurnFilter('all')">全部 <span class="count-badge" id="filterCountAll">0</span></button>
                 <button class="furn-filter-tab" data-filter="pending" onclick="setFurnFilter('pending')">⏳ 待購買 <span class="count-badge" id="filterCountPending">0</span></button>
@@ -913,7 +1033,6 @@
                 <button class="furn-filter-tab" data-filter="high" onclick="setFurnFilter('high')">🔴 高優先 <span class="count-badge" id="filterCountHigh">0</span></button>
             </div>
 
-            <!-- 傢俱卡片列表 -->
             <div id="furnitureCards" class="furniture-cards"></div>
             <div id="furnitureEmpty" class="empty-state" style="display:none">
                 <div class="empty-state-icon">🛋️</div>
@@ -956,7 +1075,7 @@
                 <div class="chart-card"><h3 class="section-title" style="margin-bottom:16px">📊 支出分類</h3><div style="height:200px"><canvas id="pieChart"></canvas></div></div>
             </div>
             <div class="chart-card" style="margin-top:20px">
-                <h3 class="section-title" style="margin-bottom:16px">📈 每月趨勢</h3>
+                <h3 class="section-title" style="margin-bottom:16px">📈 每月收支趨勢</h3>
                 <div class="chart-container"><canvas id="yearlyChart"></canvas></div>
             </div>
         </div>
@@ -984,12 +1103,23 @@
         </div>
     </div>
 
-    <!-- 新增/編輯記錄 Modal -->
+    <!-- 新增/編輯記錄 Modal（升級版：含收入/支出切換） -->
     <div class="modal-overlay" id="addRecordModal">
         <div class="modal">
             <div class="modal-header"><h3 id="recModalTitle">📝 新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
             <input type="hidden" id="recEditId">
-            <div class="form-group"><label class="form-label">類型</label><select id="recType" class="form-select"></select></div>
+            <input type="hidden" id="recDirection" value="expense">
+
+            <!-- 收入/支出切換 -->
+            <div class="form-group">
+                <label class="form-label">類型</label>
+                <div class="direction-toggle">
+                    <button type="button" class="direction-btn active-expense" id="dirExpenseBtn" onclick="setRecordDirection('expense')">📤 支出</button>
+                    <button type="button" class="direction-btn" id="dirIncomeBtn" onclick="setRecordDirection('income')">📥 收入</button>
+                </div>
+            </div>
+
+            <div class="form-group"><label class="form-label">項目</label><select id="recType" class="form-select"></select></div>
             <div class="form-row">
                 <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="0"></div>
                 <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
@@ -1003,13 +1133,12 @@
         </div>
     </div>
 
-    <!-- 新增/編輯傢俱 Modal（升級版） -->
+    <!-- 新增/編輯傢俱 Modal -->
     <div class="modal-overlay" id="addFurnitureModal">
         <div class="modal">
             <div class="modal-header"><h3 id="furnModalTitle">🛋️ 新增項目</h3><button class="close-btn" onclick="closeModal('addFurnitureModal')">✕</button></div>
             <input type="hidden" id="furnEditId">
 
-            <!-- 購買狀態 -->
             <div class="form-group">
                 <label class="form-label">購買狀態</label>
                 <div class="purchase-status-toggle">
@@ -1033,7 +1162,6 @@
                 </select>
             </div>
 
-            <!-- 購買連結（待購買時顯示） -->
             <div class="form-group" id="furnLinkGroup">
                 <label class="form-label">購買連結 🔗</label>
                 <input type="url" id="furnLink" class="form-input" placeholder="https://... 貼上商品網址，點一下就能去買">
@@ -1133,17 +1261,27 @@
             expenses: [],
             budgetPerson: 'Jack',
             furnFilter: 'all',
+            quickAddMode: 'expense', // 'expense' | 'income'
             types: [
-                { name: '房貸', icon: '🏠' },
-                { name: '管理費', icon: '🏢' },
-                { name: '水費', icon: '💧' },
-                { name: '電費', icon: '💡' },
-                { name: '瓦斯', icon: '🔥' },
-                { name: '網路', icon: '📶' },
-                { name: '餐費', icon: '🍱' },
-                { name: '日常', icon: '🛒' },
-                { name: '傢俱設備', icon: '🛋️' },
-                { name: '其他', icon: '📦' }
+                { name: '房貸', icon: '🏠', direction: 'expense' },
+                { name: '管理費', icon: '🏢', direction: 'expense' },
+                { name: '水費', icon: '💧', direction: 'expense' },
+                { name: '電費', icon: '💡', direction: 'expense' },
+                { name: '瓦斯', icon: '🔥', direction: 'expense' },
+                { name: '網路', icon: '📶', direction: 'expense' },
+                { name: '餐費', icon: '🍱', direction: 'expense' },
+                { name: '日常', icon: '🛒', direction: 'expense' },
+                { name: '傢俱設備', icon: '🛋️', direction: 'expense' },
+                { name: '其他', icon: '📦', direction: 'expense' }
+            ],
+            // 收入類型（固定）
+            incomeTypes: [
+                { name: '家用費(Jack)', icon: '👨', direction: 'income' },
+                { name: '家用費(Hsun)', icon: '👨', direction: 'income' },
+                { name: '入厝禮金', icon: '🎁', direction: 'income' },
+                { name: '紅包/禮金', icon: '🧧', direction: 'income' },
+                { name: '退款/退稅', icon: '💸', direction: 'income' },
+                { name: '其他收入', icon: '💰', direction: 'income' }
             ],
             charts: {}
         };
@@ -1358,52 +1496,129 @@
         }
 
         function updateTypeSelects() {
-            const defaultTypes = [
+            const defaultExpenseTypes = [
                 { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                 { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
                 { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
                 { name: '餐費', icon: '🍱' }, { name: '日常', icon: '🛒' },
                 { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
             ];
-            const typesToUse = (state.types && state.types.length > 0) ? state.types : defaultTypes;
-            const options = typesToUse.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
-            ['recType', 'autoType', 'remType'].forEach(id => {
+            const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
+            const expenseOptions = expenseTypes.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
+
+            // autoType / remType 只用支出類型
+            ['autoType', 'remType'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.innerHTML = options;
+                if (el) el.innerHTML = expenseOptions;
             });
+
+            // recType 根據目前方向動態更新（由 setRecordDirection 控制）
+            setRecordDirection(document.getElementById('recDirection')?.value || 'expense');
         }
 
+        // ============================================
+        // 記錄 Modal - 方向切換
+        // ============================================
+        function setRecordDirection(direction) {
+            document.getElementById('recDirection').value = direction;
+            const expBtn = document.getElementById('dirExpenseBtn');
+            const incBtn = document.getElementById('dirIncomeBtn');
+
+            if (direction === 'income') {
+                expBtn.className = 'direction-btn';
+                incBtn.className = 'direction-btn active-income';
+                // 填入收入類型
+                document.getElementById('recType').innerHTML = state.incomeTypes.map(t =>
+                    `<option value="${t.name}">${t.icon} ${t.name}</option>`
+                ).join('');
+            } else {
+                expBtn.className = 'direction-btn active-expense';
+                incBtn.className = 'direction-btn';
+                // 填入支出類型
+                const defaultExpenseTypes = [
+                    { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
+                    { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
+                    { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
+                    { name: '餐費', icon: '🍱' }, { name: '日常', icon: '🛒' },
+                    { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
+                ];
+                const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
+                document.getElementById('recType').innerHTML = expenseTypes.map(t =>
+                    `<option value="${t.name}">${t.icon} ${t.name}</option>`
+                ).join('');
+            }
+        }
+
+        // ============================================
+        // 快速記帳 tab 切換
+        // ============================================
+        let currentQuickAddMode = 'expense';
+
+        function switchQuickAddTab(mode) {
+            currentQuickAddMode = mode;
+            const expTab = document.getElementById('qaTabExpense');
+            const incTab = document.getElementById('qaTabIncome');
+            if (mode === 'income') {
+                expTab.className = 'quick-add-tab';
+                incTab.className = 'quick-add-tab active-income';
+            } else {
+                expTab.className = 'quick-add-tab active-expense';
+                incTab.className = 'quick-add-tab';
+            }
+            renderQuickAddGrid();
+        }
+
+        function renderQuickAddGrid() {
+            const grid = document.getElementById('quickAddGrid');
+            if (currentQuickAddMode === 'income') {
+                grid.innerHTML = state.incomeTypes.map(t =>
+                    `<div class="quick-add-btn income-btn" onclick="quickAdd('${t.name}', 'income')">
+                        <span class="icon">${t.icon}</span>
+                        <span>${t.name}</span>
+                    </div>`
+                ).join('');
+            } else {
+                const defaultExpenseTypes = [
+                    { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
+                    { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
+                    { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
+                    { name: '餐費', icon: '🍱' }, { name: '日常', icon: '🛒' },
+                    { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
+                ];
+                const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
+                grid.innerHTML = expenseTypes.slice(0, 9).map(t =>
+                    `<div class="quick-add-btn" onclick="quickAdd('${t.name}', 'expense')">
+                        <span class="icon">${t.icon}</span>
+                        <span>${t.name}</span>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        // ============================================
+        // Dashboard
+        // ============================================
         function renderDashboard() {
             const now = new Date();
             const thisMonth = state.records.filter(r => {
                 const d = new Date(r.date);
                 return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
             });
-            const total = thisMonth.reduce((sum, r) => sum + r.amount, 0);
-            
-            // 傢俱已購買 vs 待購買
-            const boughtAmt = state.furniture.filter(f => f.purchased === 'purchased').reduce((s, f) => s + (f.price || 0), 0);
+
+            // 收入 vs 支出（根據 direction 欄位，舊資料沒有 direction 視為支出）
+            const incomeAmt = thisMonth.filter(r => r.direction === 'income').reduce((sum, r) => sum + (r.amount || 0), 0);
+            const expenseAmt = thisMonth.filter(r => r.direction !== 'income').reduce((sum, r) => sum + (r.amount || 0), 0);
+            const balance = incomeAmt - expenseAmt;
+
+            document.getElementById('dashBalance').textContent = (balance >= 0 ? '+' : '') + '$' + balance.toLocaleString();
+            document.getElementById('dashBalanceSub').textContent = `收入 $${incomeAmt.toLocaleString()} ／ 支出 $${expenseAmt.toLocaleString()}`;
+            document.getElementById('dashIncome').textContent = '$' + incomeAmt.toLocaleString();
+            document.getElementById('dashExpense').textContent = '$' + expenseAmt.toLocaleString();
+
             const pendingAmt = state.furniture.filter(f => f.purchased !== 'purchased').reduce((s, f) => s + (f.price || 0), 0);
-            
-            document.getElementById('dashTotal').textContent = '$' + total.toLocaleString();
-            document.getElementById('dashFurnitureBought').textContent = '$' + boughtAmt.toLocaleString();
             document.getElementById('dashFurniturePending').textContent = '$' + pendingAmt.toLocaleString();
 
-            const defaultTypes = [
-                { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
-                { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
-                { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
-                { name: '餐費', icon: '🍱' }, { name: '日常', icon: '🛒' },
-                { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
-            ];
-            const typesToRender = (state.types && state.types.length > 0) ? state.types : defaultTypes;
-            document.getElementById('quickAddGrid').innerHTML = typesToRender.slice(0, 9).map(t =>
-                `<div class="quick-add-btn" onclick="quickAdd('${t.name}')">
-                    <span class="icon">${t.icon}</span>
-                    <span>${t.name}</span>
-                </div>`
-            ).join('');
-
+            renderQuickAddGrid();
             renderMortgageProgress();
         }
 
@@ -1419,7 +1634,8 @@
             const mortgageRecords = state.records.filter(r => {
                 const type = (r.type || '').toLowerCase();
                 const note = (r.note || '').toLowerCase();
-                return MORTGAGE_CONFIG.keywords.some(k => type.includes(k) || note.includes(k));
+                // 只計算支出類的房貸記錄
+                return r.direction !== 'income' && MORTGAGE_CONFIG.keywords.some(k => type.includes(k) || note.includes(k));
             });
             const paidAmount = mortgageRecords.reduce((sum, r) => sum + (r.amount || 0), 0);
             const remainingAmount = MORTGAGE_CONFIG.totalPrice - paidAmount;
@@ -1480,18 +1696,30 @@
             }
             if (tableWrapper) tableWrapper.style.display = 'block';
             empty.style.display = 'none';
-            tbody.innerHTML = sorted.slice(0, 50).map(r => `
-                <tr>
+            tbody.innerHTML = sorted.slice(0, 50).map(r => {
+                const isIncome = r.direction === 'income';
+                const amountStr = isIncome
+                    ? `<span class="record-amount income">+$${(r.amount || 0).toLocaleString()}</span>`
+                    : `<span class="record-amount expense">$${(r.amount || 0).toLocaleString()}</span>`;
+                const dirChip = isIncome
+                    ? `<span class="direction-chip income">📥 收入</span>`
+                    : `<span class="direction-chip expense">📤 支出</span>`;
+                return `
+                <tr class="${isIncome ? 'income-row' : ''}">
                     <td>${r.date ? r.date.slice(5) : ''}</td>
-                    <td><div style="font-weight:600">${r.type}</div><div class="person-tag">👤 ${r.person || '未知'}</div></td>
-                    <td class="record-amount">$${(r.amount || 0).toLocaleString()}</td>
+                    <td>
+                        <div style="font-weight:600;display:flex;align-items:center;gap:6px">${r.type} ${dirChip}</div>
+                        <div class="person-tag">👤 ${r.person || '未知'}</div>
+                    </td>
+                    <td>${amountStr}</td>
                     <td style="color:var(--text-secondary)">${r.note || '-'}</td>
                     <td><button class="action-btn" onclick="editRecord(${r.id})" title="編輯">✏️</button></td>
-                </tr>`).join('');
+                </tr>`;
+            }).join('');
         }
 
         // ============================================
-        // 傢俱清單（升級版）
+        // 傢俱清單
         // ============================================
         let currentFurnFilter = 'all';
 
@@ -1504,7 +1732,6 @@
         }
 
         function renderFurniture() {
-            // 統計數字
             const total = state.furniture.reduce((sum, f) => sum + (f.price || 0), 0);
             const boughtItems = state.furniture.filter(f => f.purchased === 'purchased');
             const pendingItems = state.furniture.filter(f => f.purchased !== 'purchased');
@@ -1517,7 +1744,6 @@
             document.getElementById('furnPending').textContent = '$' + pendingAmt.toLocaleString();
             document.getElementById('furnHigh').textContent = '$' + highPendingAmt.toLocaleString();
 
-            // 購買進度
             const pct = state.furniture.length > 0 ? Math.round((boughtItems.length / state.furniture.length) * 100) : 0;
             document.getElementById('purchasePct').textContent = pct + '%';
             document.getElementById('purchaseProgressFill').style.width = pct + '%';
@@ -1526,7 +1752,6 @@
                     ? `已購買 ${boughtItems.length} / ${state.furniture.length} 項，花費 $${boughtAmt.toLocaleString()}`
                     : '尚無項目';
 
-            // 篩選 badge 數字
             document.getElementById('filterCountAll').textContent = state.furniture.length;
             document.getElementById('filterCountPending').textContent = pendingItems.length;
             document.getElementById('filterCountPurchased').textContent = boughtItems.length;
@@ -1547,7 +1772,6 @@
             else if (currentFurnFilter === 'high') filtered = filtered.filter(f => f.priority === '高' && f.purchased !== 'purchased');
 
             filtered.sort((a, b) => {
-                // 待購買排前面，已購買排後面
                 if (a.purchased === 'purchased' && b.purchased !== 'purchased') return 1;
                 if (a.purchased !== 'purchased' && b.purchased === 'purchased') return -1;
                 return (priorityOrder[a.priority] || 1) - (priorityOrder[b.priority] || 1);
@@ -1704,9 +1928,10 @@
         // ============================================
         // 記帳
         // ============================================
-        function quickAdd(type) {
+        function quickAdd(type, direction = 'expense') {
             document.getElementById('recEditId').value = '';
-            document.getElementById('recModalTitle').textContent = '📝 新增記錄';
+            document.getElementById('recModalTitle').textContent = direction === 'income' ? '📥 新增收入' : '📤 新增支出';
+            setRecordDirection(direction);
             document.getElementById('recType').value = type;
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
@@ -1719,6 +1944,7 @@
         function openAddRecord() {
             document.getElementById('recEditId').value = '';
             document.getElementById('recModalTitle').textContent = '📝 新增記錄';
+            setRecordDirection('expense');
             document.getElementById('recType').selectedIndex = 0;
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
@@ -1733,6 +1959,8 @@
             if (!record) return;
             document.getElementById('recEditId').value = id;
             document.getElementById('recModalTitle').textContent = '✏️ 編輯記錄';
+            // 先設定方向（會更新 recType 選項）
+            setRecordDirection(record.direction || 'expense');
             document.getElementById('recType').value = record.type || '';
             document.getElementById('recDate').value = record.date || '';
             document.getElementById('recAmount').value = record.amount || '';
@@ -1744,13 +1972,15 @@
 
         async function saveRecord() {
             const editId = document.getElementById('recEditId').value;
+            const direction = document.getElementById('recDirection').value || 'expense';
             const record = {
                 id: editId ? parseInt(editId) : Date.now(),
                 type: document.getElementById('recType').value,
                 amount: parseInt(document.getElementById('recAmount').value) || 0,
                 date: document.getElementById('recDate').value,
                 person: document.getElementById('recPerson').value,
-                note: document.getElementById('recNote').value
+                note: document.getElementById('recNote').value,
+                direction: direction
             };
             if (!record.amount) { showToast('請輸入金額', 'error'); return; }
             closeModal('addRecordModal');
@@ -1762,7 +1992,7 @@
             const action = editId ? 'updateRecord' : 'addRecord';
             try {
                 await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action, record, userId: state.user ? state.user.userId : null }) });
-                showToast(editId ? '更新成功喵！😸' : '記帳成功喵！🐱');
+                showToast(direction === 'income' ? '收入記錄成功 💰' : (editId ? '更新成功喵！😸' : '記帳成功喵！🐱'));
             } catch (e) { showToast('同步失敗', 'error'); }
         }
 
@@ -1981,25 +2211,36 @@
         function renderCharts() {
             const now = new Date();
             const labels = [];
-            const trendData = [];
+            const trendExpenseData = [];
+            const trendIncomeData = [];
+
             for (let i = 5; i >= 0; i--) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 labels.push(`${d.getMonth() + 1}月`);
-                trendData.push(state.records.reduce((sum, r) => {
+                const monthRecords = state.records.filter(r => {
                     const rd = new Date(r.date);
-                    return (rd.getFullYear() === d.getFullYear() && rd.getMonth() === d.getMonth()) ? sum + r.amount : sum;
-                }, 0));
+                    return rd.getFullYear() === d.getFullYear() && rd.getMonth() === d.getMonth();
+                });
+                trendExpenseData.push(monthRecords.filter(r => r.direction !== 'income').reduce((sum, r) => sum + r.amount, 0));
+                trendIncomeData.push(monthRecords.filter(r => r.direction === 'income').reduce((sum, r) => sum + r.amount, 0));
             }
 
             if (state.charts.trend) state.charts.trend.destroy();
             state.charts.trend = new Chart(document.getElementById('trendChart'), {
                 type: 'line',
-                data: { labels, datasets: [{ label: '每月支出', data: trendData, borderColor: '#5D9C84', backgroundColor: 'rgba(93,156,132,0.1)', fill: true, tension: 0.4, borderWidth: 3, pointBackgroundColor: '#5D9C84', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+                data: {
+                    labels,
+                    datasets: [
+                        { label: '支出', data: trendExpenseData, borderColor: '#5D9C84', backgroundColor: 'rgba(93,156,132,0.1)', fill: true, tension: 0.4, borderWidth: 3, pointBackgroundColor: '#5D9C84', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5 },
+                        { label: '收入', data: trendIncomeData, borderColor: '#27AE60', backgroundColor: 'rgba(39,174,96,0.08)', fill: true, tension: 0.4, borderWidth: 2, pointBackgroundColor: '#27AE60', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4, borderDash: [4,4] }
+                    ]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
             });
 
+            // 只用支出資料做分類圓餅
             const typeMap = {};
-            state.records.forEach(r => { typeMap[r.type] = (typeMap[r.type] || 0) + r.amount; });
+            state.records.filter(r => r.direction !== 'income').forEach(r => { typeMap[r.type] = (typeMap[r.type] || 0) + r.amount; });
             const pieColors = ['#5D9C84','#7ABFA5','#FFB366','#FFD4A8','#3D7A64','#6BCB77','#FF6B6B','#74B9FF'];
             if (state.charts.pie) state.charts.pie.destroy();
             state.charts.pie = new Chart(document.getElementById('pieChart'), {
@@ -2008,8 +2249,9 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } }, cutout: '60%' }
             });
 
+            // 成員分攤（僅支出）
             const memberMap = {};
-            state.records.forEach(r => { const n = r.person || '未知'; memberMap[n] = (memberMap[n] || 0) + r.amount; });
+            state.records.filter(r => r.direction !== 'income').forEach(r => { const n = r.person || '未知'; memberMap[n] = (memberMap[n] || 0) + r.amount; });
             if (state.charts.member) state.charts.member.destroy();
             state.charts.member = new Chart(document.getElementById('memberChart'), {
                 type: 'pie',
@@ -2020,11 +2262,18 @@
                 <div class="member-stat-item"><span>👤 ${name}</span><span style="font-weight:600;color:var(--primary)">$${amount.toLocaleString()}</span></div>`).join('')
                 || '<p style="text-align:center;color:var(--text-secondary);padding:20px">尚無資料</p>';
 
+            // 報表頁年度圖 - 收入/支出分組柱狀圖
             if (state.charts.yearly) state.charts.yearly.destroy();
             state.charts.yearly = new Chart(document.getElementById('yearlyChart'), {
                 type: 'bar',
-                data: { labels, datasets: [{ label: '總支出', data: trendData, backgroundColor: 'rgba(93,156,132,0.8)', borderRadius: 8, borderSkipped: false }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+                data: {
+                    labels,
+                    datasets: [
+                        { label: '支出', data: trendExpenseData, backgroundColor: 'rgba(93,156,132,0.8)', borderRadius: 6, borderSkipped: false },
+                        { label: '收入', data: trendIncomeData, backgroundColor: 'rgba(39,174,96,0.8)', borderRadius: 6, borderSkipped: false }
+                    ]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
             });
         }
 
