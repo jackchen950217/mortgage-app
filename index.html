@@ -361,15 +361,17 @@
         .records-table tbody tr:hover { background: rgba(93,156,132,0.03); }
         .records-table tbody tr.income-row { background: rgba(39,174,96,0.03); }
         .records-table tbody tr.income-row:hover { background: rgba(39,174,96,0.07); }
+        .records-table tbody tr:not(.income-row) { background: rgba(231,76,60,0.03); }
+        .records-table tbody tr:not(.income-row):hover { background: rgba(231,76,60,0.07); }
         .record-amount { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 15px; }
-        .record-amount.expense { color: var(--primary); }
+        .record-amount.expense { color: #E74C3C; }
         .record-amount.income { color: #27AE60; }
         .direction-chip {
             display: inline-flex; align-items: center; gap: 3px;
             font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px;
         }
         .direction-chip.income { background: rgba(39,174,96,0.12); color: #27AE60; }
-        .direction-chip.expense { background: rgba(93,156,132,0.12); color: var(--primary-dark); }
+        .direction-chip.expense { background: rgba(231,76,60,0.12); color: #C0392B; }
         .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: var(--radius-sm); min-width: 38px; transition: all 0.2s ease; }
         .action-btn:hover { background: var(--bg-primary); transform: scale(1.1); }
 
