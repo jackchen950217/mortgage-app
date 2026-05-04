@@ -1088,7 +1088,7 @@
             <div class="settings-section">
                 <h3>⏰ 自動記帳</h3>
                 <div id="autoRecordList"></div>
-                <button onclick="openModal('addAutoModal')" class="btn-primary" style="margin-top:15px">➕ 新增自動記帳</button>
+                <button onclick="openAddAutoModal()" class="btn-primary" style="margin-top:15px">➕ 新增自動記帳</button>
             </div>
             <div class="settings-section">
                 <h3>🔔 繳費提醒</h3>
@@ -1180,13 +1180,46 @@
     <!-- 自動記帳 Modal -->
     <div class="modal-overlay" id="addAutoModal">
         <div class="modal">
-            <div class="modal-header"><h3>⏰ 新增自動記帳</h3><button class="close-btn" onclick="closeModal('addAutoModal')">✕</button></div>
-            <div class="form-group"><label class="form-label">類型</label><select id="autoType" class="form-select"></select></div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">金額</label><input type="number" id="autoAmount" class="form-input" placeholder="0"></div>
-                <div class="form-group"><label class="form-label">每月幾號</label><select id="autoDay" class="form-select"></select></div>
+            <div class="modal-header">
+                <h3>⏰ 新增自動記帳</h3>
+                <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
             </div>
-            <div class="form-group"><label class="form-label">備註</label><input type="text" id="autoNote" class="form-input"></div>
+            <input type="hidden" id="autoDirection" value="expense">
+    
+            <!-- 收入/支出切換 -->
+            <div class="form-group">
+                <label class="form-label">類型</label>
+                <div class="direction-toggle">
+                    <button type="button" class="direction-btn active-expense" id="autoDirExpenseBtn" onclick="setAutoDirection('expense')">📤 支出</button>
+                    <button type="button" class="direction-btn" id="autoDirIncomeBtn" onclick="setAutoDirection('income')">📥 收入</button>
+                </div>
+            </div>
+    
+            <div class="form-group">
+                <label class="form-label">項目</label>
+                <select id="autoType" class="form-select"></select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">金額</label>
+                    <input type="number" id="autoAmount" class="form-input" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">每月幾號</label>
+                    <select id="autoDay" class="form-select"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="autoPersonLabel">付款人</label>
+                <select id="autoPerson" class="form-select">
+                    <option value="Jack">Jack</option>
+                    <option value="Hsun">Hsun</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">備註</label>
+                <input type="text" id="autoNote" class="form-input">
+            </div>
             <button onclick="saveAuto()" class="btn-primary">儲存</button>
         </div>
     </div>
@@ -2169,12 +2202,28 @@
             if (state.autoRecords.length === 0) {
                 autoList.innerHTML = '<p style="color:var(--text-secondary);font-size:14px;padding:10px 0">尚無自動記帳設定</p>';
             } else {
-                autoList.innerHTML = state.autoRecords.map(a => `
-                    <div class="setting-item">
-                        <span>${a.type} - $${a.amount.toLocaleString()} (每月${a.day}號)</span>
-                        <button class="action-btn" onclick="deleteAutoRecord(${a.id})">🗑️</button>
-                    </div>`).join('');
+                autoList.innerHTML = state.autoRecords.map(a => {
+                    const isIncome = a.direction === 'income';
+                    const chip = isIncome
+                        ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(39,174,96,0.12);color:#27AE60;">📥 收入</span>`
+                        : `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(231,76,60,0.12);color:#C0392B;">📤 支出</span>`;
+                    return `
+                        <div class="setting-item">
+                            <div style="display:flex;flex-direction:column;gap:4px;">
+                                <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;">
+                                    ${a.type} ${chip}
+                                </div>
+                                <div style="font-size:12px;color:var(--text-secondary);">
+                                    每月 ${a.day} 號・$${(a.amount || 0).toLocaleString()}・${a.person || '未設定'}
+                                    ${a.note ? `・${a.note}` : ''}
+                                </div>
+                            </div>
+                            <button class="action-btn" onclick="deleteAutoRecord(${a.id})">🗑️</button>
+                        </div>`;
+                }).join('');
             }
+        
+            // reminders 部分維持不變（保留原本邏輯）
             const cycleText = { 1: '每月', 2: '每2月', 3: '每季', 6: '每半年', 12: '每年' };
             const remList = document.getElementById('reminderList');
             if (state.reminders.length === 0) {
@@ -2188,13 +2237,31 @@
             }
         }
 
+        // 替換原本的 saveAuto
         async function saveAuto() {
-            const auto = { id: Date.now(), type: document.getElementById('autoType').value, amount: parseInt(document.getElementById('autoAmount').value) || 0, day: parseInt(document.getElementById('autoDay').value) || 1, note: document.getElementById('autoNote').value, enabled: true };
+            const direction = document.getElementById('autoDirection').value || 'expense';
+            const auto = {
+                id: Date.now(),
+                type: document.getElementById('autoType').value,
+                amount: parseInt(document.getElementById('autoAmount').value) || 0,
+                day: parseInt(document.getElementById('autoDay').value) || 1,
+                note: document.getElementById('autoNote').value,
+                person: document.getElementById('autoPerson').value || 'Jack',
+                direction: direction,
+                enabled: true
+            };
             if (!auto.amount) { showToast('請輸入金額', 'error'); return; }
             closeModal('addAutoModal');
-            state.autoRecords.push(auto); clearCache(); renderSettings();
-            try { await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords }) }); showToast('自動記帳已設定！⏰'); }
-            catch (e) { showToast('設定失敗', 'error'); }
+            state.autoRecords.push(auto);
+            clearCache();
+            renderSettings();
+            try {
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords })
+                });
+                showToast('自動記帳已設定！⏰');
+            } catch (e) { showToast('設定失敗', 'error'); }
         }
 
         async function deleteAutoRecord(id) {
@@ -2323,6 +2390,59 @@
             toast.textContent = message;
             toast.className = `toast show ${type}`;
             setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        // ============================================
+        // 自動記帳 Modal - 方向切換
+        // ============================================
+        function setAutoDirection(direction) {
+            document.getElementById('autoDirection').value = direction;
+            const expBtn = document.getElementById('autoDirExpenseBtn');
+            const incBtn = document.getElementById('autoDirIncomeBtn');
+            const personLabel = document.getElementById('autoPersonLabel');
+            const personSelect = document.getElementById('autoPerson');
+        
+            if (direction === 'income') {
+                expBtn.className = 'direction-btn';
+                incBtn.className = 'direction-btn active-income';
+                personLabel.textContent = '收款人';
+                personSelect.innerHTML = `
+                    <option value="Jack">Jack</option>
+                    <option value="Hsun">Hsun</option>
+                    <option value="共同">共同（兩人）</option>
+                `;
+                document.getElementById('autoType').innerHTML = state.incomeTypes.map(t =>
+                    `<option value="${t.name}">${t.icon} ${t.name}</option>`
+                ).join('');
+            } else {
+                expBtn.className = 'direction-btn active-expense';
+                incBtn.className = 'direction-btn';
+                personLabel.textContent = '付款人';
+                personSelect.innerHTML = `
+                    <option value="Jack">Jack</option>
+                    <option value="Hsun">Hsun</option>
+                `;
+                const defaultExpenseTypes = [
+                    { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
+                    { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
+                    { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
+                    { name: '餐費', icon: '🍱' }, { name: '日常', icon: '🛒' },
+                    { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
+                ];
+                const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
+                document.getElementById('autoType').innerHTML = expenseTypes.map(t =>
+                    `<option value="${t.name}">${t.icon} ${t.name}</option>`
+                ).join('');
+            }
+        }
+        
+        // 開啟自動記帳 Modal 時重置狀態
+        function openAddAutoModal() {
+            setAutoDirection('expense');
+            document.getElementById('autoAmount').value = '';
+            document.getElementById('autoNote').value = '';
+            document.getElementById('autoDay').value = '1';
+            document.getElementById('autoPerson').value = 'Jack';
+            openModal('addAutoModal');
         }
     </script>
 </body>
