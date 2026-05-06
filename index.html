@@ -1579,7 +1579,8 @@
                 document.getElementById('recPerson').innerHTML = `
                     <option value="Jack">Jack</option>
                     <option value="Hsun">Hsun</option>
-                `;  // ← 支出不需要「共同」
+                    <option value="共同">共同（兩人）</option>
+                `;
                 const defaultExpenseTypes = [
                     { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                     { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
@@ -2330,7 +2331,15 @@
 
             // 成員分攤（僅支出）
             const memberMap = {};
-            state.records.filter(r => r.direction !== 'income').forEach(r => { const n = r.person || '未知'; memberMap[n] = (memberMap[n] || 0) + r.amount; });
+            state.records.filter(r => r.direction !== 'income').forEach(r => {
+                const n = r.person || '未知';
+                if (n === '共同') {
+                    memberMap['Jack'] = (memberMap['Jack'] || 0) + (r.amount / 2);
+                    memberMap['Hsun'] = (memberMap['Hsun'] || 0) + (r.amount / 2);
+                } else {
+                    memberMap[n] = (memberMap[n] || 0) + r.amount;
+                }
+            });
             if (state.charts.member) state.charts.member.destroy();
             state.charts.member = new Chart(document.getElementById('memberChart'), {
                 type: 'pie',
@@ -2420,6 +2429,7 @@
                 personSelect.innerHTML = `
                     <option value="Jack">Jack</option>
                     <option value="Hsun">Hsun</option>
+                    <option value="共同">共同（兩人）</option>
                 `;
                 const defaultExpenseTypes = [
                     { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
