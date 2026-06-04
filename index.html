@@ -1,3 +1,5 @@
+html
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -216,17 +218,90 @@
         .page.active { display: block; animation: pageIn 0.4s ease; }
         @keyframes pageIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ============================================
-           儀表板 - 收支結餘卡片
-           ============================================ */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        /* ============================================================
+           儀表板 - 新版雙區塊設計
+           ============================================================ */
 
-        /* 結餘大卡 */
+        /* 帳戶總餘額大卡 */
+        .account-balance-card {
+            background: linear-gradient(135deg, #2D3A52 0%, #3D5A7A 60%, #2D5A6A 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px 24px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(45,58,82,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-balance-card::before {
+            content: '🏦';
+            position: absolute;
+            right: 20px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            opacity: 0.12;
+        }
+
+        .account-balance-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .account-balance-value {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'Quicksand', sans-serif;
+            color: white;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+
+        .account-balance-note {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .account-balance-edit {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .account-balance-edit:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* 本月收支區塊 */
+        .monthly-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 本月結餘 banner（小版） */
         .balance-banner {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             border-radius: var(--radius-md);
-            padding: 20px 22px;
-            margin-bottom: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -239,13 +314,15 @@
             position: absolute;
             right: 16px; top: 50%;
             transform: translateY(-50%);
-            font-size: 52px;
+            font-size: 44px;
             opacity: 0.15;
         }
-        .balance-banner-label { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 6px; }
-        .balance-banner-value { font-size: 30px; font-weight: 800; font-family: 'Quicksand', sans-serif; color: white; }
-        .balance-banner-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+        .balance-banner-label { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 4px; }
+        .balance-banner-value { font-size: 26px; font-weight: 800; font-family: 'Quicksand', sans-serif; color: white; }
+        .balance-banner-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; }
         .balance-banner-left { position: relative; z-index: 1; }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 16px; }
 
         .stat-card { background: var(--bg-card); padding: 22px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; opacity: 0; transition: opacity 0.3s ease; }
@@ -306,9 +383,6 @@
         .section-title { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .section-icon { font-size: 22px; }
 
-        /* ============================================
-           快速記帳 - 收入/支出分頁
-           ============================================ */
         .quick-add-tabs {
             display: flex;
             gap: 8px;
@@ -349,9 +423,7 @@
         .chart-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
         .chart-container { height: 220px; position: relative; }
 
-        /* ============================================
-           記錄表格 - 收入/支出顏色
-           ============================================ */
+        /* Records table */
         .table-wrapper { background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
         .records-table { width: 100%; border-collapse: collapse; }
         .records-table th { background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); text-align: left; padding: 14px 16px; font-size: 12px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
@@ -375,9 +447,7 @@
         .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: var(--radius-sm); min-width: 38px; transition: all 0.2s ease; }
         .action-btn:hover { background: var(--bg-primary); transform: scale(1.1); }
 
-        /* ============================================
-           傢俱清單
-           ============================================ */
+        /* Furniture */
         .furn-stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -697,9 +767,6 @@
         .form-textarea { min-height: 80px; resize: vertical; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-        /* ============================================
-           記錄 Modal - 收入/支出切換
-           ============================================ */
         .direction-toggle {
             display: flex;
             gap: 10px;
@@ -732,7 +799,6 @@
             color: #27AE60;
         }
 
-        /* 購買狀態切換 */
         .purchase-status-toggle {
             display: flex;
             gap: 10px;
@@ -776,7 +842,6 @@
         .modal-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
         .modal-actions .btn-danger { padding: 12px; font-size: 14px; }
 
-        /* Priority Badge */
         .priority-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
         .p-high { background: linear-gradient(135deg, #FFEBEE, #FFCDD2); color: #D32F2F; }
         .p-mid { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); color: #EF6C00; }
@@ -840,6 +905,17 @@
         /* Reports */
         .reports-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
+        /* 帳戶餘額編輯 Modal 內的 hint */
+        .balance-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: rgba(93,156,132,0.08);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+        }
+
         @media (max-width: 600px) {
             .quick-add-grid { grid-template-columns: repeat(3, 1fr); }
             .form-row { grid-template-columns: 1fr; }
@@ -850,7 +926,7 @@
             .reports-grid { grid-template-columns: 1fr; }
             .budget-summary { grid-template-columns: 1fr; }
             .furn-stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .balance-banner-value { font-size: 24px; }
+            .account-balance-value { font-size: 28px; }
         }
     </style>
 </head>
@@ -905,10 +981,19 @@
         <!-- 總覽頁 -->
         <div class="page active" id="page-dashboard">
 
-            <!-- 本月結餘大橫幅 -->
+            <!-- ★ 新增：帳戶總餘額大卡 -->
+            <div class="account-balance-card">
+                <button class="account-balance-edit" onclick="openEditBalance()">✏️ 更新餘額</button>
+                <div class="account-balance-label">🏦 銀行專戶餘額</div>
+                <div class="account-balance-value" id="accountBalanceValue">$0</div>
+                <div class="account-balance-note" id="accountBalanceNote">尚未設定餘額・點右上角更新</div>
+            </div>
+
+            <!-- ★ 本月收支區塊 -->
+            <div class="monthly-section-title">📅 本月收支</div>
             <div class="balance-banner">
                 <div class="balance-banner-left">
-                    <div class="balance-banner-label">💵 本月家用結餘</div>
+                    <div class="balance-banner-label">💵 本月結餘</div>
                     <div class="balance-banner-value" id="dashBalance">$0</div>
                     <div class="balance-banner-sub" id="dashBalanceSub">收入 $0 ／ 支出 $0</div>
                 </div>
@@ -1105,14 +1190,33 @@
         </div>
     </div>
 
-    <!-- 新增/編輯記錄 Modal（升級版：含收入/支出切換） -->
+    <!-- ★ 新增：帳戶餘額編輯 Modal -->
+    <div class="modal-overlay" id="editBalanceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🏦 更新帳戶餘額</h3>
+                <button class="close-btn" onclick="closeModal('editBalanceModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">目前銀行專戶餘額</label>
+                <input type="number" id="accountBalanceInput" class="form-input" placeholder="例如：250000">
+                <div class="balance-hint">💡 手動輸入你們銀行專戶的實際餘額，系統不會自動計算，需要定期更新。</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">備註（選填）</label>
+                <input type="text" id="accountBalanceNoteInput" class="form-input" placeholder="例如：6月初對帳後更新">
+            </div>
+            <button onclick="saveAccountBalance()" class="btn-primary">儲存</button>
+        </div>
+    </div>
+
+    <!-- 新增/編輯記錄 Modal -->
     <div class="modal-overlay" id="addRecordModal">
         <div class="modal">
             <div class="modal-header"><h3 id="recModalTitle">📝 新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
             <input type="hidden" id="recEditId">
             <input type="hidden" id="recDirection" value="expense">
 
-            <!-- 收入/支出切換 -->
             <div class="form-group">
                 <label class="form-label">類型</label>
                 <div class="direction-toggle">
@@ -1126,7 +1230,13 @@
                 <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="0"></div>
                 <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
             </div>
-            <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label><select id="recPerson" class="form-select"><option value="Jack">Jack</option><option value="Hsun">Hsun</option></select></div>
+            <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label>
+                <select id="recPerson" class="form-select">
+                    <option value="共同">共同（銀行專戶）</option>
+                    <option value="Jack">Jack（個人）</option>
+                    <option value="Hsun">Hsun（個人）</option>
+                </select>
+            </div>
             <div class="form-group"><label class="form-label">備註（選填）</label><input type="text" id="recNote" class="form-input" placeholder="例如：一月份"></div>
             <div class="modal-actions">
                 <button onclick="saveRecord()" class="btn-primary">儲存</button>
@@ -1166,7 +1276,7 @@
 
             <div class="form-group" id="furnLinkGroup">
                 <label class="form-label">購買連結 🔗</label>
-                <input type="url" id="furnLink" class="form-input" placeholder="https://... 貼上商品網址，點一下就能去買">
+                <input type="url" id="furnLink" class="form-input" placeholder="https://...">
             </div>
 
             <div class="form-group"><label class="form-label">備註</label><input type="text" id="furnNote" class="form-input" placeholder="例如：等特價再買"></div>
@@ -1185,8 +1295,6 @@
                 <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
             </div>
             <input type="hidden" id="autoDirection" value="expense">
-    
-            <!-- 收入/支出切換 -->
             <div class="form-group">
                 <label class="form-label">類型</label>
                 <div class="direction-toggle">
@@ -1194,7 +1302,6 @@
                     <button type="button" class="direction-btn" id="autoDirIncomeBtn" onclick="setAutoDirection('income')">📥 收入</button>
                 </div>
             </div>
-    
             <div class="form-group">
                 <label class="form-label">項目</label>
                 <select id="autoType" class="form-select"></select>
@@ -1212,8 +1319,9 @@
             <div class="form-group">
                 <label class="form-label" id="autoPersonLabel">付款人</label>
                 <select id="autoPerson" class="form-select">
-                    <option value="Jack">Jack</option>
-                    <option value="Hsun">Hsun</option>
+                    <option value="共同">共同（銀行專戶）</option>
+                    <option value="Jack">Jack（個人）</option>
+                    <option value="Hsun">Hsun（個人）</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1280,7 +1388,8 @@
             LINE_LOGIN_CHANNEL_ID: '2008934917',
             LIFF_ID: '2008934917-TFTGt0p7',
             CACHE_KEY: 'mortgageAppCache',
-            CACHE_EXPIRY: 5 * 60 * 1000
+            CACHE_EXPIRY: 5 * 60 * 1000,
+            BALANCE_KEY: 'accountBalance'   // ★ 新增：帳戶餘額本地存儲 key
         };
 
         // ============================================
@@ -1296,7 +1405,8 @@
             expenses: [],
             budgetPerson: 'Jack',
             furnFilter: 'all',
-            quickAddMode: 'expense', // 'expense' | 'income'
+            quickAddMode: 'expense',
+            // ★ 支出類型（不變）
             types: [
                 { name: '房貸', icon: '🏠', direction: 'expense' },
                 { name: '管理費', icon: '🏢', direction: 'expense' },
@@ -1310,10 +1420,12 @@
                 { name: '傢俱設備', icon: '🛋️', direction: 'expense' },
                 { name: '其他', icon: '📦', direction: 'expense' }
             ],
-            // 收入類型（固定）
+            // ★ 收入類型 - 新增股票相關
             incomeTypes: [
                 { name: '家用費(Jack)', icon: '👨', direction: 'income' },
                 { name: '家用費(Hsun)', icon: '👨', direction: 'income' },
+                { name: '股票收益', icon: '📈', direction: 'income' },   // ★ 新增
+                { name: '股票配息', icon: '💹', direction: 'income' },   // ★ 新增
                 { name: '入厝禮金', icon: '🎁', direction: 'income' },
                 { name: '紅包/禮金', icon: '🧧', direction: 'income' },
                 { name: '退款/退稅', icon: '💸', direction: 'income' },
@@ -1362,6 +1474,47 @@
         }
 
         function clearCache() { localStorage.removeItem(CONFIG.CACHE_KEY); }
+
+        // ============================================
+        // ★ 帳戶餘額（本地儲存）
+        // ============================================
+        function getAccountBalance() {
+            try {
+                const saved = localStorage.getItem(CONFIG.BALANCE_KEY);
+                return saved ? JSON.parse(saved) : { amount: null, note: '', updatedAt: null };
+            } catch (e) { return { amount: null, note: '', updatedAt: null }; }
+        }
+
+        function openEditBalance() {
+            const bal = getAccountBalance();
+            document.getElementById('accountBalanceInput').value = bal.amount !== null ? bal.amount : '';
+            document.getElementById('accountBalanceNoteInput').value = bal.note || '';
+            openModal('editBalanceModal');
+        }
+
+        function saveAccountBalance() {
+            const amount = parseInt(document.getElementById('accountBalanceInput').value);
+            const note = document.getElementById('accountBalanceNoteInput').value.trim();
+            if (isNaN(amount)) { showToast('請輸入有效金額', 'error'); return; }
+            const data = { amount, note, updatedAt: new Date().toLocaleDateString('zh-TW') };
+            localStorage.setItem(CONFIG.BALANCE_KEY, JSON.stringify(data));
+            closeModal('editBalanceModal');
+            renderAccountBalance();
+            showToast('帳戶餘額已更新 ✅');
+        }
+
+        function renderAccountBalance() {
+            const bal = getAccountBalance();
+            const valueEl = document.getElementById('accountBalanceValue');
+            const noteEl = document.getElementById('accountBalanceNote');
+            if (bal.amount !== null) {
+                valueEl.textContent = '$' + bal.amount.toLocaleString();
+                noteEl.textContent = (bal.note ? bal.note + '・' : '') + '更新於 ' + (bal.updatedAt || '未知');
+            } else {
+                valueEl.textContent = '$0';
+                noteEl.textContent = '尚未設定餘額・點右上角更新';
+            }
+        }
 
         // ============================================
         // LIFF / LINE 登入
@@ -1541,14 +1694,10 @@
             ];
             const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
             const expenseOptions = expenseTypes.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
-
-            // autoType / remType 只用支出類型
             ['autoType', 'remType'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = expenseOptions;
             });
-
-            // recType 根據目前方向動態更新（由 setRecordDirection 控制）
             setRecordDirection(document.getElementById('recDirection')?.value || 'expense');
         }
 
@@ -1559,29 +1708,19 @@
             document.getElementById('recDirection').value = direction;
             const expBtn = document.getElementById('dirExpenseBtn');
             const incBtn = document.getElementById('dirIncomeBtn');
-            const personLabel = document.getElementById('recPersonLabel');  // ← 新增
-        
+            const personLabel = document.getElementById('recPersonLabel');
+
             if (direction === 'income') {
                 expBtn.className = 'direction-btn';
                 incBtn.className = 'direction-btn active-income';
-                personLabel.textContent = '收款人';  // ← 新增
-                document.getElementById('recPerson').innerHTML = `
-                    <option value="Jack">Jack</option>
-                    <option value="Hsun">Hsun</option>
-                    <option value="共同">共同（兩人）</option>
-                `;  // ← 新增「共同」選項
+                personLabel.textContent = '收款人';
                 document.getElementById('recType').innerHTML = state.incomeTypes.map(t =>
                     `<option value="${t.name}">${t.icon} ${t.name}</option>`
                 ).join('');
             } else {
                 expBtn.className = 'direction-btn active-expense';
                 incBtn.className = 'direction-btn';
-                personLabel.textContent = '付款人';  // ← 新增
-                document.getElementById('recPerson').innerHTML = `
-                    <option value="Jack">Jack</option>
-                    <option value="Hsun">Hsun</option>
-                    <option value="共同">共同（兩人）</option>
-                `;
+                personLabel.textContent = '付款人';
                 const defaultExpenseTypes = [
                     { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                     { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
@@ -1646,13 +1785,14 @@
         // Dashboard
         // ============================================
         function renderDashboard() {
+            renderAccountBalance();   // ★ 帳戶餘額卡
+
             const now = new Date();
             const thisMonth = state.records.filter(r => {
                 const d = new Date(r.date);
                 return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
             });
 
-            // 收入 vs 支出（根據 direction 欄位，舊資料沒有 direction 視為支出）
             const incomeAmt = thisMonth.filter(r => r.direction === 'income').reduce((sum, r) => sum + (r.amount || 0), 0);
             const expenseAmt = thisMonth.filter(r => r.direction !== 'income').reduce((sum, r) => sum + (r.amount || 0), 0);
             const balance = incomeAmt - expenseAmt;
@@ -1681,7 +1821,6 @@
             const mortgageRecords = state.records.filter(r => {
                 const type = (r.type || '').toLowerCase();
                 const note = (r.note || '').toLowerCase();
-                // 只計算支出類的房貸記錄
                 return r.direction !== 'income' && MORTGAGE_CONFIG.keywords.some(k => type.includes(k) || note.includes(k));
             });
             const paidAmount = mortgageRecords.reduce((sum, r) => sum + (r.amount || 0), 0);
@@ -1707,7 +1846,7 @@
             if (mortgageRecords.length === 0) {
                 detailsContainer.innerHTML = `
                     <div class="mortgage-details-title"><span>📋</span><span>付款明細</span></div>
-                    <div class="mortgage-empty">😿 尚無房貸還款記錄<br><small>記帳時使用「房貸」、「頭款」、「斡旋」等關鍵字即可自動追蹤</small></div>`;
+                    <div class="mortgage-empty">😿 尚無房貸還款記錄</div>`;
             } else {
                 const sorted = [...mortgageRecords].sort((a, b) => new Date(b.date) - new Date(a.date));
                 detailsContainer.innerHTML = `
@@ -1751,12 +1890,16 @@
                 const dirChip = isIncome
                     ? `<span class="direction-chip income">📥 收入</span>`
                     : `<span class="direction-chip expense">📤 支出</span>`;
+                // ★ person 標籤：共同用不同顏色標示
+                const personLabel = r.person === '共同'
+                    ? `<span class="person-tag" style="border-color:var(--primary);color:var(--primary)">🏦 銀行專戶</span>`
+                    : `<span class="person-tag">👤 ${r.person || '未知'}</span>`;
                 return `
                 <tr class="${isIncome ? 'income-row' : ''}">
                     <td>${r.date ? r.date.slice(5) : ''}</td>
                     <td>
                         <div style="font-weight:600;display:flex;align-items:center;gap:6px">${r.type} ${dirChip}</div>
-                        <div class="person-tag">👤 ${r.person || '未知'}</div>
+                        ${personLabel}
                     </td>
                     <td>${amountStr}</td>
                     <td style="color:var(--text-secondary)">${r.note || '-'}</td>
@@ -1983,7 +2126,8 @@
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
-            document.getElementById('recPerson').value = 'Jack';
+            // ★ 預設選「共同」
+            document.getElementById('recPerson').value = '共同';
             document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
@@ -1996,7 +2140,8 @@
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
-            document.getElementById('recPerson').value = 'Jack';
+            // ★ 預設選「共同」
+            document.getElementById('recPerson').value = '共同';
             document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
@@ -2006,13 +2151,12 @@
             if (!record) return;
             document.getElementById('recEditId').value = id;
             document.getElementById('recModalTitle').textContent = '✏️ 編輯記錄';
-            // 先設定方向（會更新 recType 選項）
             setRecordDirection(record.direction || 'expense');
             document.getElementById('recType').value = record.type || '';
             document.getElementById('recDate').value = record.date || '';
             document.getElementById('recAmount').value = record.amount || '';
             document.getElementById('recNote').value = record.note || '';
-            document.getElementById('recPerson').value = record.person || 'Jack';
+            document.getElementById('recPerson').value = record.person || '共同';
             document.getElementById('recDeleteBtn').style.display = 'block';
             openModal('addRecordModal');
         }
@@ -2224,8 +2368,7 @@
                         </div>`;
                 }).join('');
             }
-        
-            // reminders 部分維持不變（保留原本邏輯）
+
             const cycleText = { 1: '每月', 2: '每2月', 3: '每季', 6: '每半年', 12: '每年' };
             const remList = document.getElementById('reminderList');
             if (state.reminders.length === 0) {
@@ -2239,7 +2382,6 @@
             }
         }
 
-        // 替換原本的 saveAuto
         async function saveAuto() {
             const direction = document.getElementById('autoDirection').value || 'expense';
             const auto = {
@@ -2248,7 +2390,7 @@
                 amount: parseInt(document.getElementById('autoAmount').value) || 0,
                 day: parseInt(document.getElementById('autoDay').value) || 1,
                 note: document.getElementById('autoNote').value,
-                person: document.getElementById('autoPerson').value || 'Jack',
+                person: document.getElementById('autoPerson').value || '共同',
                 direction: direction,
                 enabled: true
             };
@@ -2258,10 +2400,7 @@
             clearCache();
             renderSettings();
             try {
-                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords })
-                });
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords }) });
                 showToast('自動記帳已設定！⏰');
             } catch (e) { showToast('設定失敗', 'error'); }
         }
@@ -2319,7 +2458,6 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
             });
 
-            // 只用支出資料做分類圓餅
             const typeMap = {};
             state.records.filter(r => r.direction !== 'income').forEach(r => { typeMap[r.type] = (typeMap[r.type] || 0) + r.amount; });
             const pieColors = ['#5D9C84','#7ABFA5','#FFB366','#FFD4A8','#3D7A64','#6BCB77','#FF6B6B','#74B9FF'];
@@ -2330,7 +2468,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } }, cutout: '60%' }
             });
 
-            // 成員分攤（僅支出）
+            // ★ 成員分攤：共同＝各算一半
             const memberMap = {};
             state.records.filter(r => r.direction !== 'income').forEach(r => {
                 const n = r.person || '未知';
@@ -2348,10 +2486,9 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
             document.getElementById('memberStats').innerHTML = Object.entries(memberMap).sort((a, b) => b[1] - a[1]).map(([name, amount]) => `
-                <div class="member-stat-item"><span>👤 ${name}</span><span style="font-weight:600;color:var(--primary)">$${amount.toLocaleString()}</span></div>`).join('')
+                <div class="member-stat-item"><span>👤 ${name}</span><span style="font-weight:600;color:var(--primary)">$${Math.round(amount).toLocaleString()}</span></div>`).join('')
                 || '<p style="text-align:center;color:var(--text-secondary);padding:20px">尚無資料</p>';
 
-            // 報表頁年度圖 - 收入/支出分組柱狀圖
             if (state.charts.yearly) state.charts.yearly.destroy();
             state.charts.yearly = new Chart(document.getElementById('yearlyChart'), {
                 type: 'bar',
@@ -2401,6 +2538,7 @@
             toast.className = `toast show ${type}`;
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
+
         // ============================================
         // 自動記帳 Modal - 方向切換
         // ============================================
@@ -2409,17 +2547,11 @@
             const expBtn = document.getElementById('autoDirExpenseBtn');
             const incBtn = document.getElementById('autoDirIncomeBtn');
             const personLabel = document.getElementById('autoPersonLabel');
-            const personSelect = document.getElementById('autoPerson');
-        
+
             if (direction === 'income') {
                 expBtn.className = 'direction-btn';
                 incBtn.className = 'direction-btn active-income';
                 personLabel.textContent = '收款人';
-                personSelect.innerHTML = `
-                    <option value="Jack">Jack</option>
-                    <option value="Hsun">Hsun</option>
-                    <option value="共同">共同（兩人）</option>
-                `;
                 document.getElementById('autoType').innerHTML = state.incomeTypes.map(t =>
                     `<option value="${t.name}">${t.icon} ${t.name}</option>`
                 ).join('');
@@ -2427,11 +2559,6 @@
                 expBtn.className = 'direction-btn active-expense';
                 incBtn.className = 'direction-btn';
                 personLabel.textContent = '付款人';
-                personSelect.innerHTML = `
-                    <option value="Jack">Jack</option>
-                    <option value="Hsun">Hsun</option>
-                    <option value="共同">共同（兩人）</option>
-                `;
                 const defaultExpenseTypes = [
                     { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                     { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
@@ -2445,14 +2572,13 @@
                 ).join('');
             }
         }
-        
-        // 開啟自動記帳 Modal 時重置狀態
+
         function openAddAutoModal() {
             setAutoDirection('expense');
             document.getElementById('autoAmount').value = '';
             document.getElementById('autoNote').value = '';
             document.getElementById('autoDay').value = '1';
-            document.getElementById('autoPerson').value = 'Jack';
+            document.getElementById('autoPerson').value = '共同';  // ★ 預設共同
             openModal('addAutoModal');
         }
     </script>
