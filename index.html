@@ -1063,7 +1063,7 @@
             </div>
             <div class="table-wrapper">
                 <table class="records-table">
-                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>備註</th><th style="width:50px"></th></tr></thead>
+                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>墊付／請款</th><th>備註</th><th style="width:50px"></th></tr></thead>
                     <tbody id="recordsBody"></tbody>
                 </table>
             </div>
@@ -1207,40 +1207,56 @@
         </div>
     </div>
 
-    <!-- 新增/編輯記錄 Modal -->
-    <div class="modal-overlay" id="addRecordModal">
-        <div class="modal">
-            <div class="modal-header"><h3 id="recModalTitle">📝 新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
-            <input type="hidden" id="recEditId">
-            <input type="hidden" id="recDirection" value="expense">
-
-            <div class="form-group">
-                <label class="form-label">類型</label>
-                <div class="direction-toggle">
-                    <button type="button" class="direction-btn active-expense" id="dirExpenseBtn" onclick="setRecordDirection('expense')">📤 支出</button>
-                    <button type="button" class="direction-btn" id="dirIncomeBtn" onclick="setRecordDirection('income')">📥 收入</button>
+        <!-- 新增/編輯記錄 Modal -->
+        <div class="modal-overlay" id="addRecordModal">
+            <div class="modal">
+                <div class="modal-header"><h3 id="recModalTitle">📝 新增記錄</h3><button class="close-btn" onclick="closeModal('addRecordModal')">✕</button></div>
+                <input type="hidden" id="recEditId">
+                <input type="hidden" id="recDirection" value="expense">
+        
+                <div class="form-group">
+                    <label class="form-label">類型</label>
+                    <div class="direction-toggle">
+                        <button type="button" class="direction-btn active-expense" id="dirExpenseBtn" onclick="setRecordDirection('expense')">📤 支出</button>
+                        <button type="button" class="direction-btn" id="dirIncomeBtn" onclick="setRecordDirection('income')">📥 收入</button>
+                    </div>
+                </div>
+        
+                <div class="form-group"><label class="form-label">項目</label><select id="recType" class="form-select"></select></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="0"></div>
+                    <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
+                </div>
+                <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label>
+                    <select id="recPerson" class="form-select">
+                        <option value="共同">共同（銀行專戶）</option>
+                        <option value="Jack">Jack（個人）</option>
+                        <option value="Hsun">Hsun（個人）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">誰先墊付</label>
+                    <select id="recPaidBy" class="form-select" onchange="updatePaidByVisibility()">
+                        <option value="">無（直接從專戶付）</option>
+                        <option value="Jack">Jack 墊付</option>
+                        <option value="Hsun">Hsun 墊付</option>
+                    </select>
+                </div>
+                <div class="form-group" id="claimedGroup" style="display:none">
+                    <label class="form-label">請款狀態</label>
+                    <div class="direction-toggle">
+                        <button type="button" class="direction-btn active-expense" id="claimedNoBtn" onclick="setClaimedStatus(false)">⏳ 未請款</button>
+                        <button type="button" class="direction-btn" id="claimedYesBtn" onclick="setClaimedStatus(true)">✅ 已請款</button>
+                    </div>
+                    <input type="hidden" id="recClaimed" value="false">
+                </div>
+                <div class="form-group"><label class="form-label">備註（選填）</label><input type="text" id="recNote" class="form-input" placeholder="例如：一月份"></div>
+                <div class="modal-actions">
+                    <button onclick="saveRecord()" class="btn-primary">儲存</button>
+                    <button id="recDeleteBtn" onclick="deleteRecordFromModal()" class="btn-secondary btn-danger" style="display:none">🗑️ 刪除此記錄</button>
                 </div>
             </div>
-
-            <div class="form-group"><label class="form-label">項目</label><select id="recType" class="form-select"></select></div>
-            <div class="form-row">
-                <div class="form-group"><label class="form-label">金額</label><input type="number" id="recAmount" class="form-input" placeholder="0"></div>
-                <div class="form-group"><label class="form-label">日期</label><input type="date" id="recDate" class="form-input"></div>
-            </div>
-            <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label>
-                <select id="recPerson" class="form-select">
-                    <option value="共同">共同（銀行專戶）</option>
-                    <option value="Jack">Jack（個人）</option>
-                    <option value="Hsun">Hsun（個人）</option>
-                </select>
-            </div>
-            <div class="form-group"><label class="form-label">備註（選填）</label><input type="text" id="recNote" class="form-input" placeholder="例如：一月份"></div>
-            <div class="modal-actions">
-                <button onclick="saveRecord()" class="btn-primary">儲存</button>
-                <button id="recDeleteBtn" onclick="deleteRecordFromModal()" class="btn-secondary btn-danger" style="display:none">🗑️ 刪除此記錄</button>
-            </div>
         </div>
-    </div>
 
     <!-- 新增/編輯傢俱 Modal -->
     <div class="modal-overlay" id="addFurnitureModal">
@@ -1415,6 +1431,7 @@
                 { name: '食材費', icon: '🥦', direction: 'expense' },
                 { name: '日常', icon: '🛒', direction: 'expense' },
                 { name: '傢俱設備', icon: '🛋️', direction: 'expense' },
+                { name: '股票', icon: '📈', direction: 'expense' },
                 { name: '其他', icon: '📦', direction: 'expense' }
             ],
             // ★ 收入類型 - 新增股票相關
@@ -1690,8 +1707,9 @@
                 { name: '房貸', icon: '🏠' }, { name: '管理費', icon: '🏢' },
                 { name: '水費', icon: '💧' }, { name: '電費', icon: '💡' },
                 { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
-                { name: '餐費', icon: '🍱' }, { name: '食材費', icon: '🥦' }, { name: '日常', icon: '🛒' },
-                { name: '傢俱設備', icon: '🛋️' }, { name: '其他', icon: '📦' }
+                { name: '餐費', icon: '🍱' }, { name: '食材費', icon: '🥦' },
+                { name: '日常', icon: '🛒' }, { name: '傢俱設備', icon: '🛋️' },
+                { name: '股票', icon: '📈' }, { name: '其他', icon: '📦' }
             ];
             const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
             const expenseOptions = expenseTypes.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
@@ -1734,6 +1752,24 @@
                     `<option value="${t.name}">${t.icon} ${t.name}</option>`
                 ).join('');
             }
+        }
+        function setClaimedStatus(claimed) {
+            document.getElementById('recClaimed').value = claimed ? 'true' : 'false';
+            const yesBtn = document.getElementById('claimedYesBtn');
+            const noBtn = document.getElementById('claimedNoBtn');
+            if (claimed) {
+                yesBtn.className = 'direction-btn active-income';
+                noBtn.className = 'direction-btn';
+            } else {
+                yesBtn.className = 'direction-btn';
+                noBtn.className = 'direction-btn active-expense';
+            }
+        }
+        
+        function updatePaidByVisibility() {
+            const paidBy = document.getElementById('recPaidBy').value;
+            const claimedGroup = document.getElementById('claimedGroup');
+            claimedGroup.style.display = paidBy ? 'block' : 'none';
         }
 
         // ============================================
@@ -1891,10 +1927,17 @@
                 const dirChip = isIncome
                     ? `<span class="direction-chip income">📥 收入</span>`
                     : `<span class="direction-chip expense">📤 支出</span>`;
-                // ★ person 標籤：共同用不同顏色標示
                 const personLabel = r.person === '共同'
                     ? `<span class="person-tag" style="border-color:var(--primary);color:var(--primary)">🏦 銀行專戶</span>`
                     : `<span class="person-tag">👤 ${r.person || '未知'}</span>`;
+                const paidByCell = r.paidBy
+                    ? `<div style="font-size:12px;font-weight:600;color:var(--text-secondary)">👤 ${r.paidBy} 墊付</div>
+                       <span style="display:inline-block;margin-top:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;${
+                           r.claimed === 'true'
+                               ? 'background:rgba(39,174,96,0.12);color:#27AE60'
+                               : 'background:rgba(230,126,34,0.12);color:#E67E22'
+                       }">${r.claimed === 'true' ? '✅ 已請款' : '⏳ 未請款'}</span>`
+                    : `<span style="font-size:12px;color:var(--text-secondary)">—</span>`;
                 return `
                 <tr class="${isIncome ? 'income-row' : ''}">
                     <td>${r.date ? r.date.slice(5) : ''}</td>
@@ -1903,6 +1946,7 @@
                         ${personLabel}
                     </td>
                     <td>${amountStr}</td>
+                    <td>${paidByCell}</td>
                     <td style="color:var(--text-secondary)">${r.note || '-'}</td>
                     <td><button class="action-btn" onclick="editRecord(${r.id})" title="編輯">✏️</button></td>
                 </tr>`;
@@ -2127,8 +2171,11 @@
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
-            // ★ 預設選「共同」
             document.getElementById('recPerson').value = '共同';
+            document.getElementById('recPaidBy').value = '';
+            document.getElementById('recClaimed').value = 'false';
+            document.getElementById('claimedGroup').style.display = 'none';
+            setClaimedStatus(false);
             document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
@@ -2141,8 +2188,11 @@
             document.getElementById('recDate').valueAsDate = new Date();
             document.getElementById('recAmount').value = '';
             document.getElementById('recNote').value = '';
-            // ★ 預設選「共同」
             document.getElementById('recPerson').value = '共同';
+            document.getElementById('recPaidBy').value = '';
+            document.getElementById('recClaimed').value = 'false';
+            document.getElementById('claimedGroup').style.display = 'none';
+            setClaimedStatus(false);
             document.getElementById('recDeleteBtn').style.display = 'none';
             openModal('addRecordModal');
         }
@@ -2158,6 +2208,10 @@
             document.getElementById('recAmount').value = record.amount || '';
             document.getElementById('recNote').value = record.note || '';
             document.getElementById('recPerson').value = record.person || '共同';
+            document.getElementById('recPaidBy').value = record.paidBy || '';
+            document.getElementById('recClaimed').value = record.claimed || 'false';
+            updatePaidByVisibility();
+            setClaimedStatus(record.claimed === 'true');
             document.getElementById('recDeleteBtn').style.display = 'block';
             openModal('addRecordModal');
         }
@@ -2172,7 +2226,9 @@
                 date: document.getElementById('recDate').value,
                 person: document.getElementById('recPerson').value,
                 note: document.getElementById('recNote').value,
-                direction: direction
+                direction: direction,
+                paidBy: document.getElementById('recPaidBy').value,
+                claimed: document.getElementById('recClaimed').value
             };
             if (!record.amount) { showToast('請輸入金額', 'error'); return; }
             closeModal('addRecordModal');
@@ -2187,7 +2243,6 @@
                 showToast(direction === 'income' ? '收入記錄成功 💰' : (editId ? '更新成功喵！😸' : '記帳成功喵！🐱'));
             } catch (e) { showToast('同步失敗', 'error'); }
         }
-
         async function deleteRecordFromModal() {
             const editId = document.getElementById('recEditId').value;
             if (!editId || !confirm('確定要刪除這筆記錄嗎？')) return;
