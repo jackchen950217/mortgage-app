@@ -981,7 +981,6 @@
 
             <!-- ★ 新增：帳戶總餘額大卡 -->
             <div class="account-balance-card">
-                <button class="account-balance-edit" onclick="openEditBalance()">✏️ 更新餘額</button>
                 <div class="account-balance-label">🏦 銀行專戶餘額</div>
                 <div class="account-balance-value" id="accountBalanceValue">$0</div>
                 <div class="account-balance-note" id="accountBalanceNote">尚未設定餘額・點右上角更新</div>
@@ -1502,16 +1501,20 @@
         }
 
         function renderAccountBalance() {
-            const bal = getAccountBalance();
+            const jointIncome = state.records
+                .filter(r => r.direction === 'income' && r.person === '共同')
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
+            const jointExpense = state.records
+                .filter(r => r.direction !== 'income' && r.person === '共同')
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
+            const balance = jointIncome - jointExpense;
+        
             const valueEl = document.getElementById('accountBalanceValue');
             const noteEl = document.getElementById('accountBalanceNote');
-            if (bal.amount !== null) {
-                valueEl.textContent = '$' + bal.amount.toLocaleString();
-                noteEl.textContent = (bal.note ? bal.note + '・' : '') + '更新於 ' + (bal.updatedAt || '未知');
-            } else {
-                valueEl.textContent = '$0';
-                noteEl.textContent = '尚未設定餘額・點右上角更新';
-            }
+        
+            valueEl.textContent = (balance >= 0 ? '+' : '') + '$' + balance.toLocaleString();
+            valueEl.style.color = balance >= 0 ? 'white' : '#FFB3B3';
+            noteEl.textContent = `收入 $${jointIncome.toLocaleString()} ／ 支出 $${jointExpense.toLocaleString()}（銀行專戶累計）`;
         }
 
         // ============================================
