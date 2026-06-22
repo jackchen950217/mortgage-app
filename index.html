@@ -1131,8 +1131,8 @@
                 <button onclick="refreshBudget()" class="btn-icon" title="同步資料">🔄</button>
             </div>
             <div class="person-tabs">
-                <button class="person-tab active" data-person="Jack" onclick="switchBudgetPerson('Jack')"><span class="person-tab-icon">👨</span><span>Jack</span></button>
-                <button class="person-tab" data-person="Hsun" onclick="switchBudgetPerson('Hsun')"><span class="person-tab-icon">👨</span><span>Hsun</span></button>
+                <button class="person-tab active" data-person="煜翔" onclick="switchBudgetPerson('煜翔')"><span class="person-tab-icon">👨</span><span>煜翔</span></button>
+                <button class="person-tab" data-person="卓勳" onclick="switchBudgetPerson('卓勳')"><span class="person-tab-icon">👨</span><span>卓勳</span></button>
             </div>
             <div class="budget-summary">
                 <div class="budget-card income-card"><div class="budget-card-icon">📈</div><div class="budget-card-content"><div class="budget-card-label">總收入</div><div class="budget-card-value" id="totalIncome">$0</div></div></div>
@@ -1230,16 +1230,16 @@
                 <div class="form-group"><label class="form-label" id="recPersonLabel">付款人</label>
                     <select id="recPerson" class="form-select">
                         <option value="共同">共同（銀行專戶）</option>
-                        <option value="Jack">Jack（個人）</option>
-                        <option value="Hsun">Hsun（個人）</option>
+                        <option value="煜翔">煜翔（個人）</option>
+                        <option value="卓勳">卓勳（個人）</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">誰先墊付</label>
                     <select id="recPaidBy" class="form-select" onchange="updatePaidByVisibility()">
                         <option value="">無（直接從專戶付）</option>
-                        <option value="Jack">Jack 墊付</option>
-                        <option value="Hsun">Hsun 墊付</option>
+                        <option value="煜翔">煜翔 墊付</option>
+                        <option value="卓勳">卓勳 墊付</option>
                     </select>
                 </div>
                 <div class="form-group" id="claimedGroup" style="display:none">
@@ -1333,8 +1333,8 @@
                 <label class="form-label" id="autoPersonLabel">付款人</label>
                 <select id="autoPerson" class="form-select">
                     <option value="共同">共同（銀行專戶）</option>
-                    <option value="Jack">Jack（個人）</option>
-                    <option value="Hsun">Hsun（個人）</option>
+                    <option value="煜翔">煜翔（個人）</option>
+                    <option value="卓勳">卓勳（個人）</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1416,7 +1416,7 @@
             reminders: [],
             income: [],
             expenses: [],
-            budgetPerson: 'Jack',
+            budgetPerson: '煜翔',
             furnFilter: 'all',
             quickAddMode: 'expense',
             // ★ 支出類型（不變）
@@ -1436,8 +1436,8 @@
             ],
             // ★ 收入類型 - 新增股票相關
             incomeTypes: [
-                { name: '家用費(Jack)', icon: '👨', direction: 'income' },
-                { name: '家用費(Hsun)', icon: '👨', direction: 'income' },
+                { name: '家用費(煜翔)', icon: '👨', direction: 'income' },
+                { name: '家用費(卓勳)', icon: '👨', direction: 'income' },
                 { name: '股票收益', icon: '📈', direction: 'income' },   // ★ 新增
                 { name: '股票配息', icon: '💹', direction: 'income' },   // ★ 新增
                 { name: '入厝禮金', icon: '🎁', direction: 'income' },
@@ -2529,8 +2529,8 @@
             state.records.filter(r => r.direction !== 'income').forEach(r => {
                 const n = r.person || '未知';
                 if (n === '共同') {
-                    memberMap['Jack'] = (memberMap['Jack'] || 0) + (r.amount / 2);
-                    memberMap['Hsun'] = (memberMap['Hsun'] || 0) + (r.amount / 2);
+                    memberMap['煜翔'] = (memberMap['煜翔'] || 0) + (r.amount / 2);
+                    memberMap['卓勳'] = (memberMap['卓勳'] || 0) + (r.amount / 2);
                 } else {
                     memberMap[n] = (memberMap[n] || 0) + r.amount;
                 }
