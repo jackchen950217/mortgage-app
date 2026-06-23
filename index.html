@@ -1024,6 +1024,151 @@
         }
         .paid-by-tag.unclaimed { background: rgba(230,126,34,0.12); color: #E67E22; }
         .paid-by-tag.claimed { background: rgba(39,174,96,0.12); color: #27AE60; }
+
+        /* 報表區塊標題 */
+        .report-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        /* 銀行專戶明細卡 */
+        .bank-detail-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+        }
+        
+        .bank-summary-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .bank-summary-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 14px 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bank-summary-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        
+        .bank-summary-item.b-income::before { background: linear-gradient(90deg, #27AE60, #6BCB77); }
+        .bank-summary-item.b-expense::before { background: linear-gradient(90deg, #E74C3C, #FF6B6B); }
+        .bank-summary-item.b-balance::before { background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
+        
+        .bank-summary-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .bank-summary-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .bank-summary-item.b-income .bank-summary-value { color: #27AE60; }
+        .bank-summary-item.b-expense .bank-summary-value { color: #E74C3C; }
+        .bank-summary-item.b-balance .bank-summary-value { color: var(--primary); }
+        
+        .bank-record-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .bank-record-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            gap: 10px;
+        }
+        
+        .bank-record-item:hover { background: rgba(93,156,132,0.06); }
+        
+        .bank-record-item.bank-income { border-left: 3px solid #27AE60; }
+        .bank-record-item.bank-expense { border-left: 3px solid #E74C3C; }
+        
+        .bank-record-info { flex: 1; min-width: 0; }
+        
+        .bank-record-type {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bank-record-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        .bank-record-note {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 1px;
+        }
+        
+        .bank-record-amount {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .bank-record-amount.income { color: #27AE60; }
+        .bank-record-amount.expense { color: #E74C3C; }
+        
+        .bank-empty {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* 成員分攤區塊強調框 */
+        .member-section-wrap {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        @media (max-width: 600px) {
+            .bank-summary-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .bank-summary-value { font-size: 14px; }
+        }
     </style>
 </head>
 <body>
@@ -1242,14 +1387,50 @@
 
         <!-- 報表頁 -->
         <div class="page" id="page-reports">
-            <h2 class="page-title" style="margin-bottom:20px">📊 統計報表</h2>
+            <h2 class="page-title" style="margin-bottom:4px">📊 統計報表</h2>
+        
+            <!-- ① 成員分攤區塊 -->
+            <div class="report-section-title">👥 成員支出分攤</div>
             <div class="reports-grid">
-                <div class="chart-card"><h3 class="section-title" style="margin-bottom:16px">👥 成員分攤</h3><div style="height:150px"><canvas id="memberChart"></canvas></div><div id="memberStats" class="member-stat-list"></div></div>
-                <div class="chart-card"><h3 class="section-title" style="margin-bottom:16px">📊 支出分類</h3><div style="height:200px"><canvas id="pieChart"></canvas></div></div>
+                <div class="member-section-wrap">
+                    <h3 class="section-title" style="margin-bottom:16px;font-size:14px">個人支出佔比</h3>
+                    <div style="height:150px"><canvas id="memberChart"></canvas></div>
+                    <div id="memberStats" class="member-stat-list"></div>
+                </div>
+                <div class="member-section-wrap">
+                    <h3 class="section-title" style="margin-bottom:16px;font-size:14px">📊 支出分類</h3>
+                    <div style="height:200px"><canvas id="pieChart"></canvas></div>
+                </div>
             </div>
-            <div class="chart-card" style="margin-top:20px">
-                <h3 class="section-title" style="margin-bottom:16px">📈 每月收支趨勢</h3>
+        
+            <!-- ② 趨勢圖 -->
+            <div class="report-section-title" style="margin-top:28px">📈 每月收支趨勢</div>
+            <div class="chart-card">
                 <div class="chart-container"><canvas id="yearlyChart"></canvas></div>
+            </div>
+        
+            <!-- ③ 銀行專戶明細 — 視覺上與上方明顯分隔 -->
+            <div class="report-section-title" style="margin-top:28px;color:var(--primary);border-bottom-color:var(--primary)">
+                🏦 銀行專戶明細
+            </div>
+            <div class="bank-detail-card">
+                <div class="bank-summary-row">
+                    <div class="bank-summary-item b-income">
+                        <div class="bank-summary-label">總收入</div>
+                        <div class="bank-summary-value" id="bankTotalIncome">$0</div>
+                    </div>
+                    <div class="bank-summary-item b-expense">
+                        <div class="bank-summary-label">總支出</div>
+                        <div class="bank-summary-value" id="bankTotalExpense">$0</div>
+                    </div>
+                    <div class="bank-summary-item b-balance">
+                        <div class="bank-summary-label">累計結餘</div>
+                        <div class="bank-summary-value" id="bankBalance">$0</div>
+                    </div>
+                </div>
+                <div class="bank-record-list" id="bankRecordList">
+                    <div class="bank-empty">載入中...</div>
+                </div>
             </div>
         </div>
 
@@ -1788,6 +1969,7 @@
             renderBudget();
             renderSettings();
             renderCharts();
+            renderBankDetail();
             updateTypeSelects();
         }
 
@@ -2655,6 +2837,53 @@
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 12 } } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
             });
+        }
+
+        function renderBankDetail() {
+            const bankRecords = [...state.records]
+                .filter(r => r.person === '共同')
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+            const totalIncome = bankRecords
+                .filter(r => r.direction === 'income')
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
+            const totalExpense = bankRecords
+                .filter(r => r.direction !== 'income')
+                .reduce((sum, r) => sum + (r.amount || 0), 0);
+            const balance = totalIncome - totalExpense;
+        
+            document.getElementById('bankTotalIncome').textContent = '$' + totalIncome.toLocaleString();
+            document.getElementById('bankTotalExpense').textContent = '$' + totalExpense.toLocaleString();
+        
+            const balEl = document.getElementById('bankBalance');
+            balEl.textContent = (balance >= 0 ? '+' : '') + '$' + balance.toLocaleString();
+            balEl.style.color = balance >= 0 ? 'var(--primary)' : '#E74C3C';
+        
+            const listEl = document.getElementById('bankRecordList');
+        
+            if (bankRecords.length === 0) {
+                listEl.innerHTML = '<div class="bank-empty">😿 尚無銀行專戶記錄</div>';
+                return;
+            }
+        
+            listEl.innerHTML = bankRecords.map(r => {
+                const isIncome = r.direction === 'income';
+                const dirChip = isIncome
+                    ? `<span class="direction-chip income" style="font-size:10px">📥</span>`
+                    : `<span class="direction-chip expense" style="font-size:10px">📤</span>`;
+                const amountStr = isIncome
+                    ? `<span class="bank-record-amount income">+$${(r.amount || 0).toLocaleString()}</span>`
+                    : `<span class="bank-record-amount expense">-$${(r.amount || 0).toLocaleString()}</span>`;
+                return `
+                <div class="bank-record-item ${isIncome ? 'bank-income' : 'bank-expense'}">
+                    <div class="bank-record-info">
+                        <div class="bank-record-type">${dirChip} ${r.type}</div>
+                        <div class="bank-record-date">📅 ${r.date || ''}</div>
+                        ${r.note ? `<div class="bank-record-note">📌 ${r.note}</div>` : ''}
+                    </div>
+                    ${amountStr}
+                </div>`;
+            }).join('');
         }
 
         // ============================================
