@@ -1213,9 +1213,9 @@
         <nav class="nav-tabs">
             <button class="nav-tab active" data-page="dashboard"><span class="nav-tab-icon">📊</span><span>總覽</span></button>
             <button class="nav-tab" data-page="records"><span class="nav-tab-icon">📝</span><span>記錄</span></button>
-            <button class="nav-tab" data-page="furniture"><span class="nav-tab-icon">🛋️</span><span>清單</span></button>
-            <button class="nav-tab" data-page="budget"><span class="nav-tab-icon">💰</span><span>收支</span></button>
             <button class="nav-tab" data-page="reports"><span class="nav-tab-icon">📈</span><span>報表</span></button>
+            <button class="nav-tab" data-page="budget"><span class="nav-tab-icon">💰</span><span>收支</span></button>
+            <button class="nav-tab" data-page="furniture"><span class="nav-tab-icon">🛋️</span><span>清單</span></button>
             <button class="nav-tab" data-page="settings"><span class="nav-tab-icon">⚙️</span><span>設定</span></button>
         </nav>
 
@@ -1408,6 +1408,19 @@
                         <div class="bank-summary-value" id="bankBalance">$0</div>
                     </div>
                 </div>
+
+                <!-- ★ 新增：銀行專戶 每月收支趨勢 + 支出分類 -->
+                <div class="reports-grid" style="margin-bottom:20px">
+                    <div class="member-section-wrap">
+                        <h3 class="section-title" style="margin-bottom:16px;font-size:14px">📈 每月收支趨勢</h3>
+                        <div style="height:200px"><canvas id="bankTrendChart"></canvas></div>
+                    </div>
+                    <div class="member-section-wrap">
+                        <h3 class="section-title" style="margin-bottom:16px;font-size:14px">📊 支出分類</h3>
+                        <div style="height:200px"><canvas id="bankPieChart"></canvas></div>
+                    </div>
+                </div>
+
                 <div class="bank-record-list" id="bankRecordList">
                     <div class="bank-empty">載入中...</div>
                 </div>
@@ -2858,6 +2871,9 @@
             const balEl = document.getElementById('bankBalance');
             balEl.textContent = (balance >= 0 ? '+' : '') + '$' + balance.toLocaleString();
             balEl.style.color = balance >= 0 ? 'var(--primary)' : '#E74C3C';
+
+            // ★ 銀行專戶：每月收支趨勢 + 支出分類（只算 person==='共同'）
+            renderBankCharts(bankRecords);
         
             const listEl = document.getElementById('bankRecordList');
         
@@ -2884,6 +2900,50 @@
                     ${amountStr}
                 </div>`;
             }).join('');
+        }
+
+        // ★ 新增：銀行專戶專用圖表（每月收支趨勢 + 支出分類），只取 person === '共同' 的記錄
+        function renderBankCharts(bankRecords) {
+            const now = new Date();
+            const labels = [];
+            const bankExpenseData = [];
+            const bankIncomeData = [];
+
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                labels.push(`${d.getMonth() + 1}月`);
+                const monthRecords = bankRecords.filter(r => {
+                    const rd = new Date(r.date);
+                    return rd.getFullYear() === d.getFullYear() && rd.getMonth() === d.getMonth();
+                });
+                bankExpenseData.push(monthRecords.filter(r => r.direction !== 'income').reduce((sum, r) => sum + (r.amount || 0), 0));
+                bankIncomeData.push(monthRecords.filter(r => r.direction === 'income').reduce((sum, r) => sum + (r.amount || 0), 0));
+            }
+
+            if (state.charts.bankTrend) state.charts.bankTrend.destroy();
+            state.charts.bankTrend = new Chart(document.getElementById('bankTrendChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: '支出', data: bankExpenseData, borderColor: '#5D9C84', backgroundColor: 'rgba(93,156,132,0.1)', fill: true, tension: 0.4, borderWidth: 3, pointBackgroundColor: '#5D9C84', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4 },
+                        { label: '收入', data: bankIncomeData, borderColor: '#27AE60', backgroundColor: 'rgba(39,174,96,0.08)', fill: true, tension: 0.4, borderWidth: 2, pointBackgroundColor: '#27AE60', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4, borderDash: [4,4] }
+                    ]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+            });
+
+            const bankTypeMap = {};
+            bankRecords.filter(r => r.direction !== 'income').forEach(r => {
+                bankTypeMap[r.type] = (bankTypeMap[r.type] || 0) + (r.amount || 0);
+            });
+            const pieColors = ['#5D9C84','#7ABFA5','#FFB366','#FFD4A8','#3D7A64','#6BCB77','#FF6B6B','#74B9FF'];
+            if (state.charts.bankPie) state.charts.bankPie.destroy();
+            state.charts.bankPie = new Chart(document.getElementById('bankPieChart'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(bankTypeMap), datasets: [{ data: Object.values(bankTypeMap), backgroundColor: pieColors, borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } } }, cutout: '60%' }
+            });
         }
 
         // ============================================
