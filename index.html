@@ -328,12 +328,10 @@
         .stat-card:hover::before { opacity: 1; }
         .stat-card.income-card::before { background: linear-gradient(90deg, #27AE60, #6BCB77); }
         .stat-card.expense-card::before { background: linear-gradient(90deg, #E74C3C, #FF6B6B); }
-        .stat-card.furn-card::before { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
         .stat-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
         .stat-value { font-size: 26px; font-weight: 700; font-family: 'Quicksand', sans-serif; color: var(--text-primary); }
         .stat-value.income-val { color: #27AE60; }
         .stat-value.expense-val { color: #E74C3C; }
-        .stat-value.furn-val { color: var(--accent); }
 
         /* Mortgage */
         .mortgage-progress-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -1005,10 +1003,6 @@
                 <div class="stat-card expense-card">
                     <div class="stat-label">📤 本月支出</div>
                     <div class="stat-value expense-val" id="dashExpense">$0</div>
-                </div>
-                <div class="stat-card furn-card">
-                    <div class="stat-label">🛋️ 傢俱待購</div>
-                    <div class="stat-value furn-val" id="dashFurniturePending">$0</div>
                 </div>
             </div>
 
@@ -1838,9 +1832,6 @@
             document.getElementById('dashBalanceSub').textContent = `收入 $${incomeAmt.toLocaleString()} ／ 支出 $${expenseAmt.toLocaleString()}`;
             document.getElementById('dashIncome').textContent = '$' + incomeAmt.toLocaleString();
             document.getElementById('dashExpense').textContent = '$' + expenseAmt.toLocaleString();
-
-            const pendingAmt = state.furniture.filter(f => f.purchased !== 'purchased').reduce((s, f) => s + (f.price || 0), 0);
-            document.getElementById('dashFurniturePending').textContent = '$' + pendingAmt.toLocaleString();
 
             renderQuickAddGrid();
             renderMortgageProgress();
