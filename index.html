@@ -924,6 +924,106 @@
             .furn-stats-grid { grid-template-columns: repeat(2, 1fr); }
             .account-balance-value { font-size: 28px; }
         }
+        .records-card-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .record-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            border-left: 4px solid var(--border);
+            transition: all 0.2s ease;
+        }
+        .record-card.is-income { border-left-color: #27AE60; background: linear-gradient(135deg, rgba(39,174,96,0.03), var(--bg-card)); }
+        .record-card.is-expense { border-left-color: #E74C3C; background: linear-gradient(135deg, rgba(231,76,60,0.03), var(--bg-card)); }
+        
+        .record-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .record-card-left { flex: 1; min-width: 0; }
+        
+        .record-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .record-card-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .record-card-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        
+        .record-card-amount {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .record-card-amount.income { color: #27AE60; }
+        .record-card-amount.expense { color: #E74C3C; }
+        
+        .record-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .record-card-note {
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+        
+        .record-card-edit {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        .record-card-edit:hover { background: var(--bg-primary); }
+        
+        .paid-by-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+        .paid-by-tag.unclaimed { background: rgba(230,126,34,0.12); color: #E67E22; }
+        .paid-by-tag.claimed { background: rgba(39,174,96,0.12); color: #27AE60; }
     </style>
 </head>
 <body>
@@ -1055,12 +1155,7 @@
                 <h2 class="page-title">📝 記帳記錄</h2>
                 <button onclick="openAddRecord()" class="btn-primary" style="width:auto;padding:12px 20px;">➕ 新增</button>
             </div>
-            <div class="table-wrapper">
-                <table class="records-table">
-                    <thead><tr><th>日期</th><th>項目</th><th>金額</th><th>墊付／請款</th><th>備註</th><th style="width:50px"></th></tr></thead>
-                    <tbody id="recordsBody"></tbody>
-                </table>
-            </div>
+            <div id="recordsBody" class="records-card-list"></div>
             <div id="recordsEmpty" class="empty-state" style="display:none"><div class="empty-state-icon">😿</div><p class="empty-state-text">還沒有記錄喵～</p></div>
         </div>
 
@@ -1899,48 +1994,60 @@
         // ============================================
         function renderRecords() {
             const sorted = [...state.records].sort((a, b) => new Date(b.date) - new Date(a.date));
-            const tbody = document.getElementById('recordsBody');
+            const container = document.getElementById('recordsBody');
             const empty = document.getElementById('recordsEmpty');
-            const tableWrapper = tbody.closest('.table-wrapper');
+        
             if (sorted.length === 0) {
-                tbody.innerHTML = '';
-                if (tableWrapper) tableWrapper.style.display = 'none';
+                container.innerHTML = '';
                 empty.style.display = 'block';
                 return;
             }
-            if (tableWrapper) tableWrapper.style.display = 'block';
             empty.style.display = 'none';
-            tbody.innerHTML = sorted.slice(0, 50).map(r => {
+        
+            container.innerHTML = sorted.slice(0, 50).map(r => {
                 const isIncome = r.direction === 'income';
                 const amountStr = isIncome
-                    ? `<span class="record-amount income">+$${(r.amount || 0).toLocaleString()}</span>`
-                    : `<span class="record-amount expense">$${(r.amount || 0).toLocaleString()}</span>`;
+                    ? `<span class="record-card-amount income">+$${(r.amount || 0).toLocaleString()}</span>`
+                    : `<span class="record-card-amount expense">$${(r.amount || 0).toLocaleString()}</span>`;
                 const dirChip = isIncome
                     ? `<span class="direction-chip income">📥 收入</span>`
                     : `<span class="direction-chip expense">📤 支出</span>`;
                 const personLabel = r.person === '共同'
                     ? `<span class="person-tag" style="border-color:var(--primary);color:var(--primary)">🏦 銀行專戶</span>`
                     : `<span class="person-tag">👤 ${r.person || '未知'}</span>`;
-                const paidByCell = r.paidBy
-                    ? `<div style="font-size:12px;font-weight:600;color:var(--text-secondary)">👤 ${r.paidBy} 墊付</div>
-                       <span style="display:inline-block;margin-top:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;${
-                           r.claimed === 'true'
-                               ? 'background:rgba(39,174,96,0.12);color:#27AE60'
-                               : 'background:rgba(230,126,34,0.12);color:#E67E22'
-                       }">${r.claimed === 'true' ? '✅ 已請款' : '⏳ 未請款'}</span>`
-                    : `<span style="font-size:12px;color:var(--text-secondary)">—</span>`;
+                const paidByHtml = r.paidBy
+                    ? `<span class="paid-by-tag ${r.claimed === 'true' ? 'claimed' : 'unclaimed'}">
+                         ${r.claimed === 'true' ? '✅' : '⏳'} ${r.paidBy} 墊付・${r.claimed === 'true' ? '已請款' : '未請款'}
+                       </span>`
+                    : '';
+        
                 return `
-                <tr class="${isIncome ? 'income-row' : ''}">
-                    <td>${r.date ? r.date.slice(5) : ''}</td>
-                    <td>
-                        <div style="font-weight:600;display:flex;align-items:center;gap:6px">${r.type} ${dirChip}</div>
-                        ${personLabel}
-                    </td>
-                    <td>${amountStr}</td>
-                    <td>${paidByCell}</td>
-                    <td style="color:var(--text-secondary)">${r.note || '-'}</td>
-                    <td><button class="action-btn" onclick="editRecord(${r.id})" title="編輯">✏️</button></td>
-                </tr>`;
+                <div class="record-card ${isIncome ? 'is-income' : 'is-expense'}">
+                    <div class="record-card-top">
+                        <div class="record-card-left">
+                            <div class="record-card-title">
+                                ${r.type} ${dirChip}
+                            </div>
+                            <div class="record-card-meta">
+                                <span>📅 ${r.date ? r.date.slice(5) : ''}</span>
+                                ${personLabel}
+                                ${paidByHtml}
+                            </div>
+                        </div>
+                        <div class="record-card-right">
+                            ${amountStr}
+                        </div>
+                    </div>
+                    ${(r.note || '') ? `
+                    <div class="record-card-bottom">
+                        <span class="record-card-note">📌 ${r.note}</span>
+                        <button class="record-card-edit" onclick="editRecord(${r.id})" title="編輯">✏️</button>
+                    </div>` : `
+                    <div class="record-card-bottom">
+                        <span class="record-card-note" style="opacity:0.4">無備註</span>
+                        <button class="record-card-edit" onclick="editRecord(${r.id})" title="編輯">✏️</button>
+                    </div>`}
+                </div>`;
             }).join('');
         }
 
