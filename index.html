@@ -1714,7 +1714,7 @@
                 { name: '食材費', icon: '🥦', direction: 'expense' },
                 { name: '日常', icon: '🛒', direction: 'expense' },
                 { name: '傢俱設備', icon: '🛋️', direction: 'expense' },
-                { name: '股票', icon: '📈', direction: 'expense' },
+                { name: '利息', icon: '📈', direction: 'expense' },
                 { name: '其他', icon: '📦', direction: 'expense' }
             ],
             // ★ 收入類型 - 新增股票相關
@@ -1993,7 +1993,7 @@
                 { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '📶' },
                 { name: '餐費', icon: '🍱' }, { name: '食材費', icon: '🥦' },
                 { name: '日常', icon: '🛒' }, { name: '傢俱設備', icon: '🛋️' },
-                { name: '股票', icon: '📈' }, { name: '其他', icon: '📦' }
+                { name: '利息', icon: '📈' }, { name: '其他', icon: '📦' }
             ];
             const expenseTypes = (state.types && state.types.length > 0) ? state.types : defaultExpenseTypes;
             const expenseOptions = expenseTypes.map(t => `<option value="${t.name}">${t.icon} ${t.name}</option>`).join('');
