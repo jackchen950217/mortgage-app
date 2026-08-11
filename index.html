@@ -1225,6 +1225,7 @@
             <!-- ★ 新增：帳戶總餘額大卡 -->
             <div class="account-balance-card">
                 <div class="account-balance-label">🏦 銀行專戶餘額</div>
+                <button class="account-balance-edit" onclick="refreshAccountBalance()">🔄 同步</button>
                 <div class="account-balance-value" id="accountBalanceValue">$0</div>
                 <div class="account-balance-note" id="accountBalanceNote">尚未設定餘額・點右上角更新</div>
             </div>
@@ -2442,6 +2443,27 @@
             if (!confirm('確定要刪除這個項目嗎？')) return;
             closeModal('addFurnitureModal');
             await deleteFurniture(parseInt(editId));
+        }
+
+        async function refreshAccountBalance() {
+            showToast('同步中...');
+            clearCache();
+            try {
+                const res = await fetch(`${CONFIG.GOOGLE_SCRIPT_URL}?action=getRecords`);
+                const data = await res.json();
+                if (data.success) {
+                    state.records = data.records || [];
+                    renderAccountBalance();
+                    renderDashboard();   // 順便把本月收支也一起更新
+                    renderBankDetail();  // 報表頁的銀行專戶明細也一起更新
+                    showToast('已同步最新餘額 🔄');
+                } else {
+                    showToast('同步失敗：' + (data.error || '未知錯誤'), 'error');
+                }
+            } catch (e) {
+                showToast('同步失敗，請檢查網路或 Script 狀態', 'error');
+                console.error('refreshAccountBalance error:', e);
+            }
         }
 
         async function refreshFurniture() {
