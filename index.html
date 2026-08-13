@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
         :root {
@@ -1297,10 +1298,13 @@
 
         <!-- 記錄頁 -->
         <div class="page" id="page-records">
-            <div class="page-header">
-                <h2 class="page-title">📝 記帳記錄</h2>
+        <div class="page-header">
+            <h2 class="page-title">📝 記帳記錄</h2>
+            <div class="header-actions">
+                <button onclick="exportRecordsToExcel()" class="btn-icon" title="匯出 Excel">📊</button>
                 <button onclick="openAddRecord()" class="btn-primary" style="width:auto;padding:12px 20px;">➕ 新增</button>
             </div>
+        </div>
             <div id="recordsBody" class="records-card-list"></div>
             <div id="recordsEmpty" class="empty-state" style="display:none"><div class="empty-state-icon">😿</div><p class="empty-state-text">還沒有記錄喵～</p></div>
         </div>
@@ -2246,6 +2250,51 @@
                     </div>`}
                 </div>`;
             }).join('');
+        }
+
+        // ============================================
+        // 匯出 Excel
+        // ============================================
+        function exportRecordsToExcel() {
+            if (!state.records || state.records.length === 0) {
+                showToast('目前沒有記錄可以匯出', 'error');
+                return;
+            }
+        
+            const sorted = [...state.records].sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+            const rows = sorted.map(r => ({
+                '日期': r.date || '',
+                '收支': r.direction === 'income' ? '收入' : '支出',
+                '項目': r.type || '',
+                '金額': r.amount || 0,
+                '付款/收款人': r.person === '共同' ? '共同（銀行專戶）' : (r.person || ''),
+                '墊付人': r.paidBy || '',
+                '請款狀態': r.paidBy ? (r.claimed === 'true' ? '已請款' : '未請款') : '',
+                '備註': r.note || ''
+            }));
+        
+            // 加一列總計方便對帳
+            const totalIncome = sorted.filter(r => r.direction === 'income').reduce((s, r) => s + (r.amount || 0), 0);
+            const totalExpense = sorted.filter(r => r.direction !== 'income').reduce((s, r) => s + (r.amount || 0), 0);
+            rows.push({});
+            rows.push({ '日期': '合計', '收支': '收入', '金額': totalIncome });
+            rows.push({ '日期': '合計', '收支': '支出', '金額': totalExpense });
+            rows.push({ '日期': '合計', '收支': '結餘', '金額': totalIncome - totalExpense });
+        
+            const worksheet = XLSX.utils.json_to_sheet(rows);
+            worksheet['!cols'] = [
+                { wch: 12 }, { wch: 8 }, { wch: 14 }, { wch: 12 },
+                { wch: 18 }, { wch: 10 }, { wch: 10 }, { wch: 24 }
+            ];
+        
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, '記帳記錄');
+        
+            const today = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(workbook, `鎮前街的家_記帳記錄_${today}.xlsx`);
+        
+            showToast('已匯出 Excel 📊');
         }
 
         // ============================================
