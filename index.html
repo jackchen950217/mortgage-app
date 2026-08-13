@@ -1301,6 +1301,12 @@
         <div class="page-header">
             <h2 class="page-title">📝 記帳記錄</h2>
             <div class="header-actions">
+                <select id="exportFilterSelect" class="form-select" style="width:auto;padding:10px 12px;font-size:13px;">
+                    <option value="all">全部對象</option>
+                    <option value="共同">🏦 共同（銀行專戶）</option>
+                    <option value="煜翔">👤 煜翔</option>
+                    <option value="卓勳">👤 卓勳</option>
+                </select>
                 <button onclick="exportRecordsToExcel()" class="btn-icon" title="匯出 Excel">📊</button>
                 <button onclick="openAddRecord()" class="btn-primary" style="width:auto;padding:12px 20px;">➕ 新增</button>
             </div>
@@ -2261,7 +2267,25 @@
                 return;
             }
         
-            const sorted = [...state.records].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const filterValue = document.getElementById('exportFilterSelect').value; // all / 共同 / 煜翔 / 卓勳
+            const filterLabel = {
+                all: '全部對象',
+                '共同': '共同（銀行專戶）',
+                '煜翔': '煜翔',
+                '卓勳': '卓勳'
+            }[filterValue] || '全部對象';
+        
+            let filtered = [...state.records];
+            if (filterValue !== 'all') {
+                filtered = filtered.filter(r => r.person === filterValue);
+            }
+        
+            if (filtered.length === 0) {
+                showToast(`「${filterLabel}」目前沒有記錄可以匯出`, 'error');
+                return;
+            }
+        
+            const sorted = filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
         
             const rows = sorted.map(r => ({
                 '日期': r.date || '',
@@ -2292,9 +2316,10 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, '記帳記錄');
         
             const today = new Date().toISOString().slice(0, 10);
-            XLSX.writeFile(workbook, `鎮前街的家_記帳記錄_${today}.xlsx`);
+            const safeLabel = filterLabel.replace(/[（）()]/g, '');
+            XLSX.writeFile(workbook, `鎮前街的家_記帳記錄_${safeLabel}_${today}.xlsx`);
         
-            showToast('已匯出 Excel 📊');
+            showToast(`已匯出「${filterLabel}」Excel 📊`);
         }
 
         // ============================================
