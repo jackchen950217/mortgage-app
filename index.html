@@ -2607,7 +2607,12 @@
             openModal('addRecordModal');
         }
 
+        let isSavingRecord = false;
+        
         async function saveRecord() {
+            if (isSavingRecord) return;   // 防止重複觸發
+            isSavingRecord = true;
+        
             const editId = document.getElementById('recEditId').value;
             const direction = document.getElementById('recDirection').value || 'expense';
             const record = {
@@ -2621,18 +2626,24 @@
                 paidBy: document.getElementById('recPaidBy').value,
                 claimed: document.getElementById('recClaimed').value
             };
-            if (!record.amount) { showToast('請輸入金額', 'error'); return; }
+            if (!record.amount) { showToast('請輸入金額', 'error'); isSavingRecord = false; return; }
+        
             closeModal('addRecordModal');
             if (editId) {
                 const idx = state.records.findIndex(r => r.id === record.id);
                 if (idx !== -1) state.records[idx] = { ...state.records[idx], ...record };
             } else { state.records.unshift(record); }
             clearCache(); renderAll();
+        
             const action = editId ? 'updateRecord' : 'addRecord';
             try {
                 await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action, record, userId: state.user ? state.user.userId : null }) });
                 showToast(direction === 'income' ? '收入記錄成功 💰' : (editId ? '更新成功喵！😸' : '記帳成功喵！🐱'));
-            } catch (e) { showToast('同步失敗', 'error'); }
+            } catch (e) {
+                showToast('同步失敗', 'error');
+            } finally {
+                isSavingRecord = false;   // 無論成功失敗都要解鎖
+            }
         }
         async function deleteRecordFromModal() {
             const editId = document.getElementById('recEditId').value;
