@@ -1597,11 +1597,12 @@
     <!-- 自動記帳 Modal -->
     <div class="modal-overlay" id="addAutoModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3>⏰ 新增自動記帳</h3>
-                <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
-            </div>
-            <input type="hidden" id="autoDirection" value="expense">
+        <div class="modal-header">
+            <h3 id="autoModalTitle">⏰ 新增自動記帳</h3>
+            <button class="close-btn" onclick="closeModal('addAutoModal')">✕</button>
+        </div>
+        <input type="hidden" id="autoEditId">
+        <input type="hidden" id="autoDirection" value="expense">
             <div class="form-group">
                 <label class="form-label">類型</label>
                 <div class="direction-toggle">
@@ -2807,7 +2808,7 @@
                 autoList.innerHTML = '<p style="color:var(--text-secondary);font-size:14px;padding:10px 0">尚無自動記帳設定</p>';
             } else {
                 autoList.innerHTML = state.autoRecords.map(a => {
-                    const isIncome = a.direction === 'income';
+                    const isIncome = (a.direction || (state.incomeTypes.some(t => t.name === a.type) ? 'income' : 'expense')) === 'income';
                     const chip = isIncome
                         ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(39,174,96,0.12);color:#27AE60;">📥 收入</span>`
                         : `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(231,76,60,0.12);color:#C0392B;">📤 支出</span>`;
@@ -2822,7 +2823,10 @@
                                     ${a.note ? `・${a.note}` : ''}
                                 </div>
                             </div>
-                            <button class="action-btn" onclick="deleteAutoRecord(${a.id})">🗑️</button>
+                            <div style="display:flex;gap:4px;">
+                            <button class="action-btn" onclick="editAutoRecord(${a.id})" title="編輯">✏️</button>
+                            <button class="action-btn" onclick="deleteAutoRecord(${a.id})" title="刪除">🗑️</button>
+                        </div>
                         </div>`;
                 }).join('');
             }
@@ -2841,26 +2845,39 @@
         }
 
         async function saveAuto() {
-            const direction = document.getElementById('autoDirection').value || 'expense';
+            const editId = document.getElementById('autoEditId').value;
+            const old = editId ? state.autoRecords.find(x => String(x.id) === String(editId)) : null;
+        
             const auto = {
-                id: Date.now(),
+                id: old ? old.id : Date.now(),
                 type: document.getElementById('autoType').value,
                 amount: parseInt(document.getElementById('autoAmount').value) || 0,
                 day: parseInt(document.getElementById('autoDay').value) || 1,
                 note: document.getElementById('autoNote').value,
                 person: document.getElementById('autoPerson').value || '共同',
-                direction: direction,
-                enabled: true
+                direction: document.getElementById('autoDirection').value || 'expense',
+                enabled: old ? old.enabled : true,
+                createdAt: old ? old.createdAt : undefined
             };
             if (!auto.amount) { showToast('請輸入金額', 'error'); return; }
+        
             closeModal('addAutoModal');
-            state.autoRecords.push(auto);
+            if (old) {
+                const idx = state.autoRecords.findIndex(x => String(x.id) === String(old.id));
+                state.autoRecords[idx] = auto;
+            } else {
+                state.autoRecords.push(auto);
+            }
             clearCache();
             renderSettings();
+        
             try {
-                await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords }) });
-                showToast('自動記帳已設定！⏰');
-            } catch (e) { showToast('設定失敗', 'error'); }
+                await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'saveAutoRecords', autoRecords: state.autoRecords })
+                });
+                showToast(old ? '自動記帳已更新 ✅' : '自動記帳已設定！⏰');
+            } catch (e) { showToast('儲存失敗', 'error'); }
         }
 
         async function deleteAutoRecord(id) {
@@ -3126,11 +3143,31 @@
         }
 
         function openAddAutoModal() {
+            document.getElementById('autoEditId').value = '';
+            document.getElementById('autoModalTitle').textContent = '⏰ 新增自動記帳';
             setAutoDirection('expense');
             document.getElementById('autoAmount').value = '';
             document.getElementById('autoNote').value = '';
             document.getElementById('autoDay').value = '1';
-            document.getElementById('autoPerson').value = '共同';  // ★ 預設共同
+            document.getElementById('autoPerson').value = '共同';
+            openModal('addAutoModal');
+        }
+        
+        function editAutoRecord(id) {
+            const a = state.autoRecords.find(x => String(x.id) === String(id));
+            if (!a) return;
+        
+            const direction = a.direction ||
+                (state.incomeTypes.some(t => t.name === a.type) ? 'income' : 'expense');
+        
+            document.getElementById('autoEditId').value = a.id;
+            document.getElementById('autoModalTitle').textContent = '✏️ 編輯自動記帳';
+            setAutoDirection(direction);                       // 要先切方向，項目選單才會對
+            document.getElementById('autoType').value = a.type;
+            document.getElementById('autoAmount').value = a.amount || '';
+            document.getElementById('autoDay').value = a.day || 1;
+            document.getElementById('autoPerson').value = a.person || '共同';
+            document.getElementById('autoNote').value = a.note || '';
             openModal('addAutoModal');
         }
     </script>
