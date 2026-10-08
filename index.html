@@ -96,6 +96,26 @@
             animation: floatPaw 20s ease-in-out infinite;
         }
 
+        .wander-cat {
+            position: absolute;
+            top: 0; left: 0;
+            opacity: 0.18;
+            will-change: transform;
+            transition: transform var(--dur, 12s) ease-in-out;
+            user-select: none;
+        }
+        .wander-cat span {
+            display: block;
+            animation: catBob 1.2s ease-in-out infinite;
+        }
+        @keyframes catBob {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50% { transform: translateY(-5px) rotate(4deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .wander-cat, .wander-cat span { transition: none; animation: none; }
+        }
+
         .paw:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
         .paw:nth-child(2) { left: 80%; top: 15%; animation-delay: -5s; transform: rotate(30deg); }
         .paw:nth-child(3) { left: 25%; top: 60%; animation-delay: -10s; transform: rotate(-20deg); }
@@ -1177,7 +1197,7 @@
     </style>
 </head>
 <body>
-    <div class="floating-paws">
+    <div class="floating-paws" id="catLayer"></div>
         <span class="paw">🐾</span>
         <span class="paw">🐾</span>
         <span class="paw">🐾</span>
@@ -1758,6 +1778,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             initTheme();
             setupTabs();
+            initWanderingCats(); 
             setupDaySelects();
             await checkLoginStatus();
         });
@@ -3104,6 +3125,39 @@
             const saved = localStorage.getItem('theme');
             if (saved) document.body.setAttribute('data-theme', saved);
             else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.setAttribute('data-theme', 'dark');
+        }
+
+        function initWanderingCats() {
+            const layer = document.getElementById('catLayer');
+            if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        
+            const faces = ['😺', '😸', '😻', '🐱', '😽', '🐈'];
+            const count = window.innerWidth < 600 ? 5 : 8;
+        
+            for (let i = 0; i < count; i++) {
+                const cat = document.createElement('div');
+                cat.className = 'wander-cat';
+                cat.style.fontSize = (22 + Math.random() * 22) + 'px';
+                cat.innerHTML = `<span style="animation-delay:${-Math.random() * 1.2}s">${faces[i % faces.length]}</span>`;
+                layer.appendChild(cat);
+        
+                const move = () => {
+                    const x = Math.random() * (window.innerWidth - 50);
+                    const y = Math.random() * (window.innerHeight - 50);
+                    const dur = 10 + Math.random() * 10;           // 10～20 秒走一段
+                    const flip = Math.random() < 0.5 ? -1 : 1;     // 隨機面向
+                    cat.style.setProperty('--dur', dur + 's');
+                    cat.style.transform = `translate(${x}px, ${y}px) scaleX(${flip})`;
+                    setTimeout(move, dur * 1000);
+                };
+                // 先放到隨機位置（不要動畫），再開始走
+                cat.style.transition = 'none';
+                cat.style.transform = `translate(${Math.random() * window.innerWidth}px, ${Math.random() * window.innerHeight}px)`;
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    cat.style.transition = '';
+                    move();
+                }));
+            }
         }
 
         function showToast(message, type = 'success') {
