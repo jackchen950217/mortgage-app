@@ -316,6 +316,10 @@
             font-size: 44px;
             opacity: 0.15;
         }
+        .balance-banner.negative {
+            background: linear-gradient(135deg, #E67E22 0%, #F39C4A 100%);
+            box-shadow: 0 4px 20px rgba(230, 126, 34, 0.3);
+        }
         .balance-banner-label { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 4px; }
         .balance-banner-value { font-size: 26px; font-weight: 800; font-family: 'Quicksand', sans-serif; color: white; }
         .balance-banner-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; }
@@ -2133,6 +2137,7 @@
             const balance = incomeAmt - expenseAmt;
 
             document.getElementById('dashBalance').textContent = (balance >= 0 ? '+' : '') + '$' + balance.toLocaleString();
+            document.querySelector('.balance-banner').classList.toggle('negative', balance < 0);
             document.getElementById('dashBalanceSub').textContent = `收入 $${incomeAmt.toLocaleString()} ／ 支出 $${expenseAmt.toLocaleString()}`;
             document.getElementById('dashIncome').textContent = '$' + incomeAmt.toLocaleString();
             document.getElementById('dashExpense').textContent = '$' + expenseAmt.toLocaleString();
