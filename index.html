@@ -96,36 +96,46 @@
             animation: floatPaw 20s ease-in-out infinite;
         }
 
-        .wander-cat {
-            position: absolute;
-            top: 0; left: 0;
-            opacity: 0.18;
+        .cat-layer {
+            position: fixed; left: 0; bottom: 0;
+            width: 100%; height: 56px;
+            pointer-events: none;
+            z-index: 90;            /* 在內容上面、header(100) 下面 */
+            overflow: hidden;
+        }
+        .cat-actor, .mouse-actor {
+            position: absolute; left: 0; bottom: 2px;
             will-change: transform;
-            transition: transform var(--dur, 12s) ease-in-out;
-            user-select: none;
         }
-        .wander-cat span {
-            display: block;
-            animation: catBob 1.2s ease-in-out infinite;
+        .cat-actor svg   { display: block; width: 64px; height: 40px; overflow: visible; }
+        .mouse-actor svg { display: block; width: 28px; height: 15px; overflow: visible; }
+        .mouse-actor { opacity: 0; transition: opacity .3s; }
+        
+        /* 腳：預設不動，走路/奔跑才擺動 */
+        .cat-leg, .mouse-leg { transform-box: fill-box; transform-origin: 50% 0; }
+        .walking .cat-leg { animation: legSwing 0.9s ease-in-out infinite; }
+        .running .cat-leg { animation: legSwing 0.35s ease-in-out infinite; }
+        .cat-leg.b { animation-delay: -0.45s !important; }
+        .running .cat-leg.b { animation-delay: -0.175s !important; }
+        @keyframes legSwing {
+            0%, 100% { transform: rotate(-24deg); }
+            50%      { transform: rotate(24deg); }
         }
-        @keyframes catBob {
-            0%, 100% { transform: translateY(0) rotate(-4deg); }
-            50% { transform: translateY(-5px) rotate(4deg); }
-        }
+        
+        /* 身體走路時輕微上下起伏 */
+        .walking .cat-body-bob { animation: bodyBob 0.45s ease-in-out infinite; }
+        .running .cat-body-bob { animation: bodyBob 0.175s ease-in-out infinite; }
+        @keyframes bodyBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+        
+        /* 尾巴一直慢慢搖 */
+        .cat-tail { transform-box: fill-box; transform-origin: 90% 90%; animation: tailSway 2.6s ease-in-out infinite; }
+        @keyframes tailSway { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(10deg); } }
+        
+        /* 老鼠的腳 */
+        .running .mouse-leg { animation: legSwing 0.18s ease-in-out infinite; }
+        
         @media (prefers-reduced-motion: reduce) {
-            .wander-cat, .wander-cat span { transition: none; animation: none; }
-        }
-
-        .paw:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-        .paw:nth-child(2) { left: 80%; top: 15%; animation-delay: -5s; transform: rotate(30deg); }
-        .paw:nth-child(3) { left: 25%; top: 60%; animation-delay: -10s; transform: rotate(-20deg); }
-        .paw:nth-child(4) { left: 70%; top: 70%; animation-delay: -15s; transform: rotate(45deg); }
-        .paw:nth-child(5) { left: 50%; top: 40%; animation-delay: -8s; transform: rotate(-10deg); }
-        .paw:nth-child(6) { left: 90%; top: 50%; animation-delay: -12s; transform: rotate(60deg); }
-
-        @keyframes floatPaw {
-            0%, 100% { transform: translateY(0) rotate(var(--rotate, 0deg)); }
-            50% { transform: translateY(-15px) rotate(var(--rotate, 0deg)); }
+            .cat-layer * { animation: none !important; transition: none !important; }
         }
 
         /* 登入畫面 */
@@ -1197,7 +1207,7 @@
     </style>
 </head>
 <body>
-    <div class="floating-paws" id="catLayer"></div>
+   <div class="cat-layer" id="catLayer"></div>
 
     <!-- 登入畫面 -->
     <div class="login-screen" id="loginScreen">
@@ -1771,7 +1781,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             initTheme();
             setupTabs();
-            initWanderingCats(); 
+            initCat();
             setupDaySelects();
             await checkLoginStatus();
         });
@@ -3120,37 +3130,108 @@
             else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.setAttribute('data-theme', 'dark');
         }
 
-        function initWanderingCats() {
+        function initCat() {
             const layer = document.getElementById('catLayer');
             if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         
-            const faces = ['😺', '😸', '😻', '🐱', '😽', '🐈'];
-            const count = window.innerWidth < 600 ? 5 : 8;
+            layer.innerHTML = `
+            <div class="cat-actor" id="catActor">
+              <div class="cat-flip" id="catFlip">
+                <svg viewBox="0 0 80 50">
+                  <g class="cat-body-bob">
+                    <path class="cat-tail" d="M12 26 C0 22 0 8 8 5" fill="none" stroke="#E39A4F" stroke-width="5" stroke-linecap="round"/>
+                    <rect class="cat-leg a" x="15" y="32" width="6" height="15" rx="3" fill="#C97F38"/>
+                    <rect class="cat-leg b" x="24" y="32" width="6" height="15" rx="3" fill="#C97F38"/>
+                    <rect class="cat-leg b" x="46" y="32" width="6" height="15" rx="3" fill="#C97F38"/>
+                    <rect class="cat-leg a" x="55" y="32" width="6" height="15" rx="3" fill="#C97F38"/>
+                    <ellipse cx="35" cy="29" rx="25" ry="12" fill="#F0A860"/>
+                    <path d="M18 22 Q22 28 18 36 M28 20 Q32 28 28 38 M38 20 Q42 28 38 38" stroke="#D98E45" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <circle cx="62" cy="20" r="10" fill="#F0A860"/>
+                    <polygon points="54,14 55,2 62,11" fill="#F0A860"/>
+                    <polygon points="62,11 69,2 71,14" fill="#F0A860"/>
+                    <circle cx="66" cy="19" r="1.6" fill="#2D3436"/>
+                    <circle cx="71" cy="22" r="1.3" fill="#E57A8A"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="mouse-actor" id="mouseActor">
+              <div class="cat-flip" id="mouseFlip">
+                <svg viewBox="0 0 30 16">
+                  <path d="M5 11 C-3 10 -2 3 3 2" fill="none" stroke="#B9A89A" stroke-width="1.5" stroke-linecap="round"/>
+                  <rect class="mouse-leg" x="9" y="11" width="2.5" height="5" rx="1.2" fill="#8F8073"/>
+                  <rect class="mouse-leg" x="18" y="11" width="2.5" height="5" rx="1.2" fill="#8F8073"/>
+                  <ellipse cx="14" cy="9" rx="10" ry="6" fill="#B9A89A"/>
+                  <circle cx="22" cy="5" r="3" fill="#B9A89A"/>
+                  <circle cx="25" cy="8" r="4" fill="#B9A89A"/>
+                  <circle cx="26" cy="7" r="0.9" fill="#2D3436"/>
+                </svg>
+              </div>
+            </div>`;
         
-            for (let i = 0; i < count; i++) {
-                const cat = document.createElement('div');
-                cat.className = 'wander-cat';
-                cat.style.fontSize = (22 + Math.random() * 22) + 'px';
-                cat.innerHTML = `<span style="animation-delay:${-Math.random() * 1.2}s">${faces[i % faces.length]}</span>`;
-                layer.appendChild(cat);
+            const cat = document.getElementById('catActor');
+            const catFlip = document.getElementById('catFlip');
+            const mouse = document.getElementById('mouseActor');
+            const mouseFlip = document.getElementById('mouseFlip');
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+            const maxX = () => window.innerWidth - 64;
         
-                const move = () => {
-                    const x = Math.random() * (window.innerWidth - 50);
-                    const y = Math.random() * (window.innerHeight - 50);
-                    const dur = 10 + Math.random() * 10;           // 10～20 秒走一段
-                    const flip = Math.random() < 0.5 ? -1 : 1;     // 隨機面向
-                    cat.style.setProperty('--dur', dur + 's');
-                    cat.style.transform = `translate(${x}px, ${y}px) scaleX(${flip})`;
-                    setTimeout(move, dur * 1000);
-                };
-                // 先放到隨機位置（不要動畫），再開始走
-                cat.style.transition = 'none';
-                cat.style.transform = `translate(${Math.random() * window.innerWidth}px, ${Math.random() * window.innerHeight}px)`;
-                requestAnimationFrame(() => requestAnimationFrame(() => {
-                    cat.style.transition = '';
-                    move();
-                }));
+            let catX = Math.random() * maxX();
+            cat.style.transform = `translateX(${catX}px)`;
+        
+            // 貓慢慢走到指定位置（speed = px/秒）
+            async function walkCat(target, speed, mode, delay = 0) {
+                if (delay) await sleep(delay);
+                catFlip.style.transform = `scaleX(${target > catX ? 1 : -1})`;
+                const dur = Math.abs(target - catX) / speed;
+                cat.classList.add(mode);
+                cat.style.transition = `transform ${dur}s linear`;
+                cat.style.transform = `translateX(${target}px)`;
+                catX = target;
+                await sleep(dur * 1000);
+                cat.classList.remove(mode);
             }
+        
+            // 老鼠從貓前方衝出，貓追上去
+            async function chase() {
+                const W = maxX();
+                const dir = (W - catX) > catX ? 1 : -1;       // 往空間大的那邊跑
+                const startX = Math.max(0, Math.min(window.innerWidth - 28,
+                    dir > 0 ? catX + 64 + 80 : catX - 28 - 80));
+                const endX = dir > 0 ? window.innerWidth + 20 : -40;
+        
+                mouse.style.transition = 'none';
+                mouse.style.transform = `translateX(${startX}px)`;
+                mouseFlip.style.transform = `scaleX(${dir})`;
+                mouse.offsetWidth;                            // 強制重算，讓下面的 transition 生效
+                mouse.style.opacity = 1;
+                mouse.classList.add('running');
+                const mdur = Math.abs(endX - startX) / 120;
+                mouse.style.transition = `transform ${mdur}s linear, opacity .3s`;
+                mouse.style.transform = `translateX(${endX}px)`;
+        
+                await walkCat(dir > 0 ? W : 0, 140, 'running', 450);   // 貓晚一點點才追
+                mouse.style.opacity = 0;
+                mouse.classList.remove('running');
+            }
+        
+            async function loop() {
+                await sleep(1500);
+                while (true) {
+                    if (document.hidden) { await sleep(2000); continue; }
+                    if (Math.random() < 0.25) {
+                        await chase();
+                    } else {
+                        const W = maxX();
+                        let target = catX + (Math.random() < 0.5 ? -1 : 1) * (100 + Math.random() * 260);
+                        target = Math.max(0, Math.min(W, target));
+                        if (Math.abs(target - catX) < 60) target = catX < W / 2 ? W * 0.75 : W * 0.25;
+                        await walkCat(target, 28, 'walking');
+                    }
+                    await sleep(3000 + Math.random() * 5000);   // 停下來發呆 3～8 秒
+                }
+            }
+            loop();
         }
 
         function showToast(message, type = 'success') {
