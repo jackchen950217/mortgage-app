@@ -2226,10 +2226,17 @@
                     ${sorted.length > 10 ? `<div class="mortgage-empty">還有 ${sorted.length - 10} 筆記錄...</div>` : ''}`;
             }
         }
-
         // ============================================
         // 記錄
         // ============================================
+        const RECORDS_PAGE_SIZE = 50;
+        let recordsLimit = RECORDS_PAGE_SIZE;
+        
+        function loadMoreRecords() {
+            recordsLimit += RECORDS_PAGE_SIZE;
+            renderRecords();
+        }
+        
         function renderRecords() {
             const sorted = [...state.records].sort((a, b) => new Date(b.date) - new Date(a.date));
             const container = document.getElementById('recordsBody');
@@ -2242,7 +2249,7 @@
             }
             empty.style.display = 'none';
         
-            container.innerHTML = sorted.slice(0, 50).map(r => {
+            const cardsHtml = sorted.slice(0, recordsLimit).map(r => {
                 const isIncome = r.direction === 'income';
                 const amountStr = isIncome
                     ? `<span class="record-card-amount income">+$${(r.amount || 0).toLocaleString()}</span>`
@@ -2287,8 +2294,18 @@
                     </div>`}
                 </div>`;
             }).join('');
+        
+            const remaining = sorted.length - recordsLimit;
+            const loadMoreHtml = remaining > 0
+                ? `<button class="btn-secondary" style="width:100%" onclick="loadMoreRecords()">
+                       ⬇️ 載入更多（還有 ${remaining} 筆）
+                   </button>`
+                : `<div style="text-align:center;color:var(--text-secondary);font-size:13px;padding:12px 0">
+                       🐾 已顯示全部 ${sorted.length} 筆記錄
+                   </div>`;
+        
+            container.innerHTML = cardsHtml + loadMoreHtml;
         }
-
         // ============================================
         // 匯出 Excel
         // ============================================
