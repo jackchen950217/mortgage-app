@@ -97,11 +97,29 @@
         }
 
         .cat-layer {
-            position: fixed; left: 0; bottom: 0;
-            width: 100%; height: 56px;
+            position: fixed; left: 0; top: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 90;            /* 在內容上面、header(100) 下面 */
             overflow: hidden;
+        }
+        .cat-actor { pointer-events: auto; cursor: pointer; }
+        
+        .cat-bubble {
+            position: absolute;
+            font-size: 12px; font-weight: 600;
+            background: var(--bg-card); color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 3px 10px; border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            pointer-events: none; white-space: nowrap;
+            animation: bubbleUp 1.4s ease-out forwards;
+        }
+        @keyframes bubbleUp {
+            0%   { opacity: 0; transform: translateY(6px); }
+            15%  { opacity: 1; transform: translateY(0); }
+            80%  { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-10px); }
         }
         .cat-actor, .mouse-actor {
             position: absolute; left: 0; bottom: 2px;
@@ -3192,27 +3210,117 @@
             const mouseFlip = document.getElementById('mouseFlip');
             const sleep = ms => new Promise(r => setTimeout(r, ms));
             const maxX = () => window.innerWidth - 64;
+            const clampX = x => Math.max(0, Math.min(maxX(), x));
         
             let catX = Math.random() * maxX();
-            cat.style.transform = `translateX(${catX}px)`;
+            let catY = 0;              // 離地高度（px），0 = 站在地上
+            let jumping = false;
+            let perchEl = null;        // 目前站著的元素
         
-            // 貓慢慢走到指定位置（speed = px/秒）
+            const setPos = (x, y) => { cat.style.transform = `translate(${x}px, ${-y}px)`; };
+            setPos(catX, 0);
+        
+            // 貓慢慢走到指定位置（只在目前高度水平移動）
             async function walkCat(target, speed, mode, delay = 0) {
                 if (delay) await sleep(delay);
                 catFlip.style.transform = `scaleX(${target > catX ? 1 : -1})`;
                 const dur = Math.abs(target - catX) / speed;
                 cat.classList.add(mode);
                 cat.style.transition = `transform ${dur}s linear`;
-                cat.style.transform = `translateX(${target}px)`;
+                setPos(target, catY);
                 catX = target;
                 await sleep(dur * 1000);
                 cat.classList.remove(mode);
             }
         
-            // 老鼠從貓前方衝出，貓追上去
+            // 拋物線跳躍：從目前位置跳到 (tx, ty)，extra = 弧線額外高度
+            async function jumpArc(tx, ty, extra = 60) {
+                jumping = true;
+                const sx = catX, sy = catY;
+                catFlip.style.transform = `scaleX(${tx >= sx ? 1 : -1})`;
+                const dur = Math.min(1800, 550 + Math.abs(tx - sx) * 0.6 + Math.abs(ty - sy) * 0.8);
+                const steps = 24, frames = [];
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    const x = sx + (tx - sx) * t;
+                    const y = sy + (ty - sy) * t + 4 * extra * t * (1 - t);
+                    frames.push({ transform: `translate(${x}px, ${-y}px)` });
+                }
+                cat.style.transition = 'none';
+                cat.classList.add('running');
+                const anim = cat.animate(frames, { duration: dur, easing: 'linear', fill: 'forwards' });
+                await anim.finished;
+                catX = tx; catY = ty;
+                setPos(tx, ty);
+                anim.cancel();
+                cat.classList.remove('running');
+                jumping = false;
+            }
+        
+            // 找一個畫面上看得到的元素當落腳點
+            function pickPerch() {
+                if (document.querySelector('.modal-overlay.active')) return null;
+                const sel = ['.account-balance-card', '.balance-banner', '.stat-card', '.mortgage-progress-card',
+                    '.quick-add-btn', '.chart-card', '.record-card', '.furniture-card', '.budget-item',
+                    '.member-section-wrap', '.settings-section', '.furn-stat-card']
+                    .map(s => '.page.active ' + s).join(',');
+                const H = layer.clientHeight;
+                const list = [...document.querySelectorAll(sel)].filter(el => {
+                    const r = el.getBoundingClientRect();
+                    return r.top > 150 && r.top < H - 90 && r.width >= 80 && r.height > 0;
+                });
+                if (!list.length) return null;
+                const el = list[Math.floor(Math.random() * list.length)];
+                const r = el.getBoundingClientRect();
+                const x = clampX(r.left + Math.random() * Math.max(0, r.width - 64));
+                return { el, x, y: H - r.top - 4 };
+            }
+        
+            async function jumpToPerch(p) {
+                const climb = Math.max(0, p.y - catY);
+                await jumpArc(p.x, p.y, 60 + climb * 0.3);
+                perchEl = p.el;
+            }
+        
+            async function jumpToGround(extra = 80) {
+                const tx = clampX(catX + (Math.random() < 0.5 ? -1 : 1) * (60 + Math.random() * 200));
+                await jumpArc(tx, 0, extra);
+                perchEl = null;
+            }
+        
+            // 站的位置不見了（切分頁、捲動、重新渲染）就掉回地面
+            setInterval(() => {
+                if (jumping || catY <= 0) return;
+                let ok = false;
+                if (perchEl && perchEl.isConnected && perchEl.offsetParent !== null) {
+                    const r = perchEl.getBoundingClientRect();
+                    ok = Math.abs((layer.clientHeight - r.top - 4) - catY) < 6;
+                }
+                if (!ok) {
+                    cat.style.transition = 'transform .5s cubic-bezier(.5,0,1,.5)';
+                    setPos(catX, 0);
+                    catY = 0; perchEl = null;
+                }
+            }, 400);
+        
+            // 點貓：小跳 + 泡泡
+            cat.addEventListener('click', async () => {
+                if (jumping) return;
+                const words = ['喵～', '😸', '記帳了嗎？', '🐾', '今天花多少？'];
+                const b = document.createElement('div');
+                b.className = 'cat-bubble';
+                b.textContent = words[Math.floor(Math.random() * words.length)];
+                b.style.left = Math.min(catX + 10, window.innerWidth - 100) + 'px';
+                b.style.bottom = (catY + 50) + 'px';
+                layer.appendChild(b);
+                setTimeout(() => b.remove(), 1500);
+                await jumpArc(clampX(catX + (Math.random() - 0.5) * 80), catY, 70);
+            });
+        
+            // 老鼠從貓前方衝出，貓追上去（只在地面時觸發）
             async function chase() {
                 const W = maxX();
-                const dir = (W - catX) > catX ? 1 : -1;       // 往空間大的那邊跑
+                const dir = (W - catX) > catX ? 1 : -1;
                 const startX = Math.max(0, Math.min(window.innerWidth - 28,
                     dir > 0 ? catX + 64 + 80 : catX - 28 - 80));
                 const endX = dir > 0 ? window.innerWidth + 20 : -40;
@@ -3220,14 +3328,14 @@
                 mouse.style.transition = 'none';
                 mouse.style.transform = `translateX(${startX}px)`;
                 mouseFlip.style.transform = `scaleX(${dir})`;
-                mouse.offsetWidth;                            // 強制重算，讓下面的 transition 生效
+                mouse.offsetWidth;
                 mouse.style.opacity = 1;
                 mouse.classList.add('running');
                 const mdur = Math.abs(endX - startX) / 120;
                 mouse.style.transition = `transform ${mdur}s linear, opacity .3s`;
                 mouse.style.transform = `translateX(${endX}px)`;
         
-                await walkCat(dir > 0 ? W : 0, 140, 'running', 450);   // 貓晚一點點才追
+                await walkCat(dir > 0 ? W : 0, 140, 'running', 450);
                 mouse.style.opacity = 0;
                 mouse.classList.remove('running');
             }
@@ -3236,16 +3344,30 @@
                 await sleep(1500);
                 while (true) {
                     if (document.hidden) { await sleep(2000); continue; }
-                    if (Math.random() < 0.25) {
+                    const r = Math.random();
+        
+                    if (catY > 0) {
+                        // 站在高處：跳下來，或換一個落腳點
+                        const p = r < 0.4 ? pickPerch() : null;
+                        if (p) await jumpToPerch(p); else await jumpToGround();
+                    } else if (r < 0.15) {
                         await chase();
+                    } else if (r < 0.40) {
+                        // 地面小跳
+                        const tx = clampX(catX + (Math.random() < 0.5 ? -1 : 1) * (80 + Math.random() * 160));
+                        await jumpArc(tx, 0, 40 + Math.random() * 50);
+                    } else if (r < 0.70) {
+                        // 跳上某張卡片
+                        const p = pickPerch();
+                        if (p) await jumpToPerch(p);
                     } else {
                         const W = maxX();
                         let target = catX + (Math.random() < 0.5 ? -1 : 1) * (100 + Math.random() * 260);
-                        target = Math.max(0, Math.min(W, target));
+                        target = clampX(target);
                         if (Math.abs(target - catX) < 60) target = catX < W / 2 ? W * 0.75 : W * 0.25;
                         await walkCat(target, 28, 'walking');
                     }
-                    await sleep(3000 + Math.random() * 5000);   // 停下來發呆 3～8 秒
+                    await sleep(2500 + Math.random() * 4500);   // 停下來發呆
                 }
             }
             loop();
