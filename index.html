@@ -3212,28 +3212,65 @@
             const maxX = () => window.innerWidth - 64;
             const clampX = x => Math.max(0, Math.min(maxX(), x));
         
+            // 可被打斷的等待：有人點畫面時 wake() 會讓貓立刻停下來處理
+            const wakers = [];
+            const waitOrWake = ms => new Promise(res => {
+                const t = setTimeout(finish, ms);
+                function finish() {
+                    clearTimeout(t);
+                    const i = wakers.indexOf(finish);
+                    if (i > -1) wakers.splice(i, 1);
+                    res();
+                }
+                wakers.push(finish);
+            });
+            const wake = () => [...wakers].forEach(f => f());
+        
             let catX = Math.random() * maxX();
             let catY = 0;              // 離地高度（px），0 = 站在地上
             let jumping = false;
             let perchEl = null;        // 目前站著的元素
+            let pendingCall = null;    // 被點到的位置
+            let hop = false;           // 點貓時的小跳
+            let followMode = false;    // 想預設開啟跟隨就改成 true
+            let followX = window.innerWidth / 2, followY = 0, lastMove = 0;
         
             const setPos = (x, y) => { cat.style.transform = `translate(${x}px, ${-y}px)`; };
             setPos(catX, 0);
         
-            // 貓慢慢走到指定位置（只在目前高度水平移動）
+            // 泡泡
+            function say(text) {
+                const b = document.createElement('div');
+                b.className = 'cat-bubble';
+                b.textContent = text;
+                b.style.left = Math.max(0, Math.min(catX + 10, window.innerWidth - 110)) + 'px';
+                b.style.bottom = (catY + 50) + 'px';
+                layer.appendChild(b);
+                setTimeout(() => b.remove(), 1500);
+            }
+        
+            // 走路（可被打斷：被打斷時停在當下位置）
             async function walkCat(target, speed, mode, delay = 0) {
-                if (delay) await sleep(delay);
+                if (delay) await waitOrWake(delay);
                 catFlip.style.transform = `scaleX(${target > catX ? 1 : -1})`;
                 const dur = Math.abs(target - catX) / speed;
                 cat.classList.add(mode);
                 cat.style.transition = `transform ${dur}s linear`;
                 setPos(target, catY);
-                catX = target;
-                await sleep(dur * 1000);
+                const t0 = performance.now();
+                await waitOrWake(dur * 1000);
+                if (performance.now() - t0 < dur * 1000 - 30) {
+                    const x = cat.getBoundingClientRect().left;   // 被打斷：凍結在目前位置
+                    cat.style.transition = 'none';
+                    setPos(x, catY);
+                    catX = x;
+                } else {
+                    catX = target;
+                }
                 cat.classList.remove(mode);
             }
         
-            // 拋物線跳躍：從目前位置跳到 (tx, ty)，extra = 弧線額外高度
+            // 拋物線跳躍
             async function jumpArc(tx, ty, extra = 60) {
                 jumping = true;
                 const sx = catX, sy = catY;
@@ -3257,13 +3294,30 @@
                 jumping = false;
             }
         
-            // 找一個畫面上看得到的元素當落腳點
+            // ---------- 落腳點 ----------
+            const PERCH_BASE = ['.account-balance-card', '.balance-banner', '.stat-card', '.mortgage-progress-card',
+                '.quick-add-btn', '.chart-card', '.record-card', '.furniture-card', '.budget-item',
+                '.member-section-wrap', '.settings-section', '.furn-stat-card'];
+            const PERCH_SEL = PERCH_BASE.join(',');
+        
+            const clampPerchX = (r, x) => clampX(Math.max(r.left, Math.min(x - 32, r.right - 64)));
+        
+            // 某個座標底下可以站的元素
+            function perchAt(x, y) {
+                let el = document.elementFromPoint(x, y);
+                if (!el || cat.contains(el)) return null;
+                el = el.closest(PERCH_SEL);
+                if (!el || !el.closest('.page.active')) return null;
+                const r = el.getBoundingClientRect();
+                const H = layer.clientHeight;
+                if (r.top < 150 || r.top > H - 90 || r.width < 80) return null;
+                return { el, rect: r, y: H - r.top - 4 };
+            }
+        
+            // 隨機挑一個畫面上看得到的落腳點
             function pickPerch() {
                 if (document.querySelector('.modal-overlay.active')) return null;
-                const sel = ['.account-balance-card', '.balance-banner', '.stat-card', '.mortgage-progress-card',
-                    '.quick-add-btn', '.chart-card', '.record-card', '.furniture-card', '.budget-item',
-                    '.member-section-wrap', '.settings-section', '.furn-stat-card']
-                    .map(s => '.page.active ' + s).join(',');
+                const sel = PERCH_BASE.map(s => '.page.active ' + s).join(',');
                 const H = layer.clientHeight;
                 const list = [...document.querySelectorAll(sel)].filter(el => {
                     const r = el.getBoundingClientRect();
@@ -3303,19 +3357,66 @@
                 }
             }, 400);
         
-            // 點貓：小跳 + 泡泡
-            cat.addEventListener('click', async () => {
-                if (jumping) return;
-                const words = ['喵～', '😸', '記帳了嗎？', '🐾', '今天花多少？'];
-                const b = document.createElement('div');
-                b.className = 'cat-bubble';
-                b.textContent = words[Math.floor(Math.random() * words.length)];
-                b.style.left = Math.min(catX + 10, window.innerWidth - 100) + 'px';
-                b.style.bottom = (catY + 50) + 'px';
-                layer.appendChild(b);
-                setTimeout(() => b.remove(), 1500);
-                await jumpArc(clampX(catX + (Math.random() - 0.5) * 80), catY, 70);
+            // ---------- 互動 ----------
+            // 點貓：切換跟隨模式
+            cat.addEventListener('click', e => {
+                e.stopPropagation();
+                followMode = !followMode;
+                say(followMode ? '跟著你囉 🐾' : '我自己玩～');
+                hop = true;
+                wake();
             });
+        
+            // 點畫面空白處：貓跳過去（跳過按鈕、輸入框、可點的項目）
+            const IGNORE = 'button, a, input, select, textarea, label, .modal-overlay, .nav-tab, .quick-add-btn, .furniture-card, .budget-item, .cat-actor';
+            document.addEventListener('click', e => {
+                if (e.target.closest(IGNORE)) return;
+                if (document.querySelector('.modal-overlay.active')) return;
+                if (document.getElementById('loginScreen').style.display !== 'none') return;
+                pendingCall = { x: e.clientX, y: e.clientY };
+                wake();
+            });
+        
+            // 追蹤指標位置（滑鼠移動 / 手指按下或拖曳）
+            const track = e => { followX = e.clientX; followY = e.clientY; lastMove = Date.now(); };
+            document.addEventListener('pointermove', track, { passive: true });
+            document.addEventListener('pointerdown', track, { passive: true });
+        
+            // 跳到被點的位置
+            async function goTo(c) {
+                const p = perchAt(c.x, c.y);
+                if (p) await jumpToPerch({ el: p.el, x: clampPerchX(p.rect, c.x), y: p.y });
+                else { await jumpArc(clampX(c.x - 32), 0, 50 + Math.random() * 40); perchEl = null; }
+                if (Math.random() < 0.4) say(['喵！', '來了～', '😸', '🐾'][Math.floor(Math.random() * 4)]);
+            }
+        
+            // 跟隨模式的一小步
+            async function followStep() {
+                const still = Date.now() - lastMove;
+                const p = perchAt(followX, followY);
+                if (still > 700) {
+                    if (p && p.el !== perchEl && Math.abs(p.y - catY) > 6) {
+                        await jumpToPerch({ el: p.el, x: clampPerchX(p.rect, followX), y: p.y });
+                        return;
+                    }
+                    if (!p && catY > 0) {
+                        await jumpArc(clampX(followX - 32), 0, 80);
+                        perchEl = null;
+                        return;
+                    }
+                }
+                let lo = 0, hi = maxX();
+                if (catY > 0 && perchEl && perchEl.isConnected) {   // 站在高處時只在那張卡片上走
+                    const r = perchEl.getBoundingClientRect();
+                    lo = r.left; hi = Math.max(lo, r.right - 64);
+                }
+                const tx = Math.max(lo, Math.min(hi, followX - 32));
+                const dx = tx - catX;
+                if (Math.abs(dx) < 30) return;
+                const step = Math.max(-160, Math.min(160, dx));
+                const fast = Math.abs(dx) > 200;
+                await walkCat(catX + step, fast ? 170 : 60, fast ? 'running' : 'walking');
+            }
         
             // 老鼠從貓前方衝出，貓追上去（只在地面時觸發）
             async function chase() {
@@ -3344,30 +3445,45 @@
                 await sleep(1500);
                 while (true) {
                     if (document.hidden) { await sleep(2000); continue; }
-                    const r = Math.random();
         
+                    // 1) 使用者互動優先
+                    if (hop) {
+                        hop = false;
+                        await jumpArc(clampX(catX + (Math.random() - 0.5) * 80), catY, 70);
+                        continue;
+                    }
+                    if (pendingCall) {
+                        const c = pendingCall; pendingCall = null;
+                        await goTo(c);
+                        await waitOrWake(followMode ? 200 : 1500);
+                        continue;
+                    }
+                    // 2) 跟隨模式
+                    if (followMode) {
+                        await followStep();
+                        await waitOrWake(150);
+                        continue;
+                    }
+                    // 3) 自由活動
+                    const r = Math.random();
                     if (catY > 0) {
-                        // 站在高處：跳下來，或換一個落腳點
                         const p = r < 0.4 ? pickPerch() : null;
                         if (p) await jumpToPerch(p); else await jumpToGround();
                     } else if (r < 0.15) {
                         await chase();
                     } else if (r < 0.40) {
-                        // 地面小跳
                         const tx = clampX(catX + (Math.random() < 0.5 ? -1 : 1) * (80 + Math.random() * 160));
                         await jumpArc(tx, 0, 40 + Math.random() * 50);
                     } else if (r < 0.70) {
-                        // 跳上某張卡片
                         const p = pickPerch();
                         if (p) await jumpToPerch(p);
                     } else {
                         const W = maxX();
-                        let target = catX + (Math.random() < 0.5 ? -1 : 1) * (100 + Math.random() * 260);
-                        target = clampX(target);
+                        let target = clampX(catX + (Math.random() < 0.5 ? -1 : 1) * (100 + Math.random() * 260));
                         if (Math.abs(target - catX) < 60) target = catX < W / 2 ? W * 0.75 : W * 0.25;
                         await walkCat(target, 28, 'walking');
                     }
-                    await sleep(2500 + Math.random() * 4500);   // 停下來發呆
+                    await waitOrWake(2500 + Math.random() * 4500);
                 }
             }
             loop();
